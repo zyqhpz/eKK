@@ -234,6 +234,11 @@
                 <span class="sidebar-text">500 Not Found</span>
               </a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ route('profile-club') }}">
+                <span class="sidebar-text">Profil kelab</span>
+              </a>
+            </li>
           </ul>
         </div>
       </li>
