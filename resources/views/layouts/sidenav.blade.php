@@ -239,6 +239,11 @@
                 <span class="sidebar-text">Profil kelab</span>
               </a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ route('pdf-generator') }}">
+                <span class="sidebar-text">KK PDF Generator</span>
+              </a>
+            </li>
           </ul>
         </div>
       </li>

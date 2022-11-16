@@ -27,6 +27,7 @@ use App\Http\Livewire\UpgradeToPro;
 use App\Http\Livewire\Users;
 
 use App\Http\Livewire\ProfileClub;
+use App\Http\Livewire\PDFGenerator;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,6 +58,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', Profile::class)->name('profile');
     Route::get('/profile-example', ProfileExample::class)->name('profile-example');
     Route::get('/profile-club', ProfileClub::class)->name('profile-club');
+    Route::get('/pdf-generator', PDFGenerator::class)->name('pdf-generator');
     Route::get('/users', Users::class)->name('users');
     Route::get('/login-example', LoginExample::class)->name('login-example');
     Route::get('/register-example', RegisterExample::class)->name('register-example');
