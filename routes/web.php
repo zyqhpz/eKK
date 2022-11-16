@@ -60,7 +60,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile-club', ProfileClub::class)->name('profile-club');
 
     Route::get('/pdf-generator', PDFGenerator::class)->name('pdf-generator');
-    Route::post('/pdf-generator', PDFGenerator::class)->name('pdf-generator');
+    // Route::post('/pdf-generator', PDFGenerator::class)->name('pdf-generator');
     // Route::post("/pdf-generator/view", [PDFGenerator::class, 'viewPDF'])->name('pdf-generator.view');
     Route::post("/pdf-generator/view", [PDFGenerator::class, 'viewPDF'])->name('view-pdf');
 
