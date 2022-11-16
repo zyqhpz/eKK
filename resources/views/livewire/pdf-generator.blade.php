@@ -53,17 +53,17 @@
                                     placeholder="dd/mm/yyyy">
                             </div>
                         </div> --}}
-                        <div class="date-day col-md-6 mb-3 d-none">
+                        <div class="date-day col-md-6 mb-3">
                             <label for="program-date">Tarikh program</label>
                             <input class="form-control" id="program-date" type="date"
                                 placeholder="dd/mm/yyyy">
                         </div>
-                        <div class="date-start col-md-6 mb-3">
+                        <div class="date-start col-md-6 mb-3 d-none">
                             <label for="program-date-start">Tarikh bermula</label>
                             <input class="form-control datepicker-input" id="program-date-start" type="date"
                                 placeholder="dd/mm/yyyy">
                         </div>
-                        <div class="date-end col-md-6 mb-3">
+                        <div class="date-end col-md-6 mb-3 d-none">
                             <label for="program-date-end">Tarikh berakhir</label>
                             <input class="form-control datepicker-input" id="program-date-end" type="date"
                                 placeholder="dd/mm/yyyy">
