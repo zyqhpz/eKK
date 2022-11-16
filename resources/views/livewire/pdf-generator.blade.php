@@ -8,7 +8,8 @@
         <div class="col-12 col-xl-8">
             <div class="card card-body border-0 shadow mb-4">
                 <h2 class="h5 mb-4">Kertas Kerja Generator</h2>
-                <form action="#" autocomplete="off">
+                <form action="{{ route('view-pdf') }}" method="POST" autocomplete="off" target="_blank">
+                    @csrf
                     <div class="row">
                         {{-- <div class="col-md-6 mb-3">
                             <div>

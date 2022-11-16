@@ -58,7 +58,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', Profile::class)->name('profile');
     Route::get('/profile-example', ProfileExample::class)->name('profile-example');
     Route::get('/profile-club', ProfileClub::class)->name('profile-club');
+
     Route::get('/pdf-generator', PDFGenerator::class)->name('pdf-generator');
+    Route::post('/pdf-generator', PDFGenerator::class)->name('pdf-generator');
+    // Route::post("/pdf-generator/view", [PDFGenerator::class, 'viewPDF'])->name('pdf-generator.view');
+    Route::post("/pdf-generator/view", [PDFGenerator::class, 'viewPDF'])->name('view-pdf');
+
+
     Route::get('/users', Users::class)->name('users');
     Route::get('/login-example', LoginExample::class)->name('login-example');
     Route::get('/register-example', RegisterExample::class)->name('register-example');
