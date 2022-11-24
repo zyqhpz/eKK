@@ -8,118 +8,137 @@
         <div class="col-12 col-xl-8">
             <div class="card card-body border-0 shadow mb-4">
                 <h2 class="h5 mb-4">Kertas Kerja Generator</h2>
+                <div class="section-tab">
+                    <a id="tab1">Detail 1</a>
+                    <a id="tab2">Detail 2</a>
+                    <a id="tab3">Detail 3</a>
+                    <a id="tab4">Detail 4</a>
+                </div>
                 <form action="{{ route('view-pdf') }}" method="post" autocomplete="off" target="_blank">
                     @csrf
-                    <div class="row">
-                        {{-- <div class="col-md-6 mb-3">
-                            <div>
-                                <label for="first_name">First Name</label>
-                                <input class="form-control" id="first_name" type="text"
-                                    placeholder="Enter your first name" required>
+                    <div class="details-1 d-block">
+                        <h1>Bahagian 1</h1>
+                        <div class="row">
+                            {{-- <div class="col-md-6 mb-3">
+                                <div>
+                                    <label for="first_name">First Name</label>
+                                    <input class="form-control" id="first_name" type="text"
+                                        placeholder="Enter your first name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div>
+                                    <label for="last_name">Last Name</label>
+                                    <input class="form-control" id="last_name" type="text"
+                                        placeholder="Also your last name" required>
+                                </div>
+                            </div> --}}
+                            <div class="mb-3">
+                                <label for="program-name">Nama program</label>
+                                <input class="form-control" id="program-name" type="text" name="program_name"
+                                    placeholder="Masukkan nama program" required>
                             </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <div>
-                                <label for="last_name">Last Name</label>
-                                <input class="form-control" id="last_name" type="text"
-                                    placeholder="Also your last name" required>
-                            </div>
-                        </div> --}}
-                        <div class="mb-3">
-                            <label for="program-name">Nama program</label>
-                            <input class="form-control" id="program-name" type="text" name="program_name"
-                                placeholder="Masukkan nama program" required>
-                        </div>
-                    </div>
-                    <div class="row align-items-center">
-                        <div class="col-md-6 mb-3">
-                            <label for="program-date-type">Program satu hari?</label>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="program-date-type" name="program_date_type" value="one-day" checked>
+                        <div class="row align-items-center">
+                            <div class="col-md-6 mb-3">
+                                <label for="program-date-type">Program satu hari?</label>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="program-date-type" name="program_date_type" value="one-day" checked>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        {{-- <div class="day col-md-6 mb-3 d-none">
-                            <label for="program-date">Tarikh program</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><svg class="icon icon-xs" fill="currentColor"
-                                        viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd"
-                                            d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                                            clip-rule="evenodd"></path>
-                                    </svg></span>
-                                <input data-datepicker=""
-                                    class="form-control datepicker-input" id="program-date" type="text"
+                        <div class="row">
+                            {{-- <div class="day col-md-6 mb-3 d-none">
+                                <label for="program-date">Tarikh program</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><svg class="icon icon-xs" fill="currentColor"
+                                            viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                                                clip-rule="evenodd"></path>
+                                        </svg></span>
+                                    <input data-datepicker=""
+                                        class="form-control datepicker-input" id="program-date" type="text"
+                                        placeholder="dd/mm/yyyy">
+                                </div>
+                            </div> --}}
+                            <div class="date-day col-md-6 mb-3">
+                                <label for="program-date">Tarikh program</label>
+                                <input class="form-control" id="program-date" type="date" name="program_date"
                                     placeholder="dd/mm/yyyy">
                             </div>
-                        </div> --}}
-                        <div class="date-day col-md-6 mb-3">
-                            <label for="program-date">Tarikh program</label>
-                            <input class="form-control" id="program-date" type="date" name="program_date"
-                                placeholder="dd/mm/yyyy">
-                        </div>
-                        <div class="date-start col-md-6 mb-3 d-none">
-                            <label for="program-date-start">Tarikh bermula</label>
-                            <input class="form-control datepicker-input" id="program-date-start" type="date" name="program_date_start"
-                                placeholder="dd/mm/yyyy">
-                        </div>
-                        <div class="date-end col-md-6 mb-3 d-none">
-                            <label for="program-date-end">Tarikh berakhir</label>
-                            <input class="form-control datepicker-input" id="program-date-end" type="date" name="program_date_end"
-                                placeholder="dd/mm/yyyy">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <div class="form-group">
-                                <label for="program-place">Tempat program</label>
-                                <input  class="form-control" id="program-place" type="text" name="program_place"
-                                    placeholder="Contoh: Dewan Auditorium FKP">
+                            <div class="date-start col-md-6 mb-3 d-none">
+                                <label for="program-date-start">Tarikh bermula</label>
+                                <input class="form-control datepicker-input" id="program-date-start" type="date" name="program_date_start"
+                                    placeholder="dd/mm/yyyy">
                             </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <div class="form-group">
-                                <label for="program-collab">Dengan kerjasama (jika ada)</label>
-                                <input class="form-control" id="collab" type="text" name="program_collab"
-                                    placeholder="Kelab ABC, Kelab DEF">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="program-preparedby">Disediakan oleh</label>
-                            <input class="form-control" id="collab" type="text" name="program_preparedby"
-                                    placeholder="Nama pengarah program atau setiausaha">
-                        </div>
-                        {{-- <div class="col-md-6 mb-3">
-                            <div class="form-group">
-                                <label for="phone">No. Telefon Rasmi Kelab</label>
-                                <input class="form-control" id="phone" type="number"
-                                    placeholder="+60123456789">
-                            </div>
-                        </div> --}}
-                    </div>
-                    <h2 class="h5 my-4">Status Program Terakhir</h2>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <div class="form-group">
-                                <label for="last-program-date">Tarikh program terakhir yang dilulus dan dilaksanakan</label>
-                                <input class="form-control" id="last-program-date" type="date" name="last_program_date"
+                            <div class="date-end col-md-6 mb-3 d-none">
+                                <label for="program-date-end">Tarikh berakhir</label>
+                                <input class="form-control datepicker-input" id="program-date-end" type="date" name="program_date_end"
                                     placeholder="dd/mm/yyyy">
                             </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <div class="form-group">
-                                <label for="last-program-status">Status laporan program terakhir</label>
-                                <select class="form-select mb-0" id="last-program-status" name="last_program_status">
-                                    aria-label="Pilihan status laporan">
-                                    <option value="0" selected>Dilaksanakan</option>
-                                    <option value="1">Hantar</option>
-                                </select>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="program-place">Tempat program</label>
+                                    <input  class="form-control" id="program-place" type="text" name="program_place"
+                                        placeholder="Contoh: Dewan Auditorium FKP">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="program-collab">Dengan kerjasama (jika ada)</label>
+                                    <input class="form-control" id="collab" type="text" name="program_collab"
+                                        placeholder="Kelab ABC, Kelab DEF">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="program-preparedby">Disediakan oleh</label>
+                                <input class="form-control" id="collab" type="text" name="program_preparedby"
+                                        placeholder="Nama pengarah program atau setiausaha">
+                            </div>
+                            {{-- <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="phone">No. Telefon Rasmi Kelab</label>
+                                    <input class="form-control" id="phone" type="number"
+                                        placeholder="+60123456789">
+                                </div>
+                            </div> --}}
+                        </div>
+                        <h2 class="h5 my-4">Status Program Terakhir</h2>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="last-program-date">Tarikh program terakhir yang dilulus dan dilaksanakan</label>
+                                    <input class="form-control" id="last-program-date" type="date" name="last_program_date"
+                                        placeholder="dd/mm/yyyy">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="last-program-status">Status laporan program terakhir</label>
+                                    <select class="form-select mb-0" id="last-program-status" name="last_program_status">
+                                        aria-label="Pilihan status laporan">
+                                        <option value="0" selected>Dilaksanakan</option>
+                                        <option value="1">Hantar</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div class="details-2 d-none">
+                        <h1>Bahagian 2</h1>
+                        <div class="row">
+                            <div class="mb-3">
+                                <label for="program-name">Nama program</label>
+                                <input class="form-control" id="program-name" type="text" name="program_name"
+                                    placeholder="Masukkan nama program" required>
+                            </div>
+                        </div>
+                     </div>
                     <div class="mt-3">
                         <button type="submit" class="btn btn-gray-800 mt-2 animate-up-2">Generate Kertas Kerja</button>
                     </div>
@@ -143,6 +162,20 @@
         //         $('.date-end').addClass('d-none');
         //     }
         // });
+
+        // click detail 1 to show form 1 and detail 2 to show form 2
+        $('#tab1').click(function() {
+            $('.details-2').removeClass('d-block');
+            $('.details-2').addClass('d-none');
+            $('.details-1').removeClass('d-none');
+            $('.details-1').addClass('d-block');
+        });
+        $('#tab2').click(function() {
+            $('.details-2').removeClass('d-none');
+            $('.details-2').addClass('d-block');
+            $('.details-1').removeClass('d-block');
+            $('.details-1').addClass('d-none');
+        });
 
         // $('input[type="checkbox"]').click(function() {
         $('#program-date-type').change(function() {
