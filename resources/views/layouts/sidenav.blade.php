@@ -244,6 +244,11 @@
                 <span class="sidebar-text">KK PDF Generator</span>
               </a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ route('paperwork-club') }}">
+                <span class="sidebar-text">Pengurusan Kertas Kerja</span>
+              </a>
+            </li>
           </ul>
         </div>
       </li>
