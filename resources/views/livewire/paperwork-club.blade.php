@@ -111,7 +111,7 @@
     </div>
 </div>
 </div>
-<div class="card card-body shadow border-0 table-wrapper table-responsive">
+<div class="card card-body shadow border-0 table-wrapper table-responsive min-vh-100">
     <table class="table user-table table-hover align-items-center">
         <thead>
             <tr>
@@ -131,19 +131,19 @@
                 <td><span class="fw-normal d-flex align-items-center">22 - 24 Disember 2022</span></td>
                 <td><span class="fw-normal text-success">Lulus</span></td>
                 <td>
-                    <div class="btn-group">
-                        <a href="#" class="btn btn-sm btn-success" data-bs-toggle="tooltip"
-                            data-bs-placement="top" title="Lihat kertas kerja">
-                            <i class="fas fa-eye text-white"></i>
-                        </a>
-                        <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="tooltip"
-                            data-bs-placement="top" title="Sunting kertas kerja">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="tooltip"
-                            data-bs-placement="top" title="Padam kertas kerja">
-                            <i class="fas fa-trash-alt"></i>
-                        </a>
+                    <div class="btn-group .z-index-master">
+                        <button type="button" class="btn btn-info" data-bs-toggle="tooltip"
+                            data-bs-placement="top" title="Lihat kertas kerja">Lihat</button>
+                        <button type="button" class="btn btn-info dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                            <svg class="icon icon-xs" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                            <span class="visually-hidden">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Sunting</a></li>
+                            <li><a class="dropdown-item" href="#">Butiran status</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li class="bg-danger"><a class="dropdown-item" href="#">Padam kertas kerja</a></li>
+                        </ul>
                     </div>
                 </td>
             </tr>
@@ -154,19 +154,19 @@
                 <td><span class="fw-normal d-flex align-items-center">22 - 24 Disember 2022</span></td>
                 <td><span class="fw-normal text-warning">Dalam proses</span></td>
                 <td>
-                    <div class="btn-group">
-                        <a href="#" class="btn btn-sm btn-success" data-bs-toggle="tooltip"
-                            data-bs-placement="top" title="Lihat kertas kerja">
-                            <i class="fas fa-eye text-white"></i>
-                        </a>
-                        <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="tooltip"
-                            data-bs-placement="top" title="Sunting kertas kerja">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="tooltip"
-                            data-bs-placement="top" title="Padam kertas kerja">
-                            <i class="fas fa-trash-alt"></i>
-                        </a>
+                    <div class="btn-group z-index-master">
+                        <button type="button" class="btn btn-info" data-bs-toggle="tooltip"
+                            data-bs-placement="top" title="Lihat kertas kerja">Lihat</button>
+                        <button type="button" class="btn btn-info dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                            <svg class="icon icon-xs" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                            <span class="visually-hidden">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Sunting</a></li>
+                            <li><a class="dropdown-item" href="#">Butiran status</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li class="bg-danger"><a class="dropdown-item" href="#">Padam kertas kerja</a></li>
+                        </ul>
                     </div>
                 </td>
             </tr>
@@ -182,7 +182,7 @@
                             data-bs-placement="top" title="Lihat kertas kerja">
                             <i class="fas fa-eye text-white"></i>
                         </a>
-                        <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="tooltip"
+                        <a href="#" class="btn btn-sm btn-info" data-bs-toggle="tooltip"
                             data-bs-placement="top" title="Sunting kertas kerja">
                             <i class="fas fa-edit"></i>
                         </a>
