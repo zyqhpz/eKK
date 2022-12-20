@@ -166,7 +166,7 @@
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="short-name">Singkatan Nama Kelab</label>
+                            <label for="short-name">Nama Singkatan Kelab</label>
                             <input class="form-control" id="short-name" type="text"
                                 placeholder="Masukkan nama kelab" value="BADAR UTeM" required disabled>
                         </div>
