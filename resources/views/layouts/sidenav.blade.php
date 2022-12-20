@@ -1,4 +1,4 @@
-<nav id="sidebarMenu" class="sidebar d-lg-block bg-indigo text-white collapse" data-simplebar>
+<nav id="sidebarMenu" class="sidebar d-lg-block bg-primary text-white collapse" data-simplebar>
   <div class="sidebar-inner px-2 pt-3">
     <div class="user-card d-flex d-md-none align-items-center justify-content-between justify-content-md-center pb-4">
       <div class="d-flex align-items-center">
@@ -50,7 +50,7 @@
           <span class="sidebar-text">Dashboard</span>
         </a>
       </li>
-      <li class="nav-item">
+      {{-- <li class="nav-item">
         <span class="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
           data-bs-target="#submenu-laravel" aria-expanded="true">
           <span>
@@ -78,8 +78,8 @@
             </li>
           </ul>
         </div>
-      </li>
-      <li class="nav-item">
+      </li> --}}
+      {{-- <li class="nav-item">
         <a href="https://themesberg.com/product/laravel/volt-pro-admin-dashboard-template" target="_blank" class="nav-link d-flex justify-content-between">
           <span>
             <span class="sidebar-icon"><svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"
@@ -94,8 +94,8 @@
             <span class="badge badge-sm bg-secondary ms-1">Pro</span>
           </span>
         </a>
-      </li>
-      <li class="nav-item {{ Request::segment(1) == 'transactions' ? 'active' : '' }}">
+      </li> --}}
+      {{-- <li class="nav-item {{ Request::segment(1) == 'transactions' ? 'active' : '' }}">
         <a href="/transactions" class="nav-link">
           <span class="sidebar-icon"><svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"
               xmlns="http://www.w3.org/2000/svg">
@@ -106,8 +106,8 @@
             </svg></span>
           <span class="sidebar-text">Transactions</span>
         </a>
-      </li>
-      <li class="nav-item">
+      </li> --}}
+      {{-- <li class="nav-item">
         <a href="https://themesberg.com/product/laravel/volt-pro-admin-dashboard-template" target="_blank" class="nav-link d-flex justify-content-between">
           <span>
             <span class="sidebar-icon">
@@ -123,8 +123,8 @@
             <span class="badge badge-sm bg-secondary ms-1">Pro</span>
           </span>
         </a>
-        </li>
-      <li class="nav-item">
+      </li> --}}
+      {{-- <li class="nav-item">
         <a href="https://themesberg.com/product/laravel/volt-pro-admin-dashboard-template" target="_blank" class="nav-link d-flex justify-content-between">
           <span>
             <span class="sidebar-icon">
@@ -140,8 +140,8 @@
             <span class="badge badge-sm bg-secondary ms-1">Pro</span>
           </span>
         </a>
-        </li>
-      <li class="nav-item">
+      </li> --}}
+      {{-- <li class="nav-item">
         <span
           class="nav-link {{ Request::segment(1) !== 'bootstrap-tables' ? 'collapsed' : '' }} d-flex justify-content-between align-items-center"
           data-bs-toggle="collapse" data-bs-target="#submenu-app">
@@ -171,8 +171,48 @@
             </li>
           </ul>
         </div>
-      </li>
+      </li> --}}
       <li class="nav-item">
+        <span class="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
+          data-bs-target="#submenu-pages">
+          <span>
+            <span class="sidebar-icon"><svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                  d="M2 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 002 2H4a2 2 0 01-2-2V5zm3 1h6v4H5V6zm6 6H5v2h6v-2z"
+                  clip-rule="evenodd"></path>
+                <path d="M15 7h1a2 2 0 012 2v5.5a1.5 1.5 0 01-3 0V7z"></path>
+              </svg></span>
+            <span class="sidebar-text">Kelab</span>
+          </span>
+          <span class="link-arrow"><svg class="icon icon-sm" fill="currentColor" viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clip-rule="evenodd"></path>
+            </svg></span>
+        </span>
+        <div class="multi-level collapse" role="list" id="submenu-pages" aria-expanded="false">
+          <ul class="flex-column nav">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ route('profile-club') }}">
+                <span class="sidebar-text">Profil kelab</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ route('pdf-generator') }}">
+                <span class="sidebar-text">KK PDF Generator</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ route('paperwork-club') }}">
+                <span class="sidebar-text">Pengurusan Kertas Kerja</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+      {{-- <li class="nav-item">
         <span class="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
           data-bs-target="#submenu-pages">
           <span>
@@ -251,7 +291,7 @@
             </li>
           </ul>
         </div>
-      </li>
+      </li> --}}
       <li class="nav-item">
         <span class="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
           data-bs-target="#submenu-components">
