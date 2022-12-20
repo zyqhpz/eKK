@@ -6,21 +6,26 @@
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
     </div>
     <div class="row">
-        <div class="">
-            <div class="card card-body border-0 shadow mb-4">
-                <h2 class="h5 mb-4">Kertas Kerja Generator</h2>
-                <div class="section-tab">
-                    <a id="tab1" style="padding: 10px; border: 2px solid red; background-color: red;">Detail 1</a>
-                    <a id="tab2">Detail 2</a>
-                    <a id="tab3">Detail 3</a>
-                    <a id="tab4">Detail 4</a>
-                </div>
+        <div class="row">
+            <div class="col-12">
+                <!-- Tab -->
+                <nav>
+                    <div class="nav nav-tabs mb-4" id="nav-tab" role="tablist">
+                        <a class="nav-item nav-link active" id="nav-info-tab" data-bs-toggle="tab" href="#nav-info" role="tab" aria-controls="nav-info" aria-selected="true">Maklumat Asas</a>
+                        <a class="nav-item nav-link" id="nav-intro-tab" data-bs-toggle="tab" href="#nav-intro" role="tab" aria-controls="nav-intro" aria-selected="false">Pendahuluan</a>
+                        <a class="nav-item nav-link" id="nav-tentative-tab" data-bs-toggle="tab" href="#nav-tentative" role="tab" aria-controls="nav-tentative" aria-selected="false">Tentatif</a>
+                        <a class="nav-item nav-link" id="nav-financial-tab" data-bs-toggle="tab" href="#nav-financial" role="tab" aria-controls="nav-financial" aria-selected="false">Kewangan</a>
+                        <a class="nav-item nav-link" id="nav-ajk-tab" data-bs-toggle="tab" href="#nav-ajk" role="tab" aria-controls="nav-ajk" aria-selected="false">Jawatankuasa</a>
+                        <a class="nav-item nav-link" id="nav-signature-tab" data-bs-toggle="tab" href="#nav-signature" role="tab" aria-controls="nav-signature" aria-selected="false">Tandatangan</a>
+                    </div>
+                </nav>
                 <form id="paperwork" action="{{ route('view-pdf') }}" method="post" autocomplete="off" target="_blank">
+                <div class="tab-content card card-body border-0 shadow mb-4" id="nav-tabContent" >
+                    
                     @csrf
-                    <div class="details-1 d-block">
-                        <h1>Bahagian 1</h1>
+                    <div class="tab-pane fade show active" id="nav-info" role="tabpanel" aria-labelledby="nav-info-tab">
+                        <h1>Maklumat Asas Program</h1>
                         <div class="row">
-                            <p>Click me</p>
                             <div class="mb-3">
                                 <label for="program-name">Nama program</label>
                                 <input class="form-control" id="program-name" type="text" name="program_name"
@@ -96,20 +101,89 @@
                             </div>
                         </div>
                     </div>
-                    <div class="details-2 d-none">
-                        <h1>Bahagian 2</h1>
+                    {{-- PENDAHULUAN --}}
+                    <div class="tab-pane fade" id="nav-intro" role="tabpanel" aria-labelledby="nav-intro-tab">
+                        <h1>Pendahuluan</h1>
                         <div class="row">
                             <div class="mb-3">
-                                <label for="program-name">Nama program</label>
-                                <input class="form-control" id="program-name" type="text" name="program_name"
-                                    placeholder="Masukkan nama program" required>
+                                <label for="program-name">Pendahuluan</label>
+                                <textarea class="form-control" id="pendahuluan" name="pendahuluan" required></textarea>
                             </div>
                         </div>
-                     </div>
-                    <div class="mt-3">
-                        <button type="submit" class="btn btn-gray-800 mt-2 animate-up-2">Generate Kertas Kerja</button>
+                        <div class="row">
+                            <div class="mb-3">
+                                <label for="latar-belakang">Latar Belakang</label>
+                                <textarea class="form-control" id="latar-belakang" name="latar-belakang" required></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3">
+                                <label for="objektif-program">Objektif</label>
+                                <textarea class="form-control" id="objektif-program" name="objektif-program" required></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3">
+                                <label for="hasil-pembelajaran">Hasil Pembelajaran</label>
+                                <textarea class="form-control" id="hasil-pembelajaran" name="hasil-pembelajaran" required></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3">
+                                <label for="tema-program">Tema</label>
+                                <input type="text" class="form-control" id="tema-program" name="tema-program" required/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3">
+                                <label for="anjuran">Anjuran</label>
+                                <textarea class="form-control" id="anjuran" name="anjuran" required></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3">
+                                <label for="kumpulan-sasaran">Kumpulan Sasaran</label>
+                                <textarea class="form-control" id="kumpulan-sasaran" name="kumpulan-sasaran" required></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3">
+                                <label for="tarikh-tempat-masa">Tarikh, Tempat dan Masa</label>
+                                <textarea class="form-control" id="tarikh-tempat-masa" name="tarikh-tempat-masa" required></textarea>
+                            </div>
+                        </div>
                     </div>
-                </form>
+                    <div class="tab-pane fade" id="nav-tentative" role="tabpanel" aria-labelledby="nav-tentative-tab">
+                        <h1>Tentatif Program</h1>
+                        <p>Exercitation photo booth stumptown tote bag Banksy, elit small batch freegan sed. Craft beer elit seitan exercitation, photo booth et 8-bit kale chips proident chillwave deep v laborum. Aliquip veniam delectus, Marfa eiusmod
+                            Pinterest in do umami readymade swag.</p>
+                        <p>Day handsome addition horrible sensible goodness two contempt. Evening for married his account removal. Estimable me disposing of be moonlight cordially curiosity.</p>
+                    </div>
+                    <div class="tab-pane fade" id="nav-financial" role="tabpanel" aria-labelledby="nav-financial-tab">
+                        <h1>Implikasi Kewangan</h1>
+                        <p>Exercitation photo booth stumptown tote bag Banksy, elit small batch freegan sed. Craft beer elit seitan exercitation, photo booth et 8-bit kale chips proident chillwave deep v laborum. Aliquip veniam delectus, Marfa eiusmod
+                            Pinterest in do umami readymade swag.</p>
+                        <p>Day handsome addition horrible sensible goodness two contempt. Evening for married his account removal. Estimable me disposing of be moonlight cordially curiosity.</p>
+                    </div>
+                    <div class="tab-pane fade" id="nav-signature" role="tabpanel" aria-labelledby="nav-signature-tab">
+                        <h1>Tandatangan</h1>
+                        <p>Exercitation photo booth stumptown tote bag Banksy, elit small batch freegan sed. Craft beer elit seitan exercitation, photo booth et 8-bit kale chips proident chillwave deep v laborum. Aliquip veniam delectus, Marfa eiusmod
+                            Pinterest in do umami readymade swag.</p>
+                        <p>Day handsome addition horrible sensible goodness two contempt. Evening for married his account removal. Estimable me disposing of be moonlight cordially curiosity.</p>
+                    </div>
+                    <div class="tab-pane fade" id="nav-ajk" role="tabpanel" aria-labelledby="nav-ajk-tab">
+                        <h1>Senarai Jawatankuasa Program</h1>
+                        <p>Exercitation photo booth stumptown tote bag Banksy, elit small batch freegan sed. Craft beer elit seitan exercitation, photo booth et 8-bit kale chips proident chillwave deep v laborum. Aliquip veniam delectus, Marfa eiusmod
+                            Pinterest in do umami readymade swag.</p>
+                        <p>Day handsome addition horrible sensible goodness two contempt. Evening for married his account removal. Estimable me disposing of be moonlight cordially curiosity.</p>
+                    </div>
+                    <div class="flex mt-3">
+                        <button type="button" class="btn btn-primary mt-2 animate-up-2">Simpan</button>
+                        <button type="submit" class="btn btn-gray-100 mt-2 animate-up-2">Generate Kertas Kerja</button>
+                    </div>
+                </div>
+            </form>
+                <!-- End of tab -->
             </div>
         </div>
     </div>
