@@ -2,6 +2,11 @@
 <div>
     <script src="https://code.jquery.com/jquery-3.6.1.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdn.rawgit.com/trentrichardson/jQuery-Timepicker-Addon/1.6.3/dist/jquery-ui-timepicker-addon.min.js"></script>
+
 
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
     </div>
@@ -155,6 +160,15 @@
                     </div>
                     <div class="tab-pane fade" id="nav-tentative" role="tabpanel" aria-labelledby="nav-tentative-tab">
                         <h1>Tentatif Program</h1>
+                        {{-- if program-date-start input and program-date-end input are blank, show a message to user--}}
+                        <div id="tentative">
+
+                           
+
+                            <div id="tentative-inputs">
+
+                            </div>
+                        </div>
                         <p>Exercitation photo booth stumptown tote bag Banksy, elit small batch freegan sed. Craft beer elit seitan exercitation, photo booth et 8-bit kale chips proident chillwave deep v laborum. Aliquip veniam delectus, Marfa eiusmod
                             Pinterest in do umami readymade swag.</p>
                         <p>Day handsome addition horrible sensible goodness two contempt. Evening for married his account removal. Estimable me disposing of be moonlight cordially curiosity.</p>
@@ -179,7 +193,8 @@
                     </div>
                     <div class="flex mt-3">
                         <button type="button" class="btn btn-primary mt-2 animate-up-2">Simpan</button>
-                        <button type="submit" class="btn btn-gray-100 mt-2 animate-up-2">Generate Kertas Kerja</button>
+                        <button type="button" class="btn btn-secondary mt-2 animate-up-2">Lihat PDF</button>
+                        <button type="submit" class="btn btn-gray-100 mt-2 animate-up-2">Hantar</button>
                     </div>
                 </div>
             </form>
@@ -192,6 +207,12 @@
     $(document).ready(function() {
         $("#program-date-start").change(checkDates);
         $("#program-date-end").change(checkDates);
+
+        // if program-date-start or program-date-end is empty, hide the tentative div. and add into .change
+        
+        $("#tentative").hide();
+          $("#timepicker").timepicker();
+
     });
 
     function checkDates() {
@@ -203,6 +224,9 @@
         var start = new Date(startDate);
         var end = new Date(endDate);
 
+        // calculate days between dates and add 1 to include the start date in the calculation
+        var duration = (end - start) / (1000 * 60 * 60 * 24) + 1;
+
         if (end < start && endDate != "") {
             alert("Tarikh mula program tidak boleh melebihi tarikh tamat program");
             $("#program-date-end").val("");
@@ -211,21 +235,57 @@
             $("#program-date-end").val("");
         }
 
-        
+        if ($("#program-date-start").val() == "" || $("#program-date-end").val() == "") {
+            $("#tentative").hide();
+        } else {
+            // add the days to the tentative div
+            $("#tentative").html("Program ini akan berlangsung selama " + days + " hari");
+            // add new line
+            $("#tentative").append("<br>");
+            $("#tentative").show();
+
+            var days = ["Ahad", "Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu"];
+
+            // add X amount of input fields for the tentative dates based on the days
+            for (var i = 0; i < duration; i++) {
+                var date = new Date(start);
+                date.setDate(date.getDate() + i);
+
+                // get the date and day of the week
+                var day = days[date.getDay()];
+                var date = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+                
+                // display the number of day, day of the week and date as label and input
+                var label = '<label for="hari_' + i + '">Hari ' + (i + 1) + ' (' + day + ' ' + date + ')</label>';
+                
+                $("#tentative").append(label);
+                var input = '<input type="text" class="form-control" id="hari_' + i + '" name="Hari_' + i + '" value="' + date + '" required/>';
+                $("#tentative").append(input);
+
+                // add timepicker for each day of the program and make sure each of them is unique by adding the day number to name
+                var timepicker = '<input type="text" class="form-control" id="timepicker" name="timepicker_hari_' + i + '" required/>';
+                $("#tentative").append(timepicker);
+                $("#timepicker").timepicker();
+                
+                // add a new button to add new column
+                var button = '<button type="button" class="btn btn-primary mt-2 animate-up-2" id="btn_add_column_name">Tambah masa</button>';
+                $("#tentative").append(button);
+                var count_col_name = 1
+
+                // add new timepicker after the previous one
+                $("#btn_add_column_name").click(function() {
+                    count_col_name++;
+                    var new_timepicker = '<input type="text" class="form-control" id="timepicker" name="timepicker" required/>';
+                    $("#tentative").append(new_timepicker);
+                    $("#timepicker").timepicker();
+                });
+
+
+
+            }
+        }
     }
-    // click detail 1 to show form 1 and detail 2 to show form 2
-    $('#tab1').click(function() {
-        $('.details-2').removeClass('d-block');
-        $('.details-2').addClass('d-none');
-        $('.details-1').removeClass('d-none');
-        $('.details-1').addClass('d-block');
-    });
-    $('#tab2').click(function() {
-        $('.details-2').removeClass('d-none');
-        $('.details-2').addClass('d-block');
-        $('.details-1').removeClass('d-block');
-        $('.details-1').addClass('d-none');
-    });
+
 
     $('#program-date-type').change(function() {
         if ($(this).is(":checked")) {
@@ -244,4 +304,6 @@
             $(".date-end").removeClass("d-none");
         }
     });
+
+
 </script>
