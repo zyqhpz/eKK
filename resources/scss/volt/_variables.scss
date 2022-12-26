@@ -68,7 +68,9 @@ $colors: ("blue": $blue,
 // Color scheme
 $primary  : #1F2937 !default;
 $secondary: #fb503b !default;
-$tertiary : #31316A !default;
+
+// change tertiary
+$tertiary : #224391 !default;
 
 // Series names and colors. This can be extended or customized as desired. Just add more series and colors.
 $ct-series-names: (a, b, c, d, e, f, g) !default !default;
