@@ -29,6 +29,7 @@ use App\Http\Livewire\Users;
 use App\Http\Livewire\ProfileClub;
 use App\Http\Livewire\PDFGenerator;
 use App\Http\Livewire\PaperworkClub;
+use App\Http\Livewire\PaperworkClubStatus;
 
 use App\Http\Controllers\PaperworkController;
 
@@ -62,17 +63,26 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile-example', ProfileExample::class)->name('profile-example');
 
     Route::get('/profile-club', ProfileClub::class)->name('profile-club');
-    Route::get('/kertas-kerja-kelab', PaperworkClub::class)->name('paperwork-club');
 
+    
     Route::get('/pdf-generator', PDFGenerator::class)->name('pdf-generator');
     // Route::post('/pdf-generator', PDFGenerator::class)->name('pdf-generator');
     // Route::post("/pdf-generator/view", [PDFGenerator::class, 'viewPDF'])->name('pdf-generator.view');
     Route::post("/pdf-generator/view", [PDFGenerator::class, 'viewPDF'])->name('view-pdf');
-
-
+    
+    
     // Paperwork
-    Route::get('/paperwork', [PaperworkController::class, 'index'])->name('paperwork.index');
-    Route::post('/paperwork/create', [PaperworkController::class, 'store'])->name('paperwork.store');
+    // Route::get('/paperwork', [PaperworkController::class, 'index'])->name('paperwork.index');
+    // Route::get('/kertas-kerja-kelab', [PaperworkController::class, 'index'])->name('paperwork.index');
+
+
+    // call PaperworkClub.list method from PaperworkClub.php file when /kertas-kerja-kelab is accessed
+    Route::get('/kertas-kerja-kelab', PaperworkClub::class)->name('paperwork-club');
+    Route::get('/kertas-kerja-kelab/{id}', PaperworkClubStatus::class)->name('paperwork-club-status');
+    // Route::get('/kertas-kerja-kelab/{id}', [PaperworkClub::class, 'show'])->name('paperwork-club-status');
+    Route::get('/kertas-kerja-kelab-status', [PaperworkClub::class, 'view'])->name('paperwork-status');
+    Route::post('/paperwork/create', [PaperworkClub::class, 'store'])->name('paperwork.store');
+    Route::post('/paperwork/update/{id}', [PaperworkClub::class, 'update'])->name('paperwork.update');
 
 
     Route::get('/users', Users::class)->name('users');

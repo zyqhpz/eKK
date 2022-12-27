@@ -15,8 +15,8 @@
                         </svg>
                     </a>
                 </li>
-                <li class="breadcrumb-item"><a href="#">Kertas Kerja</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Kelab</li>
+                <li class="breadcrumb-item"><a href="#">Kelab</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Kertas Kerja</li>
             </ol>
         </nav>
         <h2 class="h4">Senarai Kertas Kerja</h2>
@@ -112,7 +112,6 @@
         </div>
     </div>
 </div>
-</div>
 <div class="card card-body shadow border-0 table-wrapper table-responsive min-vh-100">
     <table class="table user-table table-hover align-items-center">
         <thead>
@@ -126,6 +125,48 @@
             </tr>
         </thead>
         <tbody>
+            {{-- foreach $paperworks --}}
+            <?php $numbering = 1; ?>
+            @foreach ($paperworks as $paperwork)
+                <?php
+                    // format date to display DD Month YYYY format and in Malaysia timezone (UTC+8) and Malay Language (ms)
+                    // $date = $paperwork->updated_at;
+                    // $formatted_date = $date->timezone('Asia/Kuala_Lumpur')->formatLocalized('%d %B %Y');
+
+                    // format date to DD/MM/YYYY format and in Malaysia timezone (UTC+8)
+                    $date = $paperwork->updated_at;
+                    $formatted_date = $date->timezone('Asia/Kuala_Lumpur')->format('d/m/Y');
+                ?>
+                <tr>
+                    <td><span class="fw-normal">{{ $numbering }}.</span></td>
+                    <td><span class="fw-normal">{{ $paperwork->name }}</span></td>
+                    <td><span class="fw-normal">{{ $formatted_date }}</span></td>
+                    <td><span class="fw-normal d-flex align-items-center">-</span></td>
+                    {{-- <td><span class="fw-normal text-success">Diluluskan</span></td> --}}
+                    <td><span class="fw-normal text-danger">Draf</span></td>
+                    <td>
+                        <div class="btn-group">
+                            {{-- route to paperwork-club-status --}}
+                            <a href="{{ route('paperwork-club-status', $paperwork->id) }}" class="btn btn-sm btn-success" data-bs-toggle="tooltip"
+                                data-bs-placement="top" title="Lihat kertas kerja">
+                                <i class="fas fa-eye text-white"></i>
+                            {{-- <a href="" class="btn btn-sm btn-success" data-bs-toggle="tooltip"
+                                data-bs-placement="top" title="Lihat kertas kerja">
+                                <i class="fas fa-eye text-white"></i>
+                            </a> --}}
+                            <a href="#" class="btn btn-sm btn-info" data-bs-toggle="tooltip"
+                                data-bs-placement="top" title="Sunting kertas kerja">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="tooltip"
+                                data-bs-placement="top" title="Padam kertas kerja">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                <?php $numbering++; ?>
+            @endforeach
             <tr>
                 <td><span class="fw-normal">1.</span></td>
                 <td><span class="fw-normal">Program Biar Santai, Tapi Sampai</span></td>
@@ -151,7 +192,7 @@
             </tr>
             <tr>
                 <td><span class="fw-normal">2.</span></td>
-                <td><span class="fw-normal">Program Biar Santai, Tapi Tak Sampai</span></td>
+                <td><span class="fw-normal">Program TBA</span></td>
                 <td><span class="fw-normal">5 November 2022</span></td>
                 <td><span class="fw-normal d-flex align-items-center">22 - 24 Disember 2022</span></td>
                 <td><span class="fw-normal text-warning">Dalam proses</span></td>
@@ -199,6 +240,7 @@
     </table>
 </div>
 
+{{-- modal to add new paperwork --}}
 
 <div class="modal fade" id="modal-addNewPaperwork" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">

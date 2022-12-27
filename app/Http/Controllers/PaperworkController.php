@@ -10,12 +10,26 @@ class PaperworkController extends Controller
 {
     public function index()
     {
-        return view('paperwork.index');
+        $paperworks = Paperwork::all();
+        return view('paperwork.index', compact('paperworks'));
+        // return view('paperwork.index');
     }
 
     public function create()
     {
         return view('paperwork.create');
+    }
+
+    public function show($id)
+    {
+        $paperwork = Paperwork::find($id);
+        return view('paperwork.show', compact('paperwork'));
+    }
+
+    public function edit($id)
+    {
+        $paperwork = Paperwork::find($id);
+        return view('paperwork.edit', compact('paperwork'));
     }
     
     public function store(Request $request)
@@ -25,25 +39,10 @@ class PaperworkController extends Controller
         // get the value of the radio paperwork_isGenerated and convert it to boolean value
         $isGenerated = $request->input('paperwork_isGenerated') == '1' ? true : false;
         $filePath = $request->paperwork_file;
-        // try {
 
         // get user id from User session 
         $userId = auth()->user()->id;
-
         $clubId = $userId;
-        // } catch (\Throwable $th) {
-        //     $filePath = null;
-        // }
-
-        // print in console
-        // dd($name, $isGenerated, $filePath);
-
-        // validate the request data, filePath is required if isGenerated is false
-        // $request->validate([
-        //     'name' => 'required',
-        //     'isGenerated' => 'required',
-        //     'filePath' => 'required_if:isGenerated,false',
-        // ]);
 
         if ($request->hasFile('paperwork_file')) {
             // $request->validate([
