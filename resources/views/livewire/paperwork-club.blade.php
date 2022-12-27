@@ -1,4 +1,6 @@
 <title>Volt Laravel Dashboard - User management</title>
+<script src="https://code.jquery.com/jquery-3.6.1.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
     <div class="d-block mb-4 mb-md-0">
         <nav aria-label="breadcrumb" class="d-none d-md-inline-block">
@@ -21,14 +23,14 @@
         <p class="mb-0">Halaman ini menunjukkan senarai kertas kerja yang telah dibuat.</p>
     </div>
     <div class="btn-toolbar mb-2 mb-md-0">
-        <a href="#" class="btn btn-sm btn-gray-800 d-inline-flex align-items-center">
+        <button type="button" data-bs-toggle="modal" data-bs-target="#modal-addNewPaperwork" class="btn btn-sm btn-gray-800 d-inline-flex align-items-center">
             <svg class="icon icon-xs me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6">
                 </path>
             </svg>
             Tambah Kerja Kerja
-        </a>
+        </button>
         <div class="btn-group ms-2 ms-lg-3">
             <button type="button" class="btn btn-sm btn-outline-gray-600">Share</button>
             <button type="button" class="btn btn-sm btn-outline-gray-600">Export</button>
@@ -196,3 +198,87 @@
         </tbody>
     </table>
 </div>
+
+
+<div class="modal fade" id="modal-addNewPaperwork" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+
+        <div class="modal-content">
+
+            {{-- create a form to add a new paperwork with attributes: name, method to upload paperwork --}}
+            {{-- <form action="{{ route('paperwork.store') }}" method="POST" enctype="multipart/form-data"> --}}
+            <form action="{{ route('paperwork.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                {{-- <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="h6 modal-title">Tambah Kertas Kerja</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body pb-0">
+                        <div class="form-group mb-3">
+                            <label class="form-label required">Nama Kertas Kerja</label>
+                            <input type="text" class="form-control" name="name" placeholder="Nama Kertas Kerja" required>
+                        </div>
+                        --}}
+                            
+            
+                <div class="modal-header">
+                    <h2 class="h6 modal-title">Tambah Kertas Kerja</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group mb-3">
+                        <label class="form-label required">Nama Kertas Kerja</label>
+                        <input type="text" class="form-control" name="paperwork_name" placeholder="Nama Kertas Kerja" autocomplete="off" required>
+                    </div>
+                    {{-- add radio button to upload paperwork or using generator --}}
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="paperwork_isGenerated" id="paperworkUpload" value="0" checked>
+                        <label class="form-check-label" for="paperworkUpload">
+                            Muat naik kertas kerja
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="paperwork_isGenerated" id="paperworkGenerator" value="1">
+                        <label class="form-check-label" for="paperworkGenerator">
+                            Jana kertas kerja
+                        </label>
+                    </div>
+                    
+                    {{-- an input field for upload paperwork when paperworkUpload is checked --}}
+                    <div class="form-group mb-3" id="paperworkFileUpload">
+                        <hr>
+                        <label class="form-label required">Muat naik fail</label>
+                        <input type="file" class="form-control" name="paperwork_file" required>
+
+                        <div class="form-text">Muat naik fail dalam format PDF sahaja.</div>
+                    </div>
+                            
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-secondary">Tambah</button>
+                    <button type="button" class="btn btn-link text-gray ms-auto" data-bs-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{-- Javascript for modal add new paperwork --}}
+
+<script>
+    // show and hide paperworkFileUpload when radio button paperworkUpload is checked
+    $(document).ready(function() {
+        $('#paperworkUpload').click(function() {
+            $('#paperworkFileUpload').show();
+            // add required attribute to paperwork-file
+            $('input[name="paperwork_file"]').attr('required', true);
+        });
+        $('#paperworkGenerator').click(function() {
+            $('#paperworkFileUpload').hide();
+            // remove required attribute to paperwork-file
+            $('input[name="paperwork_file"]').removeAttr('required');
+        });
+    });
+
+</script>

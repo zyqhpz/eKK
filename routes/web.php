@@ -30,6 +30,8 @@ use App\Http\Livewire\ProfileClub;
 use App\Http\Livewire\PDFGenerator;
 use App\Http\Livewire\PaperworkClub;
 
+use App\Http\Controllers\PaperworkController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -66,6 +68,11 @@ Route::middleware('auth')->group(function () {
     // Route::post('/pdf-generator', PDFGenerator::class)->name('pdf-generator');
     // Route::post("/pdf-generator/view", [PDFGenerator::class, 'viewPDF'])->name('pdf-generator.view');
     Route::post("/pdf-generator/view", [PDFGenerator::class, 'viewPDF'])->name('view-pdf');
+
+
+    // Paperwork
+    Route::get('/paperwork', [PaperworkController::class, 'index'])->name('paperwork.index');
+    Route::post('/paperwork/create', [PaperworkController::class, 'store'])->name('paperwork.store');
 
 
     Route::get('/users', Users::class)->name('users');
