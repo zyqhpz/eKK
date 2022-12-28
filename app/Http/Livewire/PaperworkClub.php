@@ -37,17 +37,13 @@ class PaperworkClub extends Component
         $paperwork = Paperwork::find($id);
 
         // open file
-        // $file = public_path('paperworks/' . $paperwork->filePath);
-        $file = file_get_contents(public_path('paperworks/' . $paperwork->filePath));
+        $file = public_path('paperworks/' . $paperwork->filePath);
 
-        // run the python script in resources/python/detector.py
-        $process = new Process(['python', 'resources/python/detector.py', $file]);
+        // run python script
+        $process = new Process(['python', 'python/detector.py', $file]);
         $process->run();
 
-        // get the output of the python script
         $output = $process->getOutput();
-
-        dd($output);
 
         // redirect to previous page with the output
         return redirect()->back()->with('output', $output);

@@ -44,6 +44,10 @@
     if (session('success')) {
         echo '<div class="alert alert-success" role="alert" fade show>' . session('success') . '</div>';
     }
+
+    if (session('output')) {
+        echo '<div class="alert alert-danger" role="alert" fade show>RM ' . session('output') . '</div>';
+    }
     ?>
 </div>
 <div class="card card-body shadow border-0 table-wrapper table-responsive">
