@@ -40,6 +40,11 @@
             <button type="button" class="btn btn-sm btn-outline-gray-600">Export</button>
         </div>
     </div> --}}
+    <?php
+    if (session('success')) {
+        echo '<div class="alert alert-success" role="alert" fade show>' . session('success') . '</div>';
+    }
+    ?>
 </div>
 <div class="card card-body shadow border-0 table-wrapper table-responsive">
     <div>Nama Kertas Kerja: {{ $paperwork->name }}</div>
@@ -60,14 +65,24 @@
     </div>
 
     <div>
-        <button class="btn btn-primary" type="button">Lihat Kertas Kerja</button>
+        <a class="btn btn-primary" href="{{ route('paperworkViewPDF', $paperwork->id ) }}" type="button">Lihat Kertas Kerja</a>
+        {{-- <button class="btn btn-primary" href="/paperworks/{{ $paperwork->filePath }}" type="button">Lihat Kertas Kerja</button> --}}
         <?php if ($paperwork->isGenerated) { ?>
             <button class="btn btn-outline-secondary" type="button">Sunting di penjana</button>
         <?php } else { ?>
             <button type="button" data-bs-toggle="modal" data-bs-target="#modal-editPaperwork" class="btn btn-outline-secondary">Sunting</button>
         <?php } ?>
+        <a class="btn btn-secondary" href="{{ route('paperworkFinanceDetails', $paperwork->id ) }}" type="button">Lihat Implikasi</a>
     </div>
 </div>
+
+<script>
+    window.setTimeout(function() {
+        $(".alert").fadeTo(500, 0).slideUp(500, function(){
+            $(this).remove(); 
+        });
+    }, 4000);
+</script>
 
 
 <div class="modal fade" id="modal-editPaperwork" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
@@ -86,7 +101,7 @@
                 <div class="modal-body">
                     <div class="form-group mb-3">
                         <label class="form-label required">Nama Kertas Kerja</label>
-                        <input type="text" class="form-control" name="paperwork_name" placeholder="Nama Kertas Kerja" autocomplete="off" required>
+                        <input type="text" class="form-control" name="paperwork_name" placeholder="Nama Kertas Kerja" value="{{ $paperwork->name }}" autocomplete="off" required>
                     </div>
                     
                     {{-- an input field for upload paperwork when paperworkUpload is checked --}}

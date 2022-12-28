@@ -79,6 +79,8 @@ Route::middleware('auth')->group(function () {
     // call PaperworkClub.list method from PaperworkClub.php file when /kertas-kerja-kelab is accessed
     Route::get('/kertas-kerja-kelab', PaperworkClub::class)->name('paperwork-club');
     Route::get('/kertas-kerja-kelab/{id}', PaperworkClubStatus::class)->name('paperwork-club-status');
+    Route::get('/kertas-kerja-kelab/{id}/viewPDF', [PaperworkClub::class, 'viewPDF'])->name('paperworkViewPDF');
+    Route::get('/kertas-kerja-kelab/{id}/viewFinanceDetails', [PaperworkClub::class, 'viewFinanceDetails'])->name('paperworkFinanceDetails');
     // Route::get('/kertas-kerja-kelab/{id}', [PaperworkClub::class, 'show'])->name('paperwork-club-status');
     Route::get('/kertas-kerja-kelab-status', [PaperworkClub::class, 'view'])->name('paperwork-status');
     Route::post('/paperwork/create', [PaperworkClub::class, 'store'])->name('paperwork.store');
