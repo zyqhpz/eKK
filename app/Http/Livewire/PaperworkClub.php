@@ -89,7 +89,7 @@ class PaperworkClub extends Component
 
         // redirect to previous page
         return redirect()->back()
-            ->with('success', 'Paperwork created successfully.');
+            ->with('created', 'Kertas kerja telah berjaya ditambah.');
     }
 
     public function update(Request $request, $id) 
@@ -112,7 +112,7 @@ class PaperworkClub extends Component
         $paperwork->save();
 
         return redirect()->back()
-            ->with('success', 'Kertas kerja berjaya dikemaskini.');
+            ->with('updated', 'Kertas kerja berjaya dikemaskini.');
     }
 
     public function delete($id)
@@ -121,6 +121,6 @@ class PaperworkClub extends Component
         $paperwork->delete();
 
         return redirect()->back()
-            ->with('success', 'Paperwork deleted successfully.');
+            ->with('deleted', 'Kertas kerja berjaya dipadam.');
     }
 }

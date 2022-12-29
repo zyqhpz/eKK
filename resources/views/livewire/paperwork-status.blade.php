@@ -26,23 +26,9 @@
         <h2 class="h4">Status Kertas Kerja</h2>
         <p class="mb-0">Halaman ini menunjukkan butiran kertas kerja yang telah dipilih.</p>
     </div>
-    {{-- <div class="btn-toolbar mb-2 mb-md-0">
-        <button type="button" data-bs-toggle="modal" data-bs-target="#modal-addNewPaperwork" class="btn btn-sm btn-gray-800 d-inline-flex align-items-center">
-            <svg class="icon icon-xs me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6">
-                </path>
-            </svg>
-            Tambah Kerja Kerja
-        </button>
-        <div class="btn-group ms-2 ms-lg-3">
-            <button type="button" class="btn btn-sm btn-outline-gray-600">Share</button>
-            <button type="button" class="btn btn-sm btn-outline-gray-600">Export</button>
-        </div>
-    </div> --}}
     <?php
-    if (session('success')) {
-        echo '<div class="alert alert-success" role="alert" fade show>' . session('success') . '</div>';
+    if (session('updated')) {
+        echo '<div class="alert alert-success" role="alert" fade show>' . session('updated') . '</div>';
     }
 
     if (session('output')) {
