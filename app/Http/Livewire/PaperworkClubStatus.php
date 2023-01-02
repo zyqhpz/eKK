@@ -5,15 +5,13 @@ namespace App\Http\Livewire;
 use Illuminate\Http\Request;
 use Livewire\Component;
 use App\Models\Paperwork;
+use App\Models\PaperworkDetails;
 
 class PaperworkClubStatus extends Component
 {
     public function render()
     {
-        // get the id of the paperwork from the url parameter
         $id = request()->route('id');
-        // $paperwork = Paperwork::find(4);
-        // return view('livewire.paperwork-status', compact('paperwork'));
         return $this->show($id);
     }
 
@@ -22,14 +20,4 @@ class PaperworkClubStatus extends Component
         $paperwork = Paperwork::find($id);
         return view('livewire.paperwork-status', compact('paperwork'));
     }
-
-    // public function render($view, $data = [])
-    // {
-    //     return view($view, $data);
-    // }
-    // public function view($id)
-    // {
-    //     $paperwork = Paperwork::find($id);
-    //     return $this->render('livewire.paperwork-status', ['paperwork' => $paperwork]);
-    // }
 }

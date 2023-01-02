@@ -9,7 +9,7 @@ class Paperwork extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'name', 'isGenerated', 'filePath', 'clubId', 'created_at', 'updated_at'
+        'name', 'isGenerated', 'filePath', 'clubId', 'paperworkDetailsId', 'created_at', 'updated_at'
     ];
 
     // add function to create a new paperwork

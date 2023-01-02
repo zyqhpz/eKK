@@ -111,7 +111,8 @@
                                 <li><a class="dropdown-item" href="#">Sunting</a></li>
                                 {{-- if status is draft, show delete option. else, hidden --}}
                                 <li><hr class="dropdown-divider"></li>
-                                <li class="bg-danger"><button class="dropdown-item text-white" id="btn-deletePaperwork-{{ $paperwork->id }}" data-bs-toggle="modal" data-bs-target="#modal-deletePaperwork" value="{{ $paperwork->id }}">Padam</button></li>
+                                <li class="bg-danger"><a data-bs-target="#modal-deletePaperwork{{ $paperwork->id }}" id="btn-deletePaperwork" value="{{$paperwork->id}}" data-bs-toggle="modal">Delete</a></li>
+                                {{-- <li class="bg-danger"><button class="dropdown-item text-white" id="btn-deletePaperwork-{{ $paperwork->id }}" data-bs-toggle="modal" data-bs-target="#modal-deletePaperwork{{ $paperwork->id }}" value="{{ $paperwork->id }}">Padam</button></li> --}}
                             </ul>
                         </div>
                     </td>
@@ -173,8 +174,22 @@
     </div>
 </div>
 
+{{-- open modal based on the modal-deletePaperwork{id} --}}
+<script>
+    $(document).ready(function() {
+
+    });
+
+    // get value from value attribute of button to delete paperwork and pass it to modal to delete 
+    $(document).on('click', '#btn-deletePaperwork', function() {
+        var id = $(this).val();
+        console.log(id);
+        $('#modal-deletePaperwork'+id).modal('show');
+    });
+</script>
+
 {{-- modal confirmation to delete paperwork --}}
-<div class="modal fade" id="modal-deletePaperwork" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+<div class="modal fade" id="modal-deletePaperwork{{ $paperwork->id }}" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">

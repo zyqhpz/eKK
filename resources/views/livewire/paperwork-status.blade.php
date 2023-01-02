@@ -58,7 +58,7 @@
         <a class="btn btn-primary" href="{{ route('paperworkViewPDF', $paperwork->id ) }}" type="button">Lihat Kertas Kerja</a>
         {{-- <button class="btn btn-primary" href="/paperworks/{{ $paperwork->filePath }}" type="button">Lihat Kertas Kerja</button> --}}
         <?php if ($paperwork->isGenerated) { ?>
-            <button class="btn btn-outline-secondary" type="button">Sunting di penjana</button>
+            <a class="btn btn-outline-secondary" href="{{ route('paperwork-generator', $paperwork->id) }}" type="button">Sunting di penjana</a>
         <?php } else { ?>
             <button type="button" data-bs-toggle="modal" data-bs-target="#modal-editPaperwork" class="btn btn-outline-secondary">Sunting</button>
         <?php } ?>

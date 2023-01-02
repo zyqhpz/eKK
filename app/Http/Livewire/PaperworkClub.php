@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use Illuminate\Http\Request;
 use Livewire\Component;
 use App\Models\Paperwork;
+use App\Models\PaperworkDetails;
 
 use Symfony\Component\Process\Process;
 
@@ -79,12 +80,20 @@ class PaperworkClub extends Component
         } else {
             $path = "-";
         }
+
+
+        PaperworkDetails::create([
+        ]);
+
+        // get the last inserted paperworkDetails id
+        $paperworkDetailsId = PaperworkDetails::latest()->first()->id;
         
         Paperwork::create([
             'name' => $name,
             'isGenerated' => $isGenerated,
             'filePath' => $path,
             'clubId' => $clubId,
+            'paperworkDetailsId' => $paperworkDetailsId
         ]);
 
         // redirect to previous page

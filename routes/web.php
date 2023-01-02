@@ -30,6 +30,7 @@ use App\Http\Livewire\ProfileClub;
 use App\Http\Livewire\PDFGenerator;
 use App\Http\Livewire\PaperworkClub;
 use App\Http\Livewire\PaperworkClubStatus;
+use App\Http\Livewire\PaperworkDetailsGenerator;
 
 use App\Http\Controllers\PaperworkController;
 
@@ -86,6 +87,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/paperwork/create', [PaperworkClub::class, 'store'])->name('paperwork.store');
     Route::post('/paperwork/update/{id}', [PaperworkClub::class, 'update'])->name('paperwork.update');
     Route::delete('/paperwork/delete/{id}', [PaperworkClub::class, 'delete'])->name('paperwork.delete');
+
+    // route for PDF generator
+    Route::get('/kertas-kerja-kelab/{id}/paperwork-generator', PaperworkDetailsGenerator::class)->name('paperwork-generator');
 
     Route::get('/users', Users::class)->name('users');
     Route::get('/login-example', LoginExample::class)->name('login-example');

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->boolean('isGenerated');
             $table->string('filePath');
             $table->integer('clubId');
+            $table->integer('paperworkDetailsId');
             $table->timestamps();
         });
     }
