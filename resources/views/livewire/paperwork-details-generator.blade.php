@@ -183,7 +183,6 @@
                         {{-- if program-date-start input and program-date-end input are blank, show a message to user--}}
                         <p class="text-danger">Sila isikan tarikh program terlebih dahulu pada <strong>Maklumat Asas</strong></p>
                         <div id="tentative">
-                            <hr id="tentative_line">
                             <div id="tentative-inputs">
 
                             </div>
@@ -313,22 +312,11 @@
             // set count_tentatives array based on dayAndDate array
             count_tentatives = new Array(dayAndDate.length);
 
+            // clear tentative-inputs div
+            $("#tentative-inputs").empty();
+
             // append input fields after tentative-inputs div based on dayAndDate array
             count_tentatives[0] = 0;
-            // $("#tentative-inputs").append(
-            //     `<div class="row">
-            //         <div class="mb-3">
-            //             <label for="tentatives_day_` + 0 + `">`+dayAndDate[0]+`</label>
-            //             <div class="d-flex m-2" id="tentatives_day_` + 0 + `_` + count_tentatives[0] + `">
-            //                 <input type="text" class="form-control me-2" placeholder="Masa" id="timepicker" name="timepicker_day_` + 0 + `_` + count_tentatives[0] + `" required/>
-            //                 <input type="text" class="form-control" placeholder="Perkara" id="tentatives-day-` + 0 + `-` + count_tentatives[0] + `" name="tentatives_day_` + 0 + `_` + count_tentatives[0] + `" required>
-            //                 <button type="button" class="btn btn-outline-danger w-25 h-100 px-2 ms-4" onclick="removeInputField('tentatives_day_` + 0 + `_` + count_tentatives[0] + `')" disabled>X</button>
-            //             </div>
-            //             <hr id="tentatives-line-` + 0 + `" hidden>
-            //             <button type="button" class="btn btn-primary" id="btn_add_tentative_` + 0 + `" onclick="addNewInputFieldTentatives(`+0+`)">Tambah</button>
-            //         </div>
-            //     </div>`
-            // );
             $("#tentative-inputs").append(
                 `<div class="row">
                     <div class="mb-3">
@@ -344,7 +332,7 @@
                 </div>`
             );
 
-        } else {
+        } else if ($("#program-date-start").val() != "" && $("#program-date-end").val() != "") {
 
             var programDateStart = $("#program-date-start").val();
             var programDateEnd = $("#program-date-end").val();
@@ -357,22 +345,16 @@
 
             var dayAndDate = getDaysAndDate(programDateStart, programDateEnd, duration);
 
-            // append input fields after tentative-inputs div based on dayAndDate array
-            // for (var i = 0; i < dayAndDate.length; i++) {
-            //     $("#tentative-inputs").append(
-            //         `<div class="row">
-            //             <div class="mb-3">
-            //                 <label for="tarikh-tempat-masa">`+dayAndDate[i]+`</label>
-            //                 <input type="text" class="form-control" id="tarikh-tempat-masa" name="tarikh-tempat-masa" required>
-            //             </div>
-            //         </div>`
-            //     );
-            // }
-
             count_tentatives = new Array(dayAndDate.length);
 
-            // append input fields after tentative-inputs div based on dayAndDate array
+            // clear tentative-inputs div
+            $("#tentative-inputs").empty();
 
+            // insertBefore #tentative-inputs
+            $("#tentative-inputs").append("Program ini akan berlangsung selama " + duration + " hari");
+            $('#tentative-inputs').append('<br>');
+
+            // append input fields after tentative-inputs div based on dayAndDate array
             for (var i = 0; i < dayAndDate.length; i++) {
                 count_tentatives[i] = 0;
                 $("#tentative-inputs").append(
@@ -385,48 +367,10 @@
                                 <button type="button" class="btn btn-outline-danger w-25 h-100 px-2 ms-4" onclick="removeInputField('tentatives_day_` + i + `_` + count_tentatives[i] + `')" disabled>X</button>
                             </div>
                             <hr id="tentatives-line-` + i + `" hidden>
-                            <button type="button" class="btn btn-primary" id="btn_add_tentative_` + i + `">Tambah</button>
+                            <button type="button" class="btn btn-primary" id="btn_add_tentative_` + i + `" onclick="addNewInputFieldTentatives(`+i+`)">Tambah</button>
                         </div>
                     </div>`
                 );
-                $("#timepicker").timepicker();
-
-                // $(function() {
-                //     // add event listener for btn_add_tentative
-                //     $("#btn_add_tentative_" + i).click(function() {
-                //         count_tentatives[i]++;
-                //         var clone = $("#tentatives_day_" + i + "_" + (count_tentatives[i] - 1)).clone();
-                //         clone.insertBefore("#tentatives-line-" + i);
-                //         clone.attr("id","tentatives_day_" + i + "_" + count_tentatives[i]);
-                        
-                //         clone.attr("id","tentatives_day_" + "_"+count_tentatives[i]);
-
-                //         // change name and id of input timepicker
-                //         clone.find("#timepicker").attr("name","timepicker_day_" + i + "_"+count_tentatives[i]);
-
-                //         // clear value of input timepicker
-                //         clone.find("#timepicker").val("");
-
-                //         // change name and id of input tentatives
-                //         clone.find("#tentatives-day-" + i + "-" + (count_tentatives[i] - 1)).attr("name","tentatives_day_" + i + "_"+count_tentatives[i]);
-                //         clone.find("#tentatives-day-" + i + "-" + (count_tentatives[i] - 1)).attr("id","tentatives-day-" + i + "-"+count_tentatives[i]);
-
-                //         // clear value of input tentatives
-                //         clone.find("#tentatives-day-" + i + "-" + (count_tentatives[i] - 1)).val("");
-
-                //         // change id of button
-                //         clone.find("button").attr("onclick","removeInputField('tentatives_day_" + i + "_" + count_tentatives[i] + "')");
-                //         clone.find("button").attr("id","btn_remove_tentative_" + i + "_"+count_tentatives[i]);
-
-                //         // enable remove button
-                //         clone.find("button").attr("disabled",false);
-            
-                //         $("#timepicker").timepicker();
-
-                //         console.log(count_tentatives[i]);
-
-                //     });
-                // });
             }
         }
 
@@ -475,19 +419,21 @@
         // calculate days between dates and add 1 to include the start date in the calculation
         var duration = (end - start) / (1000 * 60 * 60 * 24) + 1;
 
-        if (end < start && endDate != "") {
-            alert("Tarikh mula program tidak boleh melebihi tarikh tamat program");
-            $("#program-date-end").val("");
-        } else if (end < start && endDate == "") {
-            alert("Tarikh mula program tidak boleh melebihi tarikh tamat program");
-            $("#program-date-end").val("");
-        }
+        if (!isOneDayProgram) {
+            if (end < start && endDate != "") {
+                alert("Tarikh mula program tidak boleh melebihi tarikh tamat program");
+                $("#program-date-end").val("");
+            } else if (end < start && endDate == "") {
+                alert("Tarikh mula program tidak boleh melebihi tarikh tamat program");
+                $("#program-date-end").val("");
+            }
 
-        if ($("#program-date-start").val() == "" || $("#program-date-end").val() == "") {
-            $("#tentative").hide();
-        } else {
-            // add the days to the tentative div
-            $("#tentative").html("Program ini akan berlangsung selama " + duration + " hari");
+            if ($("#program-date-start").val() == "" || $("#program-date-end").val() == "") {
+                $("#tentative").hide();
+            } else {
+                // add the days to the tentative div
+                $("#tentative").show();
+            }
         }
     }
 
