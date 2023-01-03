@@ -444,11 +444,11 @@
         clone.find("#timepicker").val("");
 
         // change name and id of input tentatives
-        clone.find("#tentatives-day-" + i + "-" + (count_tentatives[i] - 1)).attr("name","tentatives_day_" + i + "_"+count_tentatives[i]);
-        clone.find("#tentatives-day-" + i + "-" + (count_tentatives[i] - 1)).attr("id","tentatives-day-" + i + "-"+count_tentatives[i]);
+        clone.find("#tentatives-day-" + i + "-0").attr("name","tentatives_day_" + i + "_"+count_tentatives[i]);
+        clone.find("#tentatives-day-" + i + "-0").attr("id","tentatives-day-" + i + "-"+count_tentatives[i]);
 
         // clear value of input tentatives
-        clone.find("#tentatives-day-" + i + "-" + (count_tentatives[i] - 1)).val("");
+        clone.find("#tentatives-day-" + i + "-" + count_tentatives[i]).val("");
 
         // change id of button
         clone.find("button").attr("onclick","removeInputField('tentatives_day_" + i + "_" + count_tentatives[i] + "')");
