@@ -131,7 +131,7 @@
                                     </div>
                                 @endforeach
                             @endif
-                            <hr id="background-line">
+                            <hr id="background-line" hidden>
                             <div class="mb-3 row">
                                 <div class="col-12 col-sm-4 col-md-4 offset-md-4">
                                     <div class="d-grid gap-2">
@@ -181,17 +181,13 @@
                     <div class="tab-pane fade" id="nav-tentative" role="tabpanel" aria-labelledby="nav-tentative-tab">
                         <h1>Tentatif Program</h1>
                         {{-- if program-date-start input and program-date-end input are blank, show a message to user--}}
+                        <p class="text-danger">Sila isikan tarikh program terlebih dahulu pada <strong>Maklumat Asas</strong></p>
                         <div id="tentative">
-
-                           
-
+                            <hr id="tentative_line">
                             <div id="tentative-inputs">
 
                             </div>
                         </div>
-                        <p>Exercitation photo booth stumptown tote bag Banksy, elit small batch freegan sed. Craft beer elit seitan exercitation, photo booth et 8-bit kale chips proident chillwave deep v laborum. Aliquip veniam delectus, Marfa eiusmod
-                            Pinterest in do umami readymade swag.</p>
-                        <p>Day handsome addition horrible sensible goodness two contempt. Evening for married his account removal. Estimable me disposing of be moonlight cordially curiosity.</p>
                     </div>
                     {{-- IMPLIKASI KEWANGAN --}}
                     <div class="tab-pane fade" id="nav-financial" role="tabpanel" aria-labelledby="nav-financial-tab">
@@ -216,8 +212,9 @@
                     </div>
                     <div class="flex mt-3">
                         <button type="button" class="btn btn-primary mt-2 animate-up-2">Simpan</button>
-                        <button type="button" class="btn btn-secondary mt-2 animate-up-2">Lihat PDF</button>
-                        <button type="submit" class="btn btn-gray-100 mt-2 animate-up-2">Hantar</button>
+                        <button type="submit" class="btn btn-secondary mt-2 animate-up-2">Hantar</button>
+                        <button type="button" class="btn btn-gray-100 mt-2 animate-up-2">Lihat PDF</button>
+                        <button type="button" class="btn btn-danger mt-2 animate-up-2">Batal</button>
                     </div>
                 </div>
             </form>
@@ -237,9 +234,11 @@
     var count_row_background = 1;
     var row_background = 1;
 
+    var dayAndDate = [];
+
     $(document).ready(function() {
-        $("#program-date-start").change(checkDates);
-        $("#program-date-end").change(checkDates);
+        $("#program-date-start").change(checkDates, addInputFieldTentative);
+        $("#program-date-end").change(checkDates, addInputFieldTentative);
 
         // if program-date is changed, call addInputFieldTentative()
         $("#program-date").change(addInputFieldTentative);
@@ -281,83 +280,91 @@
         $("#" + field_id).remove();
     }
 
+    function getDayAndDate(date) {
+        var days = ["Ahad", "Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu"];
+        var monthNames = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
+        var date = new Date(date);
+        var dateArray = [];
+        var day = date.getDay();
+        var month = date.getMonth();
+        var year = date.getFullYear();
+        // format like this: Ahad, 1 Januari 2020
+        var dayAndDate = days[day] + ", " + date.getDate() + " " + monthNames[month] + " " + year;
+        dateArray.push(dayAndDate);
+
+        return dateArray;
+    }
+
+    function getDaysAndDate(programDateStart, programDateEnd, duration) {
+        var days = ["Ahad", "Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu"];
+        var monthNames = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
+        var dateStart = new Date(programDateStart);
+        var dateEnd = new Date(programDateEnd);
+        var dateArray = [];
+        for (var i = 0; i < duration; i++) {
+            var day = dateStart.getDay();
+            var month = dateStart.getMonth();
+            var year = dateStart.getFullYear();
+            // format like this: Ahad, 1 Januari 2020
+            var dayAndDate = days[day] + ", " + dateStart.getDate() + " " + monthNames[month] + " " + year;
+            dateArray.push(dayAndDate);
+            dateStart.setDate(dateStart.getDate() + 1);
+        }
+        return dateArray;
+    }
+
     // add input fields in tentative div
     function addInputFieldTentative() {
         // get the value of program-date
-        programDate = $("#program-date").val();
-        // if program-date is not empty, show the tentative div
-        if (programDate != "") {
-            $("#tentative").show();
-            // if program-date-start is empty, set program-date-start to program-date
-            if ($("#program-date-start").val() == "") {
-                $("#program-date-start").val(programDate);
-            }
-            // if program-date-end is empty, set program-date-end to program-date
-            if ($("#program-date-end").val() == "") {
-                $("#program-date-end").val(programDate);
-            }
-            // if program-date-start is not empty, set program-date-start to program-date
-            if ($("#program-date-start").val() != "") {
-                programDateStart = $("#program-date-start").val();
-            }
-            // if program-date-end is not empty, set program-date-end to program-date
-            if ($("#program-date-end").val() != "") {
-                programDateEnd = $("#program-date-end").val();
-            }
-            // if program-date-start is equal to program-date-end, set isOneDayProgram to true
-            if (programDateStart == programDateEnd) {
-                isOneDayProgram = true;
-            } else {
-                isOneDayProgram = false;
-            }
+
+        $("#tentative").show();
+
+        if (isOneDayProgram) {
+
+            var programDate = $("#program-date").val();
+
             // if isOneDayProgram is true, add input fields for one day program
-            if (isOneDayProgram) {
-                $("#tentative-inputs").html(
+            // get days array
+            var dayAndDate = getDayAndDate(programDate, 1);
+
+            // append input fields after tentative-inputs div based on dayAndDate array
+            for (var i = 0; i < dayAndDate.length; i++) {
+                $("#tentative-inputs").append(
                     `<div class="row">
                         <div class="mb-3">
-                            <label for="tarikh-tempat-masa">Tarikh, Tempat dan Masa</label>
-                            <input type="text" class="form-control" id="tarikh-tempat-masa" name="tarikh-tempat-masa" required>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="mb-3">
-                            <label for="tarikh-tempat-masa">Tarikh, Tempat dan Masa</label>
-                            <input type="text" class="form-control" id="tarikh-tempat-masa" name="tarikh-tempat-masa" required>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="mb-3">
-                            <label for="tarikh-tempat-masa">Tarikh, Temp at dan Masa</label>
-                            <input type="text" class="form-control" id="tarikh-tempat-masa" name="tarikh-tempat-masa" required>
-                        </div>
-                    </div>`
-                );
-            } else {
-                // if isOneDayProgram is false, add input fields for more than one day program
-                $("#tentative-inputs").html(
-                    `<div class="row">
-                        <div class="mb-3">
-                            <label for="tarikh-tempat-masa">Tarikh, Tempat dan Masa</label>
-                            <input type="text" class="form-control" id="tarikh-tempat-masa" name="tarikh-tempat-masa" required>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="mb-3">
-                            <label for="tarikh-tempat-masa">Tarikh, Tempat dan Masa</label>
-                            <input type="text" class="form-control" id="tarikh-tempat-masa" name="tarikh-tempat-masa" required>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="mb-3">
-                            <label for="tarikh-tempat-masa">Tarikh, Tempat dan Masa</label>
+                            <label for="tarikh-tempat-masa">`+dayAndDate[i]+`</label>
                             <input type="text" class="form-control" id="tarikh-tempat-masa" name="tarikh-tempat-masa" required>
                         </div>
                     </div>`
                 );
             }
         } else {
-            // if program-date is empty, hide the tentative div
-            $("#tentative").hide();
+            // if isOneDayProgram is false, add input fields for multi day program
+            // get days array
+            // var dayAndDate = getDayAndDate(programDate, 2);
+
+            var programDateStart = $("#program-date-start").val();
+            var programDateEnd = $("#program-date-end").val();
+
+            var programDateStart = new Date(programDateStart);
+            var programDateEnd = new Date(programDateEnd);
+
+            // calculate duration of program date
+            var duration = Math.round((programDateEnd - programDateStart) / (1000 * 60 * 60 * 24)) + 1;
+
+            var dayAndDate = getDaysAndDate(programDateStart, programDateEnd, duration);
+
+            // append input fields after tentative-inputs div based on dayAndDate array
+            for (var i = 0; i < dayAndDate.length; i++) {
+                $("#tentative-inputs").append(
+                    `<div class="row">
+                        <div class="mb-3">
+                            <label for="tarikh-tempat-masa">`+dayAndDate[i]+`</label>
+                            <input type="text" class="form-control" id="tarikh-tempat-masa" name="tarikh-tempat-masa" required>
+                        </div>
+                    </div>`
+                );
+            }
         }
     }
 
@@ -387,62 +394,6 @@
         } else {
             // add the days to the tentative div
             $("#tentative").html("Program ini akan berlangsung selama " + duration + " hari");
-            // add new line
-            $("#tentative").append("<br>");
-            $("#tentative").show();
-
-            var days = ["Ahad", "Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu"];
-
-            // create array and duration as its size
-            var tentatives = new Array(duration);
-
-            // initialize the array with 0 based on the duration
-            for (var i = 0; i < duration; i++) {
-                tentatives[i] = 0;
-            }
-
-            console.log(tentatives);
-
-            // add X amount of input fields for the tentative dates based on the days
-            for (var i = 0; i < duration; i++) {
-                var date = new Date(start);
-                date.setDate(date.getDate() + i);
-
-                // get the date and day of the week
-                var day = days[date.getDay()];
-                var date = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
-                
-                // display the number of day, day of the week and date as label and input
-                var label = '<label for="hari_' + i + '">Hari ' + (i + 1) + ' (' + day + ' ' + date + ')</label>';
-                
-                $("#tentative").append(label);
-                var input = '<input type="text" class="form-control" id="hari_' + i + '" name="Hari_' + i + '" value="' + date + '" required/>';
-                $("#tentative").append(input);
-
-                // add timepicker for each day of the program and make sure each of them is unique by adding the day number to name
-                var timepicker = '<input type="text" class="form-control" id="timepicker" name="timepicker_hari_' + i + '_' + tentatives[i] + '" required/>';
-                $("#tentative").append(timepicker);
-                $("#timepicker").timepicker();
-                
-                // add a new button to add new column
-                var button = '<button type="button" class="btn btn-primary mt-2 animate-up-2" id="btn_add_column_name">Tambah masa</button>';
-                $("#tentative").append(button);
-
-                // add horizontal line
-                var hr = '<hr>';
-                $("#tentative").append(hr);
-
-                // add new timepicker after the previous one
-                $("#btn_add_column_name").click(function() {
-                    tentatives[i]++;
-                    var new_timepicker = '<input type="text" class="form-control" id="timepicker" name="timepicker_hari_' + i + '_' + tentatives[i] + '" required/>';
-                    $("#tentative").append(new_timepicker);
-                    $("#timepicker").timepicker();
-                });
-
-
-
-            }
         }
     }
 
