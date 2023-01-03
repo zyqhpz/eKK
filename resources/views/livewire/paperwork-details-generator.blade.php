@@ -97,8 +97,7 @@
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
                                     <label for="last-program-status">Status laporan program terakhir</label>
-                                    <select class="form-select mb-0" id="last-program-status" name="last_program_status">
-                                        aria-label="Pilihan status laporan">
+                                    <select class="form-select mb-0" id="last-program-status" name="last_program_status" aria-label="Pilihan status laporan">
                                         <option value="0" selected>Dilaksanakan</option>
                                         <option value="1">Hantar</option>
                                     </select>
@@ -116,9 +115,29 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="mb-3">
-                                <label for="latar-belakang">Latar Belakang</label>
-                                <textarea class="form-control" id="latar-belakang" name="latar-belakang" required></textarea>
+                            <label for="latar-belakang">Latar Belakang</label>
+                            {{-- check if $paperworkDetails->background is null --}}
+                            @if($paperworkDetails->background == null)
+                                <input type="hidden" name="" value="{{$key = 0}}">
+                                <div class="d-flex mb-3" id="background_{{$key+1}}">
+                                    <textarea class="form-control" id="latar-belakang-{{$key+1}}" name="latar_belakang[]" required></textarea>
+                                    <button type="button" class="btn btn-outline-danger btn_remove_background w-25 h-100 px-2 ms-4" id="btn_remove_background_{{$key+1}}" value="{{$key+1}}" onclick="removeInputField('background_' + {{$key+1}})">X</button>
+                                </div>
+                            @else
+                                @foreach($paperworkDetails->background as $key => $background)
+                                    <div class="mb-3" id="background_{{$key+1}}">
+                                        <textarea class="form-control" id="latar-belakang-{{$key+1}}" name="latar_belakang[]" required>{{$background}}</textarea>
+                                        <button type="button" class="btn btn-outline-danger btn_remove_background" id="btn_remove_background_{{$key+1}}" value="1">X</button>
+                                    </div>
+                                @endforeach
+                            @endif
+                            <hr id="background-line">
+                            <div class="mb-3 row">
+                                <div class="col-12 col-sm-4 col-md-4 offset-md-4">
+                                    <div class="d-grid gap-2">
+                                        <button type="button" class="btn btn-outline-primary" id="btn_add_background">+ Tambah Latar Belakang</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
@@ -158,6 +177,7 @@
                             </div>
                         </div>
                     </div>
+                    {{-- TENTATIF --}}
                     <div class="tab-pane fade" id="nav-tentative" role="tabpanel" aria-labelledby="nav-tentative-tab">
                         <h1>Tentatif Program</h1>
                         {{-- if program-date-start input and program-date-end input are blank, show a message to user--}}
@@ -173,20 +193,23 @@
                             Pinterest in do umami readymade swag.</p>
                         <p>Day handsome addition horrible sensible goodness two contempt. Evening for married his account removal. Estimable me disposing of be moonlight cordially curiosity.</p>
                     </div>
+                    {{-- IMPLIKASI KEWANGAN --}}
                     <div class="tab-pane fade" id="nav-financial" role="tabpanel" aria-labelledby="nav-financial-tab">
                         <h1>Implikasi Kewangan</h1>
                         <p>Exercitation photo booth stumptown tote bag Banksy, elit small batch freegan sed. Craft beer elit seitan exercitation, photo booth et 8-bit kale chips proident chillwave deep v laborum. Aliquip veniam delectus, Marfa eiusmod
                             Pinterest in do umami readymade swag.</p>
                         <p>Day handsome addition horrible sensible goodness two contempt. Evening for married his account removal. Estimable me disposing of be moonlight cordially curiosity.</p>
                     </div>
-                    <div class="tab-pane fade" id="nav-signature" role="tabpanel" aria-labelledby="nav-signature-tab">
-                        <h1>Tandatangan</h1>
+                    {{-- JAWATANKUASA PROGRAM --}}
+                    <div class="tab-pane fade" id="nav-ajk" role="tabpanel" aria-labelledby="nav-ajk-tab">
+                        <h1>Senarai Jawatankuasa Program</h1>
                         <p>Exercitation photo booth stumptown tote bag Banksy, elit small batch freegan sed. Craft beer elit seitan exercitation, photo booth et 8-bit kale chips proident chillwave deep v laborum. Aliquip veniam delectus, Marfa eiusmod
                             Pinterest in do umami readymade swag.</p>
                         <p>Day handsome addition horrible sensible goodness two contempt. Evening for married his account removal. Estimable me disposing of be moonlight cordially curiosity.</p>
                     </div>
-                    <div class="tab-pane fade" id="nav-ajk" role="tabpanel" aria-labelledby="nav-ajk-tab">
-                        <h1>Senarai Jawatankuasa Program</h1>
+                    {{-- TANDATANGAN --}}
+                    <div class="tab-pane fade" id="nav-signature" role="tabpanel" aria-labelledby="nav-signature-tab">
+                        <h1>Tandatangan</h1>
                         <p>Exercitation photo booth stumptown tote bag Banksy, elit small batch freegan sed. Craft beer elit seitan exercitation, photo booth et 8-bit kale chips proident chillwave deep v laborum. Aliquip veniam delectus, Marfa eiusmod
                             Pinterest in do umami readymade swag.</p>
                         <p>Day handsome addition horrible sensible goodness two contempt. Evening for married his account removal. Estimable me disposing of be moonlight cordially curiosity.</p>
@@ -204,16 +227,140 @@
     </div>
 </div>
 <script>
+
+    var isOneDayProgram = true;
+    // var program-date-start = $("#program-date-start").val();
+    var programDate;
+    var programDateStart;
+    var programDateEnd;
+
+    var count_row_background = 1;
+    var row_background = 1;
+
     $(document).ready(function() {
         $("#program-date-start").change(checkDates);
         $("#program-date-end").change(checkDates);
 
+        // if program-date is changed, call addInputFieldTentative()
+        $("#program-date").change(addInputFieldTentative);
+
+        // disable remove button for background 1
+        $('#btn_remove_background_1').prop('disabled', true);
+
         // if program-date-start or program-date-end is empty, hide the tentative div. and add into .change
         
         $("#tentative").hide();
-          $("#timepicker").timepicker();
+        $("#timepicker").timepicker();
 
     });
+
+    // add new input for background
+    $(function() {
+        $('#btn_add_background').on('click',function(){
+            count_row_background++;
+            // var clone = $("#background_1").clone().insertAfter("#background_"+(count_row_background-1));
+            var clone = $("#background_1").clone().insertBefore("#background-line");
+
+            console.log(count_row_background);
+
+            clone.attr("id","background_"+count_row_background);
+            clone.find("textarea").val("");
+            clone.find("textarea").attr("id","background_"+count_row_background);
+            clone.find("textarea").attr("name","background_"+count_row_background);
+
+            clone.find("button").attr("id","btn_remove_background_"+count_row_background);
+            clone.find("button").attr("onclick","removeInputField('background_"+count_row_background+"')");
+            clone.find("button").attr("disabled",false);
+        });
+
+
+    });
+
+    // remove input for background
+    function removeInputField(field_id){
+        $("#" + field_id).remove();
+    }
+
+    // add input fields in tentative div
+    function addInputFieldTentative() {
+        // get the value of program-date
+        programDate = $("#program-date").val();
+        // if program-date is not empty, show the tentative div
+        if (programDate != "") {
+            $("#tentative").show();
+            // if program-date-start is empty, set program-date-start to program-date
+            if ($("#program-date-start").val() == "") {
+                $("#program-date-start").val(programDate);
+            }
+            // if program-date-end is empty, set program-date-end to program-date
+            if ($("#program-date-end").val() == "") {
+                $("#program-date-end").val(programDate);
+            }
+            // if program-date-start is not empty, set program-date-start to program-date
+            if ($("#program-date-start").val() != "") {
+                programDateStart = $("#program-date-start").val();
+            }
+            // if program-date-end is not empty, set program-date-end to program-date
+            if ($("#program-date-end").val() != "") {
+                programDateEnd = $("#program-date-end").val();
+            }
+            // if program-date-start is equal to program-date-end, set isOneDayProgram to true
+            if (programDateStart == programDateEnd) {
+                isOneDayProgram = true;
+            } else {
+                isOneDayProgram = false;
+            }
+            // if isOneDayProgram is true, add input fields for one day program
+            if (isOneDayProgram) {
+                $("#tentative-inputs").html(
+                    `<div class="row">
+                        <div class="mb-3">
+                            <label for="tarikh-tempat-masa">Tarikh, Tempat dan Masa</label>
+                            <input type="text" class="form-control" id="tarikh-tempat-masa" name="tarikh-tempat-masa" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3">
+                            <label for="tarikh-tempat-masa">Tarikh, Tempat dan Masa</label>
+                            <input type="text" class="form-control" id="tarikh-tempat-masa" name="tarikh-tempat-masa" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3">
+                            <label for="tarikh-tempat-masa">Tarikh, Temp at dan Masa</label>
+                            <input type="text" class="form-control" id="tarikh-tempat-masa" name="tarikh-tempat-masa" required>
+                        </div>
+                    </div>`
+                );
+            } else {
+                // if isOneDayProgram is false, add input fields for more than one day program
+                $("#tentative-inputs").html(
+                    `<div class="row">
+                        <div class="mb-3">
+                            <label for="tarikh-tempat-masa">Tarikh, Tempat dan Masa</label>
+                            <input type="text" class="form-control" id="tarikh-tempat-masa" name="tarikh-tempat-masa" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3">
+                            <label for="tarikh-tempat-masa">Tarikh, Tempat dan Masa</label>
+                            <input type="text" class="form-control" id="tarikh-tempat-masa" name="tarikh-tempat-masa" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3">
+                            <label for="tarikh-tempat-masa">Tarikh, Tempat dan Masa</label>
+                            <input type="text" class="form-control" id="tarikh-tempat-masa" name="tarikh-tempat-masa" required>
+                        </div>
+                    </div>`
+                );
+            }
+        } else {
+            // if program-date is empty, hide the tentative div
+            $("#tentative").hide();
+        }
+    }
+
 
     function checkDates() {
         // Get the start date and end date from the input fields
@@ -285,8 +432,6 @@
                 var hr = '<hr>';
                 $("#tentative").append(hr);
 
-                var count_col_name = 1
-
                 // add new timepicker after the previous one
                 $("#btn_add_column_name").click(function() {
                     tentatives[i]++;
@@ -310,6 +455,8 @@
             $(".date-day").removeClass("d-none");
             $(".date-start").removeClass("d-block");
             $(".date-end").removeClass("d-block");
+
+            isOneDayProgram = true;
         } else {
             $(".date-day").addClass("d-none");
             $(".date-start").addClass("d-block");
@@ -317,6 +464,8 @@
             $(".date-day").removeClass("d-block");
             $(".date-start").removeClass("d-none");
             $(".date-end").removeClass("d-none");
+
+            isOneDayProgram = false;
         }
     });
 
