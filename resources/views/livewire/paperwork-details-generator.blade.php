@@ -234,11 +234,17 @@
     var count_row_background = 1;
     var row_background = 1;
 
+    var count_tentatives;
+
+    var count_row_tentative = 1;
+
     var dayAndDate = [];
 
     $(document).ready(function() {
-        $("#program-date-start").change(checkDates, addInputFieldTentative);
-        $("#program-date-end").change(checkDates, addInputFieldTentative);
+        $("#program-date-start").change(checkDates);
+        $("#program-date-start").change(addInputFieldTentative);
+        $("#program-date-end").change(checkDates);
+        $("#program-date-end").change(addInputFieldTentative);
 
         // if program-date is changed, call addInputFieldTentative()
         $("#program-date").change(addInputFieldTentative);
@@ -250,28 +256,6 @@
         
         $("#tentative").hide();
         $("#timepicker").timepicker();
-
-    });
-
-    // add new input for background
-    $(function() {
-        $('#btn_add_background').on('click',function(){
-            count_row_background++;
-            // var clone = $("#background_1").clone().insertAfter("#background_"+(count_row_background-1));
-            var clone = $("#background_1").clone().insertBefore("#background-line");
-
-            console.log(count_row_background);
-
-            clone.attr("id","background_"+count_row_background);
-            clone.find("textarea").val("");
-            clone.find("textarea").attr("id","background_"+count_row_background);
-            clone.find("textarea").attr("name","background_"+count_row_background);
-
-            clone.find("button").attr("id","btn_remove_background_"+count_row_background);
-            clone.find("button").attr("onclick","removeInputField('background_"+count_row_background+"')");
-            clone.find("button").attr("disabled",false);
-        });
-
 
     });
 
@@ -323,25 +307,44 @@
 
             var programDate = $("#program-date").val();
 
-            // if isOneDayProgram is true, add input fields for one day program
             // get days array
             var dayAndDate = getDayAndDate(programDate, 1);
 
+            // set count_tentatives array based on dayAndDate array
+            count_tentatives = new Array(dayAndDate.length);
+
             // append input fields after tentative-inputs div based on dayAndDate array
-            for (var i = 0; i < dayAndDate.length; i++) {
-                $("#tentative-inputs").append(
-                    `<div class="row">
-                        <div class="mb-3">
-                            <label for="tarikh-tempat-masa">`+dayAndDate[i]+`</label>
-                            <input type="text" class="form-control" id="tarikh-tempat-masa" name="tarikh-tempat-masa" required>
+            count_tentatives[0] = 0;
+            // $("#tentative-inputs").append(
+            //     `<div class="row">
+            //         <div class="mb-3">
+            //             <label for="tentatives_day_` + 0 + `">`+dayAndDate[0]+`</label>
+            //             <div class="d-flex m-2" id="tentatives_day_` + 0 + `_` + count_tentatives[0] + `">
+            //                 <input type="text" class="form-control me-2" placeholder="Masa" id="timepicker" name="timepicker_day_` + 0 + `_` + count_tentatives[0] + `" required/>
+            //                 <input type="text" class="form-control" placeholder="Perkara" id="tentatives-day-` + 0 + `-` + count_tentatives[0] + `" name="tentatives_day_` + 0 + `_` + count_tentatives[0] + `" required>
+            //                 <button type="button" class="btn btn-outline-danger w-25 h-100 px-2 ms-4" onclick="removeInputField('tentatives_day_` + 0 + `_` + count_tentatives[0] + `')" disabled>X</button>
+            //             </div>
+            //             <hr id="tentatives-line-` + 0 + `" hidden>
+            //             <button type="button" class="btn btn-primary" id="btn_add_tentative_` + 0 + `" onclick="addNewInputFieldTentatives(`+0+`)">Tambah</button>
+            //         </div>
+            //     </div>`
+            // );
+            $("#tentative-inputs").append(
+                `<div class="row">
+                    <div class="mb-3">
+                        <label for="tentatives_day_0">`+dayAndDate[0]+`</label>
+                        <div class="d-flex m-2" id="tentatives_day_0_` + count_tentatives[0] + `">
+                            <input type="text" class="form-control me-2" placeholder="Masa" id="timepicker" name="timepicker_day_0_` + count_tentatives[0] + `" required/>
+                            <input type="text" class="form-control" placeholder="Perkara" id="tentatives-day-0-` + count_tentatives[0] + `" name="tentatives_day_0_` + count_tentatives[0] + `" required>
+                            <button type="button" class="btn btn-outline-danger w-25 h-100 px-2 ms-4" onclick="removeInputField('tentatives_day_0_` + count_tentatives[0] + `')" disabled>X</button>
                         </div>
-                    </div>`
-                );
-            }
+                        <hr id="tentatives-line-0" hidden>
+                        <button type="button" class="btn btn-primary" id="btn_add_tentative_0" onclick="addNewInputFieldTentatives(0)">Tambah</button>
+                    </div>
+                </div>`
+            );
+
         } else {
-            // if isOneDayProgram is false, add input fields for multi day program
-            // get days array
-            // var dayAndDate = getDayAndDate(programDate, 2);
 
             var programDateStart = $("#program-date-start").val();
             var programDateEnd = $("#program-date-end").val();
@@ -355,17 +358,108 @@
             var dayAndDate = getDaysAndDate(programDateStart, programDateEnd, duration);
 
             // append input fields after tentative-inputs div based on dayAndDate array
+            // for (var i = 0; i < dayAndDate.length; i++) {
+            //     $("#tentative-inputs").append(
+            //         `<div class="row">
+            //             <div class="mb-3">
+            //                 <label for="tarikh-tempat-masa">`+dayAndDate[i]+`</label>
+            //                 <input type="text" class="form-control" id="tarikh-tempat-masa" name="tarikh-tempat-masa" required>
+            //             </div>
+            //         </div>`
+            //     );
+            // }
+
+            count_tentatives = new Array(dayAndDate.length);
+
+            // append input fields after tentative-inputs div based on dayAndDate array
+
             for (var i = 0; i < dayAndDate.length; i++) {
+                count_tentatives[i] = 0;
                 $("#tentative-inputs").append(
                     `<div class="row">
                         <div class="mb-3">
-                            <label for="tarikh-tempat-masa">`+dayAndDate[i]+`</label>
-                            <input type="text" class="form-control" id="tarikh-tempat-masa" name="tarikh-tempat-masa" required>
+                            <label for="tentatives_day_` + i + `">`+dayAndDate[i]+`</label>
+                            <div class="d-flex m-2" id="tentatives_day_` + i + `_` + count_tentatives[i] + `">
+                                <input type="text" class="form-control me-2" placeholder="Masa" id="timepicker" name="timepicker_day_` + i + `_` + count_tentatives[i] + `" required/>
+                                <input type="text" class="form-control" placeholder="Perkara" id="tentatives-day-` + i + `-` + count_tentatives[i] + `" name="tentatives_day_` + i + `_` + count_tentatives[i] + `" required>
+                                <button type="button" class="btn btn-outline-danger w-25 h-100 px-2 ms-4" onclick="removeInputField('tentatives_day_` + i + `_` + count_tentatives[i] + `')" disabled>X</button>
+                            </div>
+                            <hr id="tentatives-line-` + i + `" hidden>
+                            <button type="button" class="btn btn-primary" id="btn_add_tentative_` + i + `">Tambah</button>
                         </div>
                     </div>`
                 );
+                $("#timepicker").timepicker();
+
+                // $(function() {
+                //     // add event listener for btn_add_tentative
+                //     $("#btn_add_tentative_" + i).click(function() {
+                //         count_tentatives[i]++;
+                //         var clone = $("#tentatives_day_" + i + "_" + (count_tentatives[i] - 1)).clone();
+                //         clone.insertBefore("#tentatives-line-" + i);
+                //         clone.attr("id","tentatives_day_" + i + "_" + count_tentatives[i]);
+                        
+                //         clone.attr("id","tentatives_day_" + "_"+count_tentatives[i]);
+
+                //         // change name and id of input timepicker
+                //         clone.find("#timepicker").attr("name","timepicker_day_" + i + "_"+count_tentatives[i]);
+
+                //         // clear value of input timepicker
+                //         clone.find("#timepicker").val("");
+
+                //         // change name and id of input tentatives
+                //         clone.find("#tentatives-day-" + i + "-" + (count_tentatives[i] - 1)).attr("name","tentatives_day_" + i + "_"+count_tentatives[i]);
+                //         clone.find("#tentatives-day-" + i + "-" + (count_tentatives[i] - 1)).attr("id","tentatives-day-" + i + "-"+count_tentatives[i]);
+
+                //         // clear value of input tentatives
+                //         clone.find("#tentatives-day-" + i + "-" + (count_tentatives[i] - 1)).val("");
+
+                //         // change id of button
+                //         clone.find("button").attr("onclick","removeInputField('tentatives_day_" + i + "_" + count_tentatives[i] + "')");
+                //         clone.find("button").attr("id","btn_remove_tentative_" + i + "_"+count_tentatives[i]);
+
+                //         // enable remove button
+                //         clone.find("button").attr("disabled",false);
+            
+                //         $("#timepicker").timepicker();
+
+                //         console.log(count_tentatives[i]);
+
+                //     });
+                // });
             }
         }
+
+    }
+
+    function addNewInputFieldTentatives(i) {
+        count_tentatives[i]++;
+        var clone = $("#tentatives_day_" + i + "_0").clone().insertBefore("#tentatives-line-" + i);
+        clone.attr("id","tentatives_day_" + i + "_" + count_tentatives[i]);
+
+        // change name and id of input timepicker
+        clone.find("#timepicker").attr("name","timepicker_day_" + i + "_"+count_tentatives[i]);
+
+        // clear value of input timepicker
+        clone.find("#timepicker").val("");
+
+        // change name and id of input tentatives
+        clone.find("#tentatives-day-" + i + "-" + (count_tentatives[i] - 1)).attr("name","tentatives_day_" + i + "_"+count_tentatives[i]);
+        clone.find("#tentatives-day-" + i + "-" + (count_tentatives[i] - 1)).attr("id","tentatives-day-" + i + "-"+count_tentatives[i]);
+
+        // clear value of input tentatives
+        clone.find("#tentatives-day-" + i + "-" + (count_tentatives[i] - 1)).val("");
+
+        // change id of button
+        clone.find("button").attr("onclick","removeInputField('tentatives_day_" + i + "_" + count_tentatives[i] + "')");
+        clone.find("button").attr("id","btn_remove_tentative_" + i + "_"+count_tentatives[i]);
+
+        // enable remove button
+        clone.find("button").attr("disabled",false);
+
+        $("#timepicker").timepicker();
+
+        console.log(count_tentatives[i]);
     }
 
 
@@ -418,6 +512,25 @@
 
             isOneDayProgram = false;
         }
+    });
+
+    $(function() {
+        // add new input for background
+        $('#btn_add_background').on('click',function(){
+            count_row_background++;
+            var clone = $("#background_1").clone().insertBefore("#background-line");
+
+            console.log(count_row_background);
+
+            clone.attr("id","background_"+count_row_background);
+            clone.find("textarea").val("");
+            clone.find("textarea").attr("id","background_"+count_row_background);
+            clone.find("textarea").attr("name","background_"+count_row_background);
+
+            clone.find("button").attr("id","btn_remove_background_"+count_row_background);
+            clone.find("button").attr("onclick","removeInputField('background_"+count_row_background+"')");
+            clone.find("button").attr("disabled",false);
+        });
     });
 
 
