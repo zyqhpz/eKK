@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use Illuminate\Http\Request;
 use Livewire\Component;
+use App\Models\User;
 use App\Models\Paperwork;
 use App\Models\PaperworkDetails;
 
@@ -17,7 +18,9 @@ class PaperworkClub extends Component
 {
     public function render()
     {
-        $paperworks = Paperwork::all();
+        // $paperworks = Paperwork::all();
+        // filter by user id
+        $paperworks = Paperwork::where('clubId', auth()->user()->id)->get();
         return view('livewire.paperwork-club', compact('paperworks'));
     }
 
@@ -131,5 +134,42 @@ class PaperworkClub extends Component
 
         return redirect()->back()
             ->with('deleted', 'Kertas kerja berjaya dipadam.');
+    }
+
+    public function submit(Request $request, $id)
+    {
+        $paperwork = Paperwork::find($id);
+
+        // $paperwork->isOneDay = $request->paperwork_isOneDay ?? $paperwork->isOneDay;
+        // $paperwork->programDate = $request->paperwork_programDate ?? $paperwork->programDate;
+        // $paperwork->startDate = $request->paperwork_startDate ?? $paperwork->startDate;
+        // $paperwork->endDate = $request->paperwork_endDate ?? $paperwork->endDate;
+        // $paperwork->venue = $request->paperwork_venue ?? $paperwork->venue;
+        $paperwork->status = 1;
+
+        // $progression = array(
+        //     'submitted' => true,
+        //     'approved' => false,
+        //     'rejected' => false,
+        //     'completed' => false
+        // );
+
+        $progression = array(
+            0 => "Draf",
+            1 => "Penasihat Kelab",
+            2 => "HEPA",
+            3 => "TNC (HEPA)"
+        );
+
+        // convert array to json
+        $paperwork->progressStates = json_encode($progression);
+        $paperwork->currentProgressState = 1;
+        // $paperwork->currentProgressState = $request->paperwork_currentProgressState ?? $paperwork->currentProgressState;
+        // $paperwork->progressStates = $request->paperwork_progressStates ?? $paperwork->progressStates;
+
+        $paperwork->save();
+
+        return redirect()->back()
+            ->with('submitted', 'Kertas kerja berjaya dihantar.');
     }
 }

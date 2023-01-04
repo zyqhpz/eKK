@@ -24,7 +24,7 @@
                         <a class="nav-item nav-link" id="nav-signature-tab" data-bs-toggle="tab" href="#nav-signature" role="tab" aria-controls="nav-signature" aria-selected="false">Tandatangan</a>
                     </div>
                 </nav>
-                <form id="paperwork" action="{{ route('view-pdf') }}" method="post" autocomplete="off" target="_blank">
+                <form id="form-paperwork" action="{{ route('paperwork-generator.save', $paperwork->id) }}" method="POST" autocomplete="off" target="_blank" enctype="multipart/form-data" novalidate>
                 <div class="tab-content card card-body border-0 shadow mb-4" id="nav-tabContent" >
                     
                     @csrf
@@ -41,32 +41,37 @@
                             <div class="col-md-6 mb-3">
                                 <label for="program-date-type">Program satu hari?</label>
                                 <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="program-date-type" name="program_date_type" value="one-day" checked>
+                                    @if ($paperwork->isOneDay == 1)
+                                        <input class="form-check-input" type="checkbox" id="program-date-type" name="paperwork_isOneDay" value="1" checked>
+                                    @else
+                                        <input class="form-check-input" type="checkbox" id="program-date-type" name="paperwork_isOneDay" value="0">
+                                    @endif
+                                    {{-- <input class="form-check-input" type="checkbox" id="program-date-type" name="paperwork_isOneDay" value="1" checked> --}}
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="date-day col-md-6 mb-3">
                                 <label for="program-date">Tarikh program</label>
-                                <input class="form-control" id="program-date" type="date" name="program_date"
-                                    placeholder="dd/mm/yyyy">
+                                <input class="form-control" id="program-date" type="date" name="paperwork_programDate"
+                                    placeholder="dd/mm/yyyy" @if($paperwork->programDate != null) { value="{{ $paperwork->programDate }}"} @endif>
                             </div>
                             <div class="date-start col-md-6 mb-3 d-none">
                                 <label for="program-date-start">Tarikh bermula</label>
-                                <input class="form-control datepicker-input" id="program-date-start" type="date" name="program_date_start"
-                                    placeholder="dd/mm/yyyy">
+                                <input class="form-control datepicker-input" id="program-date-start" type="date" name="paperwork_startDate"
+                                    placeholder="dd/mm/yyyy" @if($paperwork->startDate != null) { value="{{ $paperwork->startDate }}"} @endif>
                             </div>
                             <div class="date-end col-md-6 mb-3 d-none">
                                 <label for="program-date-end">Tarikh berakhir</label>
-                                <input class="form-control datepicker-input" id="program-date-end" type="date" name="program_date_end"
-                                    placeholder="dd/mm/yyyy">
+                                <input class="form-control datepicker-input" id="program-date-end" type="date" name="paperwork_endDate"
+                                    placeholder="dd/mm/yyyy" @if($paperwork->endDate != null) { value="{{ $paperwork->endDate }}"} @endif>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
                                     <label for="program-place">Tempat program</label>
-                                    <input  class="form-control" id="program-place" type="text" name="program_place"
+                                    <input  class="form-control" id="program-place" type="text" name="paperwork_venue"
                                         placeholder="Contoh: Dewan Auditorium FKP">
                                 </div>
                             </div>
@@ -111,7 +116,7 @@
                         <div class="row">
                             <div class="mb-3">
                                 <label for="program-name">Pendahuluan</label>
-                                <textarea class="form-control" id="pendahuluan" name="pendahuluan" required></textarea>
+                                <textarea class="form-control" id="pendahuluan" name="paperwork_introduction" required></textarea>
                             </div>
                         </div>
                         <div class="row">
@@ -120,13 +125,13 @@
                             @if($paperworkDetails->background == null)
                                 <input type="hidden" name="" value="{{$key = 0}}">
                                 <div class="d-flex mb-3" id="background_{{$key+1}}">
-                                    <textarea class="form-control" id="latar-belakang-{{$key+1}}" name="latar_belakang[]" required></textarea>
+                                    <textarea class="form-control" id="latar-belakang-{{$key+1}}" name="paperwork_background[]" required></textarea>
                                     <button type="button" class="btn btn-outline-danger btn_remove_background w-25 h-100 px-2 ms-4" id="btn_remove_background_{{$key+1}}" value="{{$key+1}}" onclick="removeInputField('background_' + {{$key+1}})">X</button>
                                 </div>
                             @else
                                 @foreach($paperworkDetails->background as $key => $background)
-                                    <div class="mb-3" id="background_{{$key+1}}">
-                                        <textarea class="form-control" id="latar-belakang-{{$key+1}}" name="latar_belakang[]" required>{{$background}}</textarea>
+                                    <div class="d-flex mb-3" id="background_{{$key+1}}">
+                                        <textarea class="form-control" id="latar-belakang-{{$key+1}}" name="paperwork_background[]" required>{{$background}}</textarea>
                                         <button type="button" class="btn btn-outline-danger btn_remove_background" id="btn_remove_background_{{$key+1}}" value="1">X</button>
                                     </div>
                                 @endforeach
@@ -143,37 +148,37 @@
                         <div class="row">
                             <div class="mb-3">
                                 <label for="objektif-program">Objektif</label>
-                                <textarea class="form-control" id="objektif-program" name="objektif-program" required></textarea>
+                                <textarea class="form-control" id="objektif-program" name="paperwork_objective" required></textarea>
                             </div>
                         </div>
                         <div class="row">
                             <div class="mb-3">
                                 <label for="hasil-pembelajaran">Hasil Pembelajaran</label>
-                                <textarea class="form-control" id="hasil-pembelajaran" name="hasil-pembelajaran" required></textarea>
+                                <textarea class="form-control" id="hasil-pembelajaran" name="paperwork_learningOutcome" required></textarea>
                             </div>
                         </div>
                         <div class="row">
                             <div class="mb-3">
                                 <label for="tema-program">Tema</label>
-                                <input type="text" class="form-control" id="tema-program" name="tema-program" required/>
+                                <input type="text" class="form-control" id="tema-program" name="paperwork_theme" required/>
                             </div>
                         </div>
                         <div class="row">
                             <div class="mb-3">
                                 <label for="anjuran">Anjuran</label>
-                                <textarea class="form-control" id="anjuran" name="anjuran" required></textarea>
+                                <textarea class="form-control" id="anjuran" name="paperwork_organizedBy" required></textarea>
                             </div>
                         </div>
                         <div class="row">
                             <div class="mb-3">
                                 <label for="kumpulan-sasaran">Kumpulan Sasaran</label>
-                                <textarea class="form-control" id="kumpulan-sasaran" name="kumpulan-sasaran" required></textarea>
+                                <textarea class="form-control" id="kumpulan-sasaran" name="paperwork_targetGroup" required></textarea>
                             </div>
                         </div>
                         <div class="row">
                             <div class="mb-3">
                                 <label for="tarikh-tempat-masa">Tarikh, Tempat dan Masa</label>
-                                <textarea class="form-control" id="tarikh-tempat-masa" name="tarikh-tempat-masa" required></textarea>
+                                <textarea class="form-control" id="tarikh-tempat-masa" name="paperwork_dateVenueTime" required></textarea>
                             </div>
                         </div>
                     </div>
@@ -210,8 +215,9 @@
                         <p>Day handsome addition horrible sensible goodness two contempt. Evening for married his account removal. Estimable me disposing of be moonlight cordially curiosity.</p>
                     </div>
                     <div class="flex mt-3">
-                        <button type="button" class="btn btn-primary mt-2 animate-up-2">Simpan</button>
-                        <button type="submit" class="btn btn-secondary mt-2 animate-up-2">Hantar</button>
+                        {{-- <input type="submit" class="btn btn-primary mt-2 animate-up-2" value="Simpan"/> --}}
+                        <button type="button" class="btn btn-primary mt-2 animate-up-2" id="btn-save">Simpan</button>
+                        <button type="button" class="btn btn-secondary mt-2 animate-up-2">Hantar</button>
                         <button type="button" class="btn btn-gray-100 mt-2 animate-up-2">Lihat PDF</button>
                         <button type="button" class="btn btn-danger mt-2 animate-up-2">Batal</button>
                     </div>
@@ -251,9 +257,16 @@
         // disable remove button for background 1
         $('#btn_remove_background_1').prop('disabled', true);
 
-        // if program-date-start or program-date-end is empty, hide the tentative div. and add into .change
-        
-        $("#tentative").hide();
+        // // check if paperwork_isOneDay is checked
+        // if($("#paperwork_isOneDay").is(":checked")){
+        //     $("#program-date-end").prop("disabled", true);
+        //     $("#program-date-end").val($("#program-date-start").val());
+        //     isOneDayProgram = true;
+        // } else {
+        //     $("#program-date-end").prop("disabled", false);
+        //     isOneDayProgram = false;
+        // }
+        // $("#tentative").hide();
         $("#timepicker").timepicker();
 
     });
@@ -447,6 +460,9 @@
             $(".date-start").removeClass("d-block");
             $(".date-end").removeClass("d-block");
 
+            // set value of #program-date-type to 1
+            $("#program-date-type").val(1);
+
             isOneDayProgram = true;
         } else {
             $(".date-day").addClass("d-none");
@@ -455,6 +471,9 @@
             $(".date-day").removeClass("d-block");
             $(".date-start").removeClass("d-none");
             $(".date-end").removeClass("d-none");
+
+            // set value of #program-date-type to 0
+            $("#program-date-type").val(0);
 
             isOneDayProgram = false;
         }
@@ -471,7 +490,7 @@
             clone.attr("id","background_"+count_row_background);
             clone.find("textarea").val("");
             clone.find("textarea").attr("id","background_"+count_row_background);
-            clone.find("textarea").attr("name","background_"+count_row_background);
+            clone.find("textarea").attr("name","paperwork_background[]");
 
             clone.find("button").attr("id","btn_remove_background_"+count_row_background);
             clone.find("button").attr("onclick","removeInputField('background_"+count_row_background+"')");
@@ -479,5 +498,43 @@
         });
     });
 
+    // post to route('paperwork-generator.save', $paperwork->id) when click #btn-save
+    $('#btn-save').on('click',function(){
+        var form = $('#form-paperwork');
+        var url = form.attr('action');
+        var method = form.attr('method');
+        var data = form.serialize();
+
+        var paperwork_background = $('textarea[name="paperwork_background[]"]').map(function() {
+            return $(this).val();
+        }).get();
+
+        // encode paperwork_background to json
+        paperwork_background = JSON.stringify(paperwork_background);
+        // console.log (JSON.stringify(paperwork_background));
+
+        // append paperwork_background to data variable
+        data = data + "&paperwork_backgrounds=" + paperwork_background;
+
+        // print paperwork_background from data variable
+        // console.log(data);
+
+        $.ajax({
+            url: "<?php echo route('paperwork-generator.save', $paperwork->id); ?>",
+            method: method,
+            data: data,
+            success: function(response){
+                console.log("success");
+                // prnt paperwork_background
+                // console.log(paperwork_background);
+            },
+            error: function(error){
+                console.log(error);
+            }
+        });
+
+        // get id from {{ $paperwork->id}}
+        // var id = {{$paperwork->id}};
+    });
 
 </script>

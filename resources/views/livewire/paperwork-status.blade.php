@@ -31,6 +31,10 @@
         echo '<div class="alert alert-success" role="alert" fade show>' . session('updated') . '</div>';
     }
 
+    if (session('submitted')) {
+        echo '<div class="alert alert-success" role="alert" fade show>' . session('submitted') . '</div>';
+    }
+
     if (session('output')) {
         echo '<div class="alert alert-danger" role="alert" fade show>RM ' . session('output') . '</div>';
     }
@@ -43,26 +47,62 @@
         <div class="progress-info">
             <div class="progress-label">
                 Status: 
-                <span class="text-danger">Draf</span>
+                @if ($paperwork->status == 2)
+                    <span class="text-success">Dihantar</span>
+                @elseif($paperwork->status == 1)
+                    <span class="text-warning">Dalam proses</span>
+                @else
+                    <span class="text-danger">Draf</span>
+                @endif
             </div>
             <div class="progress-percentage">
-                <span>30%</span>
+                {{-- <span>30%</span> --}}
             </div>
         </div>
         <div class="progress">
-            <div class="progress-bar bg-danger" role="progressbar" style="width: 30%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+            {{-- <div class="progress-bar bg-danger" role="progressbar" style="width: 30%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div> --}}
+            @if ($paperwork->status == 2)
+                <div class="progress-bar bg-success" role="progressbar" style="width: 100%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+            @elseif($paperwork->status == 1)
+                <div class="progress-bar bg-warning" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+            @else
+                <div class="progress-bar bg-danger" role="progressbar" style="width: 3%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+            @endif
         </div>
+        @if ($paperwork->progressStates != null)
+            <div class="progress-states">
+                <div class="d-flex flex-row">
+                    @foreach ($paperwork->progressStates as $text)
+                        <div class="p-2">{{ $text }}</div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
     </div>
 
     <div>
         <a class="btn btn-primary" href="{{ route('paperworkViewPDF', $paperwork->id ) }}" type="button">Lihat Kertas Kerja</a>
         {{-- <button class="btn btn-primary" href="/paperworks/{{ $paperwork->filePath }}" type="button">Lihat Kertas Kerja</button> --}}
-        <?php if ($paperwork->isGenerated) { ?>
-            <a class="btn btn-outline-secondary" href="{{ route('paperwork-generator', $paperwork->id) }}" type="button">Sunting di penjana</a>
-        <?php } else { ?>
-            <button type="button" data-bs-toggle="modal" data-bs-target="#modal-editPaperwork" class="btn btn-outline-secondary">Sunting</button>
-        <?php } ?>
+        @if($paperwork->status == 0)
+            <?php if ($paperwork->isGenerated) { ?>
+                <a class="btn btn-outline-secondary" href="{{ route('paperwork-generator', $paperwork->id) }}" type="button">Sunting di penjana</a>
+            <?php } else { ?>
+                <button type="button" data-bs-toggle="modal" data-bs-target="#modal-editPaperwork" class="btn btn-outline-secondary">Sunting</button>
+            <?php } ?>
+            <form action="{{ route('paperwork.submit', $paperwork->id ) }}" method="POST">
+                @csrf
+                <button class="btn btn-success text-white" id="btn-submit" type="submit">Hantar</button>
+            </form>
+        @endif
         <a class="btn btn-secondary" href="{{ route('paperworkFinanceDetails', $paperwork->id ) }}" type="button">Lihat Implikasi</a>
+
+
+
+        {{-- @if($paperwork->status == 2)
+            <form action="{{ route('paperwork.unsubmit', $paperwork->id ) }}" method="POST">
+                @csrf
+                <button class="btn btn-danger text-white" id="btn-submit" type="submit">Batal Hantar</button>
+            </form> --}}
     </div>
 </div>
 
@@ -72,6 +112,24 @@
             $(this).remove(); 
         });
     }, 4000);
+
+
+    // $('#btn-submit').on('click',function(){
+
+    //     $.ajax({
+    //         url: "<?php echo route('paperwork.submit', $paperwork->id ); ?>",
+    //         method: "POST",
+    //         data: {
+    //             _token: "{{ csrf_token() }}",
+    //         },
+    //         success: function(response){
+    //             console.log("success");
+    //         },
+    //         error: function(error){
+    //             console.log(error);
+    //         }
+    //     });
+    // });
 </script>
 
 

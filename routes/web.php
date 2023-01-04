@@ -87,9 +87,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/paperwork/create', [PaperworkClub::class, 'store'])->name('paperwork.store');
     Route::post('/paperwork/update/{id}', [PaperworkClub::class, 'update'])->name('paperwork.update');
     Route::delete('/paperwork/delete/{id}', [PaperworkClub::class, 'delete'])->name('paperwork.delete');
+    Route::post('/paperwork/submit/{id}', [PaperworkClub::class, 'submit'])->name('paperwork.submit');
 
     // route for PDF generator
     Route::get('/kertas-kerja-kelab/{id}/paperwork-generator', PaperworkDetailsGenerator::class)->name('paperwork-generator');
+    Route::post('/kertas-kerja-kelab/{id}/paperwork-generator/update', [PaperworkDetailsGenerator::class, 'updatePaperwork'])->name('paperwork-generator.save');
+
 
     Route::get('/users', Users::class)->name('users');
     Route::get('/login-example', LoginExample::class)->name('login-example');
