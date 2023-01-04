@@ -17,10 +17,16 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->boolean('isGenerated');
-            $table->string('filePath');
+            $table->string('filePath')->nullable();
             $table->integer('clubId');
             $table->integer('paperworkDetailsId');
             $table->timestamps();
+            $table->int('isOneDay')->nullable();
+            $table->date('programDate')->nullable();
+            $table->string('venue')->nullable();
+            $table->string('status')->nullable();
+            $table->string('progressStates')->nullable();
+            $table->int('currentProgressState')->nullable();
         });
     }
 
