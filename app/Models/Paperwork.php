@@ -16,23 +16,14 @@ class Paperwork extends Model
         'paperworkDetailsId',
         'isOneDay',
         'programDate',
-        'startDate',
-        'endDate',
+        'programDateStart',
+        'programDateEnd',
         'venue',
+        'collaborations',
         'status',
         'currentProgressState',
         'progressStates',
         'created_at',
         'updated_at',
     ];
-
-    // add function to create a new paperwork
-    // public static function create($name, $isGenerated, $filepath)
-    // {
-    //     $paperwork = new Paperwork();
-    //     $paperwork->name = $name;
-    //     $paperwork->isGenerated = $isGenerated;
-    //     $paperwork->filePath = $filepath;
-    //     $paperwork->save();
-    // }
 }

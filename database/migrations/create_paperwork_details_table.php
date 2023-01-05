@@ -25,8 +25,9 @@ return new class extends Migration
             $table->string('dateVenueTime')->nullable();
             $table->string('tentativeFirebaseId')->nullable();
             $table->string('financialImplicationFirebaseId')->nullable();
-            $table->text('programCommitee')->nullable();
+            $table->text('programCommittee')->nullable();
             $table->string('closing')->nullable();
+            $table->string('signature')->nullable();
             $table->timestamps();
         });
     }

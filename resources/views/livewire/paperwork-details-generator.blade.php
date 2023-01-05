@@ -9,6 +9,11 @@
 
 
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+        <?php
+            if (session('updated')) {
+                echo '<div class="alert alert-success" role="alert" fade show>' . session('updated') . '</div>';
+            }
+        ?>
     </div>
     <div class="row">
         <div class="row">
@@ -24,9 +29,8 @@
                         <a class="nav-item nav-link" id="nav-signature-tab" data-bs-toggle="tab" href="#nav-signature" role="tab" aria-controls="nav-signature" aria-selected="false">Tandatangan</a>
                     </div>
                 </nav>
-                <form id="form-paperwork" action="{{ route('paperwork-generator.save', $paperwork->id) }}" method="POST" autocomplete="off" target="_blank" enctype="multipart/form-data" novalidate>
+                <form id="form-paperwork" action="{{ route('paperwork-generator.save', $paperwork->id) }}" method="POST" autocomplete="off" enctype="multipart/form-data" novalidate>
                 <div class="tab-content card card-body border-0 shadow mb-4" id="nav-tabContent" >
-                    
                     @csrf
                     <div class="tab-pane fade show active" id="nav-info" role="tabpanel" aria-labelledby="nav-info-tab">
                         <h1>Maklumat Asas Program</h1>
@@ -42,11 +46,10 @@
                                 <label for="program-date-type">Program satu hari?</label>
                                 <div class="form-check form-switch">
                                     @if ($paperwork->isOneDay == 1)
-                                        <input class="form-check-input" type="checkbox" id="program-date-type" name="paperwork_isOneDay" value="1" checked>
+                                        <input class="form-check-input" type="checkbox" id="program-date-type" name="paperwork_isOneDay" value=1 checked>
                                     @else
-                                        <input class="form-check-input" type="checkbox" id="program-date-type" name="paperwork_isOneDay" value="0">
+                                        <input class="form-check-input" type="checkbox" id="program-date-type" name="paperwork_isOneDay" value=0>
                                     @endif
-                                    {{-- <input class="form-check-input" type="checkbox" id="program-date-type" name="paperwork_isOneDay" value="1" checked> --}}
                                 </div>
                             </div>
                         </div>
@@ -58,13 +61,13 @@
                             </div>
                             <div class="date-start col-md-6 mb-3 d-none">
                                 <label for="program-date-start">Tarikh bermula</label>
-                                <input class="form-control datepicker-input" id="program-date-start" type="date" name="paperwork_startDate"
-                                    placeholder="dd/mm/yyyy" @if($paperwork->startDate != null) { value="{{ $paperwork->startDate }}"} @endif>
+                                <input class="form-control datepicker-input" id="program-date-start" type="date" name="paperwork_programDateStart"
+                                    placeholder="dd/mm/yyyy" @if($paperwork->programDateStart != null) { value="{{ $paperwork->programDateStart }}"} @endif>
                             </div>
                             <div class="date-end col-md-6 mb-3 d-none">
                                 <label for="program-date-end">Tarikh berakhir</label>
-                                <input class="form-control datepicker-input" id="program-date-end" type="date" name="paperwork_endDate"
-                                    placeholder="dd/mm/yyyy" @if($paperwork->endDate != null) { value="{{ $paperwork->endDate }}"} @endif>
+                                <input class="form-control datepicker-input" id="program-date-end" type="date" name="paperwork_programDateEnd"
+                                    placeholder="dd/mm/yyyy" @if($paperwork->programDateEnd != null) { value="{{ $paperwork->programDateEnd }}"} @endif>
                             </div>
                         </div>
                         <div class="row">
@@ -78,7 +81,7 @@
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
                                     <label for="program-collab">Dengan kerjasama (jika ada)</label>
-                                    <input class="form-control" id="collab" type="text" name="program_collab"
+                                    <input class="form-control" id="collab" type="text" name="program_collaborations"
                                         placeholder="Kelab ABC, Kelab DEF">
                                 </div>
                             </div>
@@ -120,13 +123,13 @@
                             </div>
                         </div>
                         <div class="row">
+                            {{-- LATAR BELAKANG --}}
                             <label for="latar-belakang">Latar Belakang</label>
-                            {{-- check if $paperworkDetails->background is null --}}
                             @if($paperworkDetails->background == null)
-                                <input type="hidden" name="" value="{{$key = 0}}">
-                                <div class="d-flex mb-3" id="background_{{$key+1}}">
-                                    <textarea class="form-control" id="latar-belakang-{{$key+1}}" name="paperwork_background[]" required></textarea>
-                                    <button type="button" class="btn btn-outline-danger btn_remove_background w-25 h-100 px-2 ms-4" id="btn_remove_background_{{$key+1}}" value="{{$key+1}}" onclick="removeInputField('background_' + {{$key+1}})">X</button>
+                                <input type="hidden" name="" value="{{$backgroundKey = 0}}">
+                                <div class="d-flex mb-3" id="background_{{$backgroundKey+1}}">
+                                    <textarea class="form-control" id="latar-belakang-{{$backgroundKey+1}}" name="paperwork_background[]" required></textarea>
+                                    <button type="button" class="btn btn-outline-danger btn_remove_background w-25 h-100 px-2 ms-4" id="btn_remove_background_{{$backgroundKey+1}}" value="{{$backgroundKey+1}}" onclick="removeInputField('background_' + {{$backgroundKey+1}})">X</button>
                                 </div>
                             @else
                                 @foreach($paperworkDetails->background as $key => $background)
@@ -140,15 +143,35 @@
                             <div class="mb-3 row">
                                 <div class="col-12 col-sm-4 col-md-4 offset-md-4">
                                     <div class="d-grid gap-2">
-                                        <button type="button" class="btn btn-outline-primary" id="btn_add_background">+ Tambah Latar Belakang</button>
+                                        <button type="button" class="btn btn-outline-secondary" id="btn_add_background">+ Tambah Latar Belakang</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="mb-3">
-                                <label for="objektif-program">Objektif</label>
-                                <textarea class="form-control" id="objektif-program" name="paperwork_objective" required></textarea>
+                            {{-- OBJEKTIF --}}
+                            <label for="objektif-program">Objektif</label>
+                            @if($paperworkDetails->objective == null)
+                                <input type="hidden" name="" value="{{$objectiveKey = 0}}">
+                                <div class="d-flex mb-3" id="objective_{{$objectiveKey+1}}">
+                                    <textarea class="form-control" id="objektif-program-{{$objectiveKey+1}}" name="paperwork_objective[]" required></textarea>
+                                    <button type="button" class="btn btn-outline-danger btn_remove_objective w-25 h-100 px-2 ms-4" id="btn_remove_objective_{{$objectiveKey+1}}" value="{{$objectiveKey+1}}" onclick="removeInputField('objective_' + {{$objectiveKey+1}})">X</button>
+                                </div>
+                            @else
+                                @foreach($paperworkDetails->objective as $key => $objective)
+                                    <div class="d-flex mb-3" id="objective_{{$key+1}}">
+                                        <textarea class="form-control" id="objektif-program-{{$key+1}}" name="paperwork_objective[]" required>{{$objective}}</textarea>
+                                        <button type="button" class="btn btn-outline-danger btn_remove_objective" id="btn_remove_objective_{{$key+1}}" value="1">X</button>
+                                    </div>
+                                @endforeach
+                            @endif
+                            <hr id="objective-line" hidden>
+                            <div class="mb-3 row">
+                                <div class="col-12 col-sm-4 col-md-4 offset-md-4">
+                                    <div class="d-grid gap-2">
+                                        <button type="button" class="btn btn-outline-secondary" id="btn_add_objective">+ Tambah Objektif</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
@@ -170,15 +193,61 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="mb-3">
-                                <label for="kumpulan-sasaran">Kumpulan Sasaran</label>
-                                <textarea class="form-control" id="kumpulan-sasaran" name="paperwork_targetGroup" required></textarea>
+                            {{-- KUMPULAN SASARAN --}}'
+                            <label for="kumpulan-sasaran">Kumpulan Sasaran</label>
+                            @if($paperworkDetails->targetGroup == null)
+                                <input type="hidden" name="" value="{{$targetGroupKey = 0}}">
+                                <div class="d-flex mb-3" id="targetGroup_{{$targetGroupKey+1}}">
+                                    <input type="text" class="form-control" id="kumpulan-sasaran-{{$targetGroupKey+1}}" name="paperwork_targetGroup[]" required/>
+                                    <button type="button" class="btn btn-outline-danger btn_remove_targetGroup w-25 h-100 px-2 ms-4" id="btn_remove_targetGroup_{{$targetGroupKey+1}}" value="{{$targetGroupKey+1}}" onclick="removeInputField('targetGroup_' + {{$targetGroupKey+1}})">X</button>
+                                </div>
+                            @else
+                                @foreach($paperworkDetails->targetGroup as $key => $targetGroup)
+                                    <div class="d-flex mb-3" id="targetGroup_{{$key+1}}">
+                                        <input type="text" class="form-control" id="kumpulan-sasaran-{{$key+1}}" name="paperwork_targetGroup[]" required value="{{$targetGroup}}"/>
+                                        <button type="button" class="btn btn-outline-danger btn_remove_targetGroup" id="btn_remove_targetGroup_{{$key+1}}" value="1">X</button>
+                                    </div>
+                                @endforeach
+                            @endif
+                            <hr id="targetGroup-line" hidden>
+                            <div class="mb-3 row">
+                                <div class="col-12 col-sm-4 col-md-4 offset-md-4">
+                                    <div class="d-grid gap-2">
+                                        <button type="button" class="btn btn-outline-secondary" id="btn_add_targetGroup">+ Tambah Kumpulan Sasaran</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
+                            {{-- TARIKH, TEMPAT, DAN MASA --}}
                             <div class="mb-3">
                                 <label for="tarikh-tempat-masa">Tarikh, Tempat dan Masa</label>
-                                <textarea class="form-control" id="tarikh-tempat-masa" name="paperwork_dateVenueTime" required></textarea>
+                                <div class="mb-3 d-flex">
+                                    <label for="program_date">Tarikh</label>
+                                    <input type="text" class="form-control" id="program_date"
+                                    value="<?php if ($paperwork->programDate != null) {
+                                        echo $paperwork->programDate;
+                                    } else if ($paperwork->programDateStart != null && $paperwork->programDateEnd != null) { 
+                                        echo $paperwork->programDateStart . ` - ` . $paperwork->programDateEnd;
+                                    } else {
+                                        echo "Sila masukkan tarikh program pada bahagian Maklumat Asas";
+                                    }  ?>" disabled />
+                                </div>
+                                <div class="mb-3 d-flex">
+                                    <label for="program_location">Tempat</label>
+                                    <input type="text" class="form-control" id="program_location" name="paperwork_dateVenueTime[]"
+                                    value="<?php if ($paperworkDetails->dateVenueTime != null) {
+                                        // get the first element of the array
+                                        echo $paperworkDetails->dateVenueTime[0];
+                                    }?>" />
+                                </div>
+                                <div class="mb-3 d-flex">
+                                    <label for="program_time">Masa</label>
+                                    <input type="text" class="form-control" id="program_time" name="paperwork_dateVenueTime[]"
+                                    value="<?php if ($paperworkDetails->dateVenueTime != null) {
+                                        echo $paperworkDetails->dateVenueTime[1];
+                                    }?>" />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -215,8 +284,8 @@
                         <p>Day handsome addition horrible sensible goodness two contempt. Evening for married his account removal. Estimable me disposing of be moonlight cordially curiosity.</p>
                     </div>
                     <div class="flex mt-3">
-                        {{-- <input type="submit" class="btn btn-primary mt-2 animate-up-2" value="Simpan"/> --}}
-                        <button type="button" class="btn btn-primary mt-2 animate-up-2" id="btn-save">Simpan</button>
+                        <input type="submit" class="btn btn-primary mt-2 animate-up-2" value="Simpan"/>
+                        {{-- <button type="button" class="btn btn-primary mt-2 animate-up-2" id="btn-save">Simpan</button> --}}
                         <button type="button" class="btn btn-secondary mt-2 animate-up-2">Hantar</button>
                         <button type="button" class="btn btn-gray-100 mt-2 animate-up-2">Lihat PDF</button>
                         <button type="button" class="btn btn-danger mt-2 animate-up-2">Batal</button>
@@ -236,7 +305,10 @@
     var programDateStart;
     var programDateEnd;
 
-    var count_row_background = 1;
+    var count_row_background = {{ $rows->background }};
+    var count_row_objective = {{ $rows->objective }};
+    var count_row_targetGroup = {{ $rows->targetGroup }};
+
     var row_background = 1;
 
     var count_tentatives;
@@ -257,16 +329,12 @@
         // disable remove button for background 1
         $('#btn_remove_background_1').prop('disabled', true);
 
-        // // check if paperwork_isOneDay is checked
-        // if($("#paperwork_isOneDay").is(":checked")){
-        //     $("#program-date-end").prop("disabled", true);
-        //     $("#program-date-end").val($("#program-date-start").val());
-        //     isOneDayProgram = true;
-        // } else {
-        //     $("#program-date-end").prop("disabled", false);
-        //     isOneDayProgram = false;
-        // }
-        // $("#tentative").hide();
+        // disable remove button for objective 1
+        $('#btn_remove_objective_1').prop('disabled', true);
+
+        // disable remove button for target group 1
+        $('#btn_remove_targetGroup_1').prop('disabled', true);
+
         $("#timepicker").timepicker();
 
     });
@@ -274,6 +342,11 @@
     // remove input for background
     function removeInputField(field_id){
         $("#" + field_id).remove();
+        
+        // if field_id has background, decrement count_row_background
+        if (field_id.includes("background")) {
+            count_row_background--;
+        }
     }
 
     function getDayAndDate(date) {
@@ -315,6 +388,8 @@
 
         $("#tentative").show();
 
+        var monthNames = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
+
         if (isOneDayProgram) {
 
             var programDate = $("#program-date").val();
@@ -324,6 +399,11 @@
 
             // set count_tentatives array based on dayAndDate array
             count_tentatives = new Array(dayAndDate.length);
+
+            // format program-date to dd Month yyyy
+            var date = new Date(programDate);
+            var programDate = date.getDate() + " " + monthNames[date.getMonth()] + " " + date.getFullYear();    
+             $("#program_date").val(programDate);
 
             // clear tentative-inputs div
             $("#tentative-inputs").empty();
@@ -335,7 +415,7 @@
                     <div class="mb-3">
                         <label for="tentatives_day_0">`+dayAndDate[0]+`</label>
                         <div class="d-flex m-2" id="tentatives_day_0_` + count_tentatives[0] + `">
-                            <input type="text" class="form-control me-2" placeholder="Masa" id="timepicker" name="timepicker_day_0_` + count_tentatives[0] + `" required/>
+                            <input type="text" class="form-control me-2" placeholder="Masa (format 24 jam, contoh: 08:30)" id="timepicker" name="timepicker_day_0_` + count_tentatives[0] + `" required/>
                             <input type="text" class="form-control" placeholder="Perkara" id="tentatives-day-0-` + count_tentatives[0] + `" name="tentatives_day_0_` + count_tentatives[0] + `" required>
                             <button type="button" class="btn btn-outline-danger w-25 h-100 px-2 ms-4" onclick="removeInputField('tentatives_day_0_` + count_tentatives[0] + `')" disabled>X</button>
                         </div>
@@ -358,6 +438,15 @@
 
             var dayAndDate = getDaysAndDate(programDateStart, programDateEnd, duration);
 
+            // format program-date-start to dd Month yyyy
+            var programDateStart = programDateStart.getDate() + " " + monthNames[programDateStart.getMonth()] + " " + programDateStart.getFullYear();
+
+            // format program-date-end to dd Month yyyy
+            var programDateEnd = programDateEnd.getDate() + " " + monthNames[programDateEnd.getMonth()] + " " + programDateEnd.getFullYear();
+
+            // change value of #program_date
+            $("#program_date").val(programDateStart + " sehingga " + programDateEnd);
+
             count_tentatives = new Array(dayAndDate.length);
 
             // clear tentative-inputs div
@@ -375,7 +464,7 @@
                         <div class="mb-3">
                             <label for="tentatives_day_` + i + `">`+dayAndDate[i]+`</label>
                             <div class="d-flex m-2" id="tentatives_day_` + i + `_` + count_tentatives[i] + `">
-                                <input type="text" class="form-control me-2" placeholder="Masa" id="timepicker" name="timepicker_day_` + i + `_` + count_tentatives[i] + `" required/>
+                                <input type="text" class="form-control me-2" placeholder="Masa (format 24 jam, contoh: 08:30)" id="timepicker" name="timepicker_day_` + i + `_` + count_tentatives[i] + `" required/>
                                 <input type="text" class="form-control" placeholder="Perkara" id="tentatives-day-` + i + `-` + count_tentatives[i] + `" name="tentatives_day_` + i + `_` + count_tentatives[i] + `" required>
                                 <button type="button" class="btn btn-outline-danger w-25 h-100 px-2 ms-4" onclick="removeInputField('tentatives_day_` + i + `_` + count_tentatives[i] + `')" disabled>X</button>
                             </div>
@@ -496,6 +585,40 @@
             clone.find("button").attr("onclick","removeInputField('background_"+count_row_background+"')");
             clone.find("button").attr("disabled",false);
         });
+
+        // add new input for objective
+        $('#btn_add_objective').on('click',function(){
+            count_row_objective++;
+            var clone = $("#objective_1").clone().insertBefore("#objective-line");
+
+            console.log(count_row_objective);
+
+            clone.attr("id","objective_"+count_row_objective);
+            clone.find("textarea").val("");
+            clone.find("textarea").attr("id","objective_"+count_row_objective);
+            clone.find("textarea").attr("name","paperwork_objective[]");
+
+            clone.find("button").attr("id","btn_remove_objective_"+count_row_objective);
+            clone.find("button").attr("onclick","removeInputField('objective_"+count_row_objective+"')");
+            clone.find("button").attr("disabled",false);
+        });
+
+        // add new input for targetGroup
+        $('#btn_add_targetGroup').on('click',function(){
+            count_row_targetGroup++;
+            var clone = $("#targetGroup_1").clone().insertBefore("#targetGroup-line");
+
+            console.log(count_row_targetGroup);
+
+            clone.attr("id","targetGroup_"+count_row_targetGroup);
+            clone.find("input").val("");
+            clone.find("input").attr("id","targetGroup_"+count_row_targetGroup);
+            clone.find("input").attr("name","paperwork_targetGroup[]");
+
+            clone.find("button").attr("id","btn_remove_targetGroup_"+count_row_targetGroup);
+            clone.find("button").attr("onclick","removeInputField('targetGroup_"+count_row_targetGroup+"')");
+            clone.find("button").attr("disabled",false);
+        });
     });
 
     // post to route('paperwork-generator.save', $paperwork->id) when click #btn-save
@@ -536,5 +659,11 @@
         // get id from {{ $paperwork->id}}
         // var id = {{$paperwork->id}};
     });
+
+    window.setTimeout(function() {
+        $(".alert").fadeTo(500, 0).slideUp(500, function(){
+            $(this).remove(); 
+        });
+    }, 4000);
 
 </script>

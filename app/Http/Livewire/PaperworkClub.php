@@ -96,6 +96,7 @@ class PaperworkClub extends Component
             'isGenerated' => $isGenerated,
             'filePath' => $path,
             'clubId' => $clubId,
+            'status' => 0,
             'paperworkDetailsId' => $paperworkDetailsId
         ]);
 

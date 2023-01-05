@@ -84,10 +84,6 @@
             <?php $numbering = 1; ?>
             @foreach ($paperworks as $paperwork)
                 <?php
-                    // format date to display DD Month YYYY format and in Malaysia timezone (UTC+8) and Malay Language (ms)
-                    // $date = $paperwork->updated_at;
-                    // $formatted_date = $date->timezone('Asia/Kuala_Lumpur')->formatLocalized('%d %B %Y');
-
                     // format date to DD/MM/YYYY format and in Malaysia timezone (UTC+8)
                     $date = $paperwork->updated_at;
                     $formatted_date = $date->timezone('Asia/Kuala_Lumpur')->format('d/m/Y');
@@ -97,8 +93,13 @@
                     <td><span class="fw-normal">{{ $paperwork->name }}</span></td>
                     <td><span class="fw-normal">{{ $formatted_date }}</span></td>
                     <td><span class="fw-normal d-flex align-items-center">-</span></td>
-                    {{-- <td><span class="fw-normal text-success">Diluluskan</span></td> --}}
-                    <td><span class="fw-normal text-danger">Draf</span></td>
+                    <?php if($paperwork->status == 0) { ?>
+                        <td><span class="fw-normal text-danger">Draf</span></td>
+                    <?php } else if($paperwork->status == 1) { ?>
+                        <td><span class="fw-normal text-warning">Dalam proses</span></td>
+                    <?php } else if($paperwork->status == 2) { ?>
+                        <td><span class="fw-normal text-success">Diluluskan</span></td>
+                    <?php } ?>
                     <td>
                         <div class="btn-group .z-index-master">
                             <a href="{{ route('paperwork-club-status', $paperwork->id) }}" type="button" class="btn btn-info" data-bs-toggle="tooltip"
@@ -111,7 +112,7 @@
                                 <li><a class="dropdown-item" href="#">Sunting</a></li>
                                 {{-- if status is draft, show delete option. else, hidden --}}
                                 <li><hr class="dropdown-divider"></li>
-                                <li class="bg-danger"><a data-bs-target="#modal-deletePaperwork{{ $paperwork->id }}" id="btn-deletePaperwork" value="{{$paperwork->id}}" data-bs-toggle="modal">Delete</a></li>
+                                <li class="dropdown-item bg-danger"><a data-bs-target="#modal-deletePaperwork{{ $paperwork->id }}" id="btn-deletePaperwork" value="{{$paperwork->id}}" data-bs-toggle="modal">Padam</a></li>
                                 {{-- <li class="bg-danger"><button class="dropdown-item text-white" id="btn-deletePaperwork-{{ $paperwork->id }}" data-bs-toggle="modal" data-bs-target="#modal-deletePaperwork{{ $paperwork->id }}" value="{{ $paperwork->id }}">Padam</button></li> --}}
                             </ul>
                         </div>
@@ -189,7 +190,9 @@
 </script>
 
 {{-- modal confirmation to delete paperwork --}}
-<div class="modal fade" id="modal-deletePaperwork{{ $paperwork->id }}" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+
+{{-- <?php if($paperwork != null) { ?> --}}
+{{-- <div class="modal fade" id="modal-deletePaperwork{{ $paperwork->id }}" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -199,9 +202,7 @@
             <div class="modal-body pb-0">
                 <p>Adakah anda pasti untuk memadam kertas kerja ini?</p>
             </div>
-            {{--  --}}
             <div class="modal-footer">
-                
                 <form action="{{ route('paperwork.delete', $paperwork->id) }}" method="POST">
                     @csrf
                     @method('DELETE')
@@ -211,7 +212,10 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
+{{-- <?php } ?> --}}
+
+{{-- javascript for modal add new paperwork --}}
 
 <script>
     // Javascript for modal add new paperwork

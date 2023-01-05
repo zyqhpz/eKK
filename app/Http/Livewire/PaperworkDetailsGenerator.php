@@ -20,15 +20,58 @@ class PaperworkDetailsGenerator extends Component
         $paperwork = Paperwork::find($id);
         $paperworkDetails = PaperworkDetails::find($paperwork->paperworkDetailsId);
 
+        if ($paperwork->isOneDay == null) {
+            $paperwork->isOneDay = 1;
+        }
+
+        $rows = array(
+            'background' => 0,
+            'objective' => 0,
+            'targetGroup' => 0
+        );
         
-        // convert string to json
+        // background - convert string to json
         if ( $paperworkDetails->background != null) {
             $paperworkDetails->background = json_decode($paperworkDetails->background);
+
+            // get how many rows
+            $rows['background'] = count($paperworkDetails->background);
         } else {
             $paperworkDetails->background = null;
         }
 
-        return view('livewire.paperwork-details-generator', compact('paperwork', 'paperworkDetails'));
+        // objective - convert string to json
+        if ( $paperworkDetails->objective != null) {
+            $paperworkDetails->objective = json_decode($paperworkDetails->objective);
+
+            // get how many rows
+            $rows['objective'] = count($paperworkDetails->objective);
+        } else {
+            $paperworkDetails->objective = null;
+        }
+
+        // targetGroup - convert string to json
+        if ( $paperworkDetails->targetGroup != null) {
+            $paperworkDetails->targetGroup = json_decode($paperworkDetails->targetGroup);
+
+            // get how many rows
+            $rows['targetGroup'] = count($paperworkDetails->targetGroup);
+        } else {
+            $paperworkDetails->targetGroup = null;
+        }
+
+        // dateVenueTime - convert string to json
+        if ( $paperworkDetails->dateVenueTime != null) {
+            $paperworkDetails->dateVenueTime = json_decode($paperworkDetails->dateVenueTime);
+        } else {
+            $paperworkDetails->dateVenueTime = null;
+        }
+
+        $rows = (object) $rows;
+
+        // dd($rows);
+
+        return view('livewire.paperwork-details-generator', compact('paperwork', 'paperworkDetails', 'rows'));
     }
 
     public function update(Request $request, $id)
@@ -54,18 +97,16 @@ class PaperworkDetailsGenerator extends Component
 
         if ($request->paperwork_isOneDay == 1) {
             $paperwork->programDate = $request->paperwork_programDate ?? $paperwork->programDate;
-            $paperwork->startDate = NULL;
-            $paperwork->endDate = NULL;
+            $paperwork->programDateStart = null;
+            $paperwork->programDateEnd = null;
         } else {
-            $paperwork->programDate = NULL;
-            $paperwork->startDate = $request->paperwork_startDate ?? $paperwork->startDate;
-            $paperwork->endDate = $request->paperwork_endDate ?? $paperwork->endDate;
+            $paperwork->programDateStart = $request->paperwork_programDateStart ?? $paperwork->programDateStart;
+            $paperwork->programDateEnd = $request->paperwork_programDateEnd ?? $paperwork->programDateEnd;
+            $paperwork->programDate = null;
         }
 
-        // $paperwork->programDate = $request->paperwork_programDate ?? $paperwork->programDate;
-        // $paperwork->startDate = $request->paperwork_startDate ?? $paperwork->startDate;
-        // $paperwork->endDate = $request->paperwork_endDate ?? $paperwork->endDate;
-        // $paperwork->venue = $request->paperwork_venue ?? $paperwork->venue;
+        $paperwork->venue = $request->paperwork_venue ?? $paperwork->venue;
+        $paperwork->collaborations = $request->paperwork_collaborations ?? $paperwork->collaborations;
         $paperwork->status = $request->paperwork_status ?? $paperwork->status;
         $paperwork->currentProgressState = $request->paperwork_currentProgressState ?? $paperwork->currentProgressState;
         $paperwork->progressStates = $request->paperwork_progressStates ?? $paperwork->progressStates;
@@ -74,17 +115,29 @@ class PaperworkDetailsGenerator extends Component
 
         // update paperoworkDetails
         $paperworkDetails->introduction = $request->paperwork_introduction ?? $paperworkDetails->introduction;
-        $paperworkDetails->objective = $request->paperwork_objective ?? $paperworkDetails->objective;
-        $paperworkDetails->background = $request->paperwork_backgrounds ?? $paperworkDetails->background;
+        
+        // dynamic inputs
+        $paperworkDetails->background = $request->paperwork_background ?? null;
+        $paperworkDetails->background = json_encode($paperworkDetails->background);
+
+        $paperworkDetails->objective = $request->paperwork_objective ?? null;
+        $paperworkDetails->objective = json_encode($paperworkDetails->objective);
+
+        $paperworkDetails->targetGroup = $request->paperwork_targetGroup ?? null;
+        $paperworkDetails->targetGroup = json_encode($paperworkDetails->targetGroup);
+
         $paperworkDetails->learningOutcome = $request->paperwork_learningOutcome ?? $paperworkDetails->learningOutcome;
         $paperworkDetails->theme = $request->paperwork_theme ?? $paperworkDetails->theme;
         $paperworkDetails->organizedBy = $request->paperwork_organizedBy ?? $paperworkDetails->organizedBy;
-        $paperworkDetails->targetGroup = $request->paperwork_targetGroup ?? $paperworkDetails->targetGroup;
+
         $paperworkDetails->dateVenueTime = $request->paperwork_dateVenueTime ?? $paperworkDetails->dateVenueTime;
-        $paperworkDetails->tentativeId = $request->paperwork_tentativeId ?? $paperworkDetails->tentativeId;
-        $paperworkDetails->financialImplicationId = $request->paperwork_financialImplicationId ?? $paperworkDetails->financialImplicationId;
-        $paperwork->programCommittee = $request->paperwork_programCommittee ?? $paperworkDetails->programCommittee;
-        $paperwork->closing = $request->paperwork_closing ?? $paperworkDetails->closing;
+        $paperworkDetails->dateVenueTime = json_encode($paperworkDetails->dateVenueTime);
+
+        $paperworkDetails->tentativeFirebaseId = $request->paperwork_tentativeFirebaseId ?? $paperworkDetails->tentativeFirebaseId;
+        $paperworkDetails->financialImplicationFirebaseId = $request->paperwork_financialImplicationFirebaseId ?? $paperworkDetails->financialImplicationFirebaseId;
+        $paperworkDetails->programCommittee = $request->paperwork_programCommittee ?? $paperworkDetails->programCommittee;
+        $paperworkDetails->signature = $request->paperwork_signature ?? $paperworkDetails->signature;
+        $paperworkDetails->closing = $request->paperwork_closing ?? $paperworkDetails->closing;
 
         $paperworkDetails->save();
 

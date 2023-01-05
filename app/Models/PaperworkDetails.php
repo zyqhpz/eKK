@@ -17,10 +17,11 @@ class PaperworkDetails extends Model
         'organizedBy',
         'targetGroup',
         'dateVenueTime',
-        'tentativeId',
-        'financialImplicationId',
-        'programCommitee',
+        'tentativeFirebaseId',
+        'financialImplicationFirebaseId',
+        'programCommittee',
         'closing',
+        'signature',
         'created_at',
         'updated_at'
     ];
