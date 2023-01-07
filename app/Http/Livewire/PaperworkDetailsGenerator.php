@@ -20,7 +20,11 @@ class PaperworkDetailsGenerator extends Component
         $paperwork = Paperwork::find($id);
         $paperworkDetails = PaperworkDetails::find($paperwork->paperworkDetailsId);
 
-        if ($paperwork->isOneDay == null) {
+        if ($paperwork->isOneDay == 0) {
+            $paperwork->isOneDay = 0;
+        } else if ( $paperwork->isOneDay == 1) {
+            $paperwork->isOneDay = 1;
+        } else {
             $paperwork->isOneDay = 1;
         }
 
@@ -60,12 +64,12 @@ class PaperworkDetailsGenerator extends Component
             $paperworkDetails->targetGroup = null;
         }
 
-        // dateVenueTime - convert string to json
-        if ( $paperworkDetails->dateVenueTime != null) {
-            $paperworkDetails->dateVenueTime = json_decode($paperworkDetails->dateVenueTime);
-        } else {
-            $paperworkDetails->dateVenueTime = null;
-        }
+        // // dateVenueTime - convert string to json
+        // if ( $paperworkDetails->dateVenueTime != null) {
+        //     $paperworkDetails->dateVenueTime = json_decode($paperworkDetails->dateVenueTime);
+        // } else {
+        //     $paperworkDetails->dateVenueTime = null;
+        // }
 
         $rows = (object) $rows;
 
@@ -90,23 +94,24 @@ class PaperworkDetailsGenerator extends Component
         $paperwork = Paperwork::find($id);
         $paperworkDetails = PaperworkDetails::find($paperwork->paperworkDetailsId);
 
-        $paperwork->name = $request->paperwork_name ?? $paperwork->name;
+        $paperwork->name = $request->program_name = $paperwork->name;
         $paperwork->isGenerated = $request->paperwork_isGenerated ?? $paperwork->isGenerated;
         $paperwork->filePath = $request->paperwork_file ?? $paperwork->filePath;
-        $paperwork->isOneDay = $request->paperwork_isOneDay ?? $paperwork->isOneDay;
 
-        if ($request->paperwork_isOneDay == 1) {
-            $paperwork->programDate = $request->paperwork_programDate ?? $paperwork->programDate;
+        if ($request->paperwork_isOneDay == 'on') {
+            $paperwork->isOneDay = 1;
+            $paperwork->programDate = $request->paperwork_programDate;
             $paperwork->programDateStart = null;
             $paperwork->programDateEnd = null;
         } else {
-            $paperwork->programDateStart = $request->paperwork_programDateStart ?? $paperwork->programDateStart;
-            $paperwork->programDateEnd = $request->paperwork_programDateEnd ?? $paperwork->programDateEnd;
+            $paperwork->isOneDay = 0;
+            $paperwork->programDateStart = $request->paperwork_programDateStart;
+            $paperwork->programDateEnd = $request->paperwork_programDateEnd;
             $paperwork->programDate = null;
         }
 
-        $paperwork->venue = $request->paperwork_venue ?? $paperwork->venue;
-        $paperwork->collaborations = $request->paperwork_collaborations ?? $paperwork->collaborations;
+        $paperwork->venue = $request->paperwork_venue ?? null;
+        $paperwork->collaborations = $request->paperwork_collaborations ?? null;
         $paperwork->status = $request->paperwork_status ?? $paperwork->status;
         $paperwork->currentProgressState = $request->paperwork_currentProgressState ?? $paperwork->currentProgressState;
         $paperwork->progressStates = $request->paperwork_progressStates ?? $paperwork->progressStates;
@@ -126,12 +131,11 @@ class PaperworkDetailsGenerator extends Component
         $paperworkDetails->targetGroup = $request->paperwork_targetGroup ?? null;
         $paperworkDetails->targetGroup = json_encode($paperworkDetails->targetGroup);
 
-        $paperworkDetails->learningOutcome = $request->paperwork_learningOutcome ?? $paperworkDetails->learningOutcome;
-        $paperworkDetails->theme = $request->paperwork_theme ?? $paperworkDetails->theme;
-        $paperworkDetails->organizedBy = $request->paperwork_organizedBy ?? $paperworkDetails->organizedBy;
+        $paperworkDetails->learningOutcome = $request->paperwork_learningOutcome ?? null;
+        $paperworkDetails->theme = $request->paperwork_theme ?? null;
+        $paperworkDetails->organizedBy = $request->paperwork_organizedBy ?? null;
 
-        $paperworkDetails->dateVenueTime = $request->paperwork_dateVenueTime ?? $paperworkDetails->dateVenueTime;
-        $paperworkDetails->dateVenueTime = json_encode($paperworkDetails->dateVenueTime);
+        $paperworkDetails->dateVenueTime = $request->paperwork_dateVenueTime ?? null;
 
         $paperworkDetails->tentativeFirebaseId = $request->paperwork_tentativeFirebaseId ?? $paperworkDetails->tentativeFirebaseId;
         $paperworkDetails->financialImplicationFirebaseId = $request->paperwork_financialImplicationFirebaseId ?? $paperworkDetails->financialImplicationFirebaseId;

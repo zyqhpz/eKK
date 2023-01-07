@@ -97,6 +97,7 @@ class PaperworkClub extends Component
             'filePath' => $path,
             'clubId' => $clubId,
             'status' => 0,
+            'isOneDay' => 1,
             'paperworkDetailsId' => $paperworkDetailsId
         ]);
 

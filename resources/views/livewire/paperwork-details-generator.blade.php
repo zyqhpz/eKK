@@ -45,11 +45,7 @@
                             <div class="col-md-6 mb-3">
                                 <label for="program-date-type">Program satu hari?</label>
                                 <div class="form-check form-switch">
-                                    @if ($paperwork->isOneDay == 1)
-                                        <input class="form-check-input" type="checkbox" id="program-date-type" name="paperwork_isOneDay" value=1 checked>
-                                    @else
-                                        <input class="form-check-input" type="checkbox" id="program-date-type" name="paperwork_isOneDay" value=0>
-                                    @endif
+                                    <input class="form-check-input" type="checkbox" id="program-date-type" name="paperwork_isOneDay">
                                 </div>
                             </div>
                         </div>
@@ -75,7 +71,8 @@
                                 <div class="form-group">
                                     <label for="program-place">Tempat program</label>
                                     <input  class="form-control" id="program-place" type="text" name="paperwork_venue"
-                                        placeholder="Contoh: Dewan Auditorium FKP">
+                                        placeholder="Contoh: Dewan Auditorium FKP"
+                                        @if($paperwork->venue != null) { value="{{ $paperwork->venue }}"} @endif>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
@@ -177,7 +174,17 @@
                         <div class="row">
                             <div class="mb-3">
                                 <label for="hasil-pembelajaran">Hasil Pembelajaran</label>
-                                <textarea class="form-control" id="hasil-pembelajaran" name="paperwork_learningOutcome" required></textarea>
+                                <select class="form-select" aria-label="Default select example" id="hasil-pembelajaran" name="paperwork_learningOutcome">
+                                    <option id="hasil-pembelajaran-0" value="0" selected hidden>Pilih hasil pembelajaran</option>
+                                    <option id="hasil-pembelajaran-1" value="1">Pengurusan & Kepimpinan</option>
+                                    <option id="hasil-pembelajaran-2" value="2">Teknikal & Inovasi</option>
+                                    <option id="hasil-pembelajaran-3" value="3">Sukarelawan</option>
+                                    <option id="hasil-pembelajaran-4" value="4">Akademik & Kerjaya</option>
+                                    <option id="hasil-pembelajaran-5" value="5">Etika & Kerohanian</option>
+                                    <option id="hasil-pembelajaran-6" value="6">Budaya & Entiti Nasional</option>
+                                    <option id="hasil-pembelajaran-7" value="7">Keusahawanan</option>
+                                    <option id="hasil-pembelajaran-8" value="8">Sukan dan Rekreasi</option>
+                                </select>
                             </div>
                         </div>
                         <div class="row">
@@ -226,26 +233,35 @@
                                     <label for="program_date">Tarikh</label>
                                     <input type="text" class="form-control" id="program_date"
                                     value="<?php if ($paperwork->programDate != null) {
+                                        // format date to dd/mm/yyyy
+                                        $date = date_create($paperwork->programDate);
+                                        $paperwork->programDate = date_format($date, "d/m/Y");
                                         echo $paperwork->programDate;
                                     } else if ($paperwork->programDateStart != null && $paperwork->programDateEnd != null) { 
-                                        echo $paperwork->programDateStart . ` - ` . $paperwork->programDateEnd;
+                                        // format date to dd/mm/yyyy
+                                        $date = date_create($paperwork->programDateStart);
+                                        $paperwork->programDateStart = date_format($date, "d/m/Y");
+                                        $date = date_create($paperwork->programDateEnd);
+                                        $paperwork->programDateEnd = date_format($date, "d/m/Y");
+                                        echo $paperwork->programDateStart . " - " . $paperwork->programDateEnd;
                                     } else {
                                         echo "Sila masukkan tarikh program pada bahagian Maklumat Asas";
                                     }  ?>" disabled />
                                 </div>
                                 <div class="mb-3 d-flex">
                                     <label for="program_location">Tempat</label>
-                                    <input type="text" class="form-control" id="program_location" name="paperwork_dateVenueTime[]"
-                                    value="<?php if ($paperworkDetails->dateVenueTime != null) {
-                                        // get the first element of the array
-                                        echo $paperworkDetails->dateVenueTime[0];
-                                    }?>" />
+                                    <input type="text" class="form-control" id="program_location"
+                                    value="<?php if ($paperwork->venue != null) {
+                                        echo $paperwork->venue;
+                                    } else {
+                                        echo "Sila masukkan tempat program pada bahagian Maklumat Asas";
+                                    }  ?>" disabled />
                                 </div>
                                 <div class="mb-3 d-flex">
                                     <label for="program_time">Masa</label>
-                                    <input type="text" class="form-control" id="program_time" name="paperwork_dateVenueTime[]"
+                                    <input type="text" class="form-control" id="program_time" name="paperwork_dateVenueTime" placeholder="Contoh: 9:00 pagi - 5:00 petang"
                                     value="<?php if ($paperworkDetails->dateVenueTime != null) {
-                                        echo $paperworkDetails->dateVenueTime[1];
+                                        echo $paperworkDetails->dateVenueTime;
                                     }?>" />
                                 </div>
                             </div>
@@ -255,7 +271,7 @@
                     <div class="tab-pane fade" id="nav-tentative" role="tabpanel" aria-labelledby="nav-tentative-tab">
                         <h1>Tentatif Program</h1>
                         {{-- if program-date-start input and program-date-end input are blank, show a message to user--}}
-                        <p class="text-danger">Sila isikan tarikh program terlebih dahulu pada <strong>Maklumat Asas</strong></p>
+                        <p class="text-danger" id="warning-dateNotFilled">Sila isikan tarikh program terlebih dahulu pada <strong>Maklumat Asas</strong></p>
                         <div id="tentative">
                             <div id="tentative-inputs">
 
@@ -299,7 +315,7 @@
 </div>
 <script>
 
-    var isOneDayProgram = true;
+    var isOneDayProgram;
     // var program-date-start = $("#program-date-start").val();
     var programDate;
     var programDateStart;
@@ -317,7 +333,28 @@
 
     var dayAndDate = [];
 
+    var monthNames = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
+    var days = ["Ahad", "Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu"];
+
     $(document).ready(function() {
+        
+        // set isOneDay to false based on $paperwork->isOneDay and call onChange of #program-date-type
+        if ({{ $paperwork->isOneDay }} == 1) {
+            isOneDayProgram = true;
+            $("#program-date-type").prop('checked', true);
+            $("#program-date-type").change();
+
+        } else {
+            isOneDayProgram = false;
+            $("#program-date-type").prop('checked', false);
+            $("#program-date-type").change();
+        }
+
+        if ({{ $paperworkDetails->learningOutcome }} != null) {
+            setSelectedLearningOutcome({{ $paperworkDetails->learningOutcome }});
+            console.log("learning outcome: " + {{ $paperworkDetails->learningOutcome }});
+        }
+
         $("#program-date-start").change(checkDates);
         $("#program-date-start").change(addInputFieldTentative);
         $("#program-date-end").change(checkDates);
@@ -347,11 +384,19 @@
         if (field_id.includes("background")) {
             count_row_background--;
         }
+
+        // if field_id has objective, decrement count_row_objective
+        if (field_id.includes("objective")) {
+            count_row_objective--;
+        }
+
+        // if field_id has targetGroup, decrement count_row_targetGroup
+        if (field_id.includes("targetGroup")) {
+            count_row_targetGroup--;
+        }
     }
 
     function getDayAndDate(date) {
-        var days = ["Ahad", "Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu"];
-        var monthNames = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
         var date = new Date(date);
         var dateArray = [];
         var day = date.getDay();
@@ -365,8 +410,6 @@
     }
 
     function getDaysAndDate(programDateStart, programDateEnd, duration) {
-        var days = ["Ahad", "Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu"];
-        var monthNames = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
         var dateStart = new Date(programDateStart);
         var dateEnd = new Date(programDateEnd);
         var dateArray = [];
@@ -388,7 +431,8 @@
 
         $("#tentative").show();
 
-        var monthNames = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
+        // hide #warning-dateNotFilled
+        $("#warning-dateNotFilled").hide();
 
         if (isOneDayProgram) {
 
@@ -549,9 +593,7 @@
             $(".date-start").removeClass("d-block");
             $(".date-end").removeClass("d-block");
 
-            // set value of #program-date-type to 1
-            $("#program-date-type").val(1);
-
+            // $("#program-date").change(addInputFieldTentative);
             isOneDayProgram = true;
         } else {
             $(".date-day").addClass("d-none");
@@ -560,13 +602,21 @@
             $(".date-day").removeClass("d-block");
             $(".date-start").removeClass("d-none");
             $(".date-end").removeClass("d-none");
-
-            // set value of #program-date-type to 0
-            $("#program-date-type").val(0);
-
             isOneDayProgram = false;
         }
+
+        if ($("#program-date-start").val() == "" || $("#program-date-end").val() == "") {
+            $("#tentative").hide();
+        } else {
+            addInputFieldTentative();
+        }
+
     });
+
+    // set selected learningOutcome if $paperworkDetails->learningOutcome is not null
+    function setSelectedLearningOutcome(value) {
+        $("#hasil-pembelajaran-" + value).prop("selected", true);
+    }
 
     $(function() {
         // add new input for background
