@@ -137,7 +137,58 @@ class PaperworkDetailsGenerator extends Component
 
         $paperworkDetails->dateVenueTime = $request->paperwork_dateVenueTime ?? null;
 
-        $paperworkDetails->tentativeFirebaseId = $request->paperwork_tentativeFirebaseId ?? $paperworkDetails->tentativeFirebaseId;
+        // Tentative Program
+        
+        $tentatives = null;
+
+        if ($request->program_duration != null) {
+            // split $request->program_tentatives string to int array by comma and count the length
+            $program_itemPerDay = explode(',', $request->program_tentatives); // num items per day
+            $program_duration = count(explode(',', $request->program_tentatives)); // num days
+            
+            $tentatives = array(
+                'duration' => $program_duration,
+                'timeAndItem' => array()
+            );
+
+            $k=0;
+
+            $totalItems = count($request->tentatives_time);
+
+            for ($i=0; $i < $program_duration; $i++) {
+                $tentatives['timeAndItem'][$i] = $program_itemPerDay[$i];
+            }
+
+            $items = array();
+
+            // tentative - data format v1
+            // for ($i=0; $i < $program_duration; $i++) {
+            //     for ($j=0; $j < $program_itemPerDay[$i]; $j++) {
+            //         $items[$j] = array(
+            //             'time' => $request->tentatives_time[$k],
+            //             'item' => $request->tentatives_item[$k]
+            //         );
+            //         $k++;
+            //     }
+            //     $tentatives['timeAndItem'][$i] = $items;
+            // }
+
+            // tentative - data format v2
+            for ($i=0; $i < $program_duration; $i++) {
+                for ($j=0; $j < $program_itemPerDay[$i]; $j++) {
+                    $items[$j] = array(
+                        $request->tentatives_time[$k] => $request->tentatives_item[$k]
+                    );
+                    $k++;
+                }
+                $tentatives['timeAndItem'][$i] = $items;
+            }
+            $paperworkDetails->tentativeFirebaseId = json_encode($tentatives);
+        } else {
+            $paperworkDetails->tentativeFirebaseId = null;
+        }
+        
+        // $paperworkDetails->tentativeFirebaseId = $request->paperwork_tentativeFirebaseId ?? $paperworkDetails->tentativeFirebaseId;
         $paperworkDetails->financialImplicationFirebaseId = $request->paperwork_financialImplicationFirebaseId ?? $paperworkDetails->financialImplicationFirebaseId;
         $paperworkDetails->programCommittee = $request->paperwork_programCommittee ?? $paperworkDetails->programCommittee;
         $paperworkDetails->signature = $request->paperwork_signature ?? $paperworkDetails->signature;

@@ -273,8 +273,9 @@
                         {{-- if program-date-start input and program-date-end input are blank, show a message to user--}}
                         <p class="text-danger" id="warning-dateNotFilled">Sila isikan tarikh program terlebih dahulu pada <strong>Maklumat Asas</strong></p>
                         <div id="tentative">
+                            <input type="text" name="program_duration" id="program-duration" hidden>
+                            <input type="text" name="program_tentatives" id="program-tentatives-item" hidden>
                             <div id="tentative-inputs">
-
                             </div>
                         </div>
                     </div>
@@ -295,9 +296,44 @@
                     {{-- TANDATANGAN --}}
                     <div class="tab-pane fade" id="nav-signature" role="tabpanel" aria-labelledby="nav-signature-tab">
                         <h1>Tandatangan</h1>
-                        <p>Exercitation photo booth stumptown tote bag Banksy, elit small batch freegan sed. Craft beer elit seitan exercitation, photo booth et 8-bit kale chips proident chillwave deep v laborum. Aliquip veniam delectus, Marfa eiusmod
-                            Pinterest in do umami readymade swag.</p>
-                        <p>Day handsome addition horrible sensible goodness two contempt. Evening for married his account removal. Estimable me disposing of be moonlight cordially curiosity.</p>
+                        <div class="row">
+                            <h5>Maklumat Penyedia Kertas Kerja</h5>
+                            <div class="col-md-6 mb-3">
+                                <label for="program-signature-preparedBy">Nama Penuh</label>
+                                <input class="form-control" id="program-signature-preparedBy" type="text" name="program_signature[]" placeholder="Nama pengarah program atau setiausaha">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="program-signature-preparedBy">Jawatan</label>
+                                <input class="form-control" id="program-signature-preparedBy" type="text" name="program_signature[]" placeholder="Jawatan dalam program atau kelab">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="program-signature-preparedBy">No. H/P</label>
+                                <input class="form-control" id="program-signature-preparedBy" type="text" name="program_signature[]" placeholder="No. H/P">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="program-signature-preparedBy">Emel</label>
+                                <input class="form-control" id="program-signature-preparedBy" type="text" name="program_signature[]" placeholder="Alamat emel">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <h5>Maklumat Presiden Kelab</h5>
+                            <div class="col-md-6 mb-3">
+                                <label for="program-signature-preparedBy">Nama Penuh</label>
+                                <input class="form-control" id="program-signature-preparedBy" type="text" name="program_signature[]" placeholder="Nama presiden kelab">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="program-signature-preparedBy">Jawatan</label>
+                                <input class="form-control" id="program-signature-preparedBy" type="text" name="program_signature[]" placeholder="Jawatan dalam program atau kelab" value="Presiden" disabled>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="program-signature-preparedBy">No. H/P</label>
+                                <input class="form-control" id="program-signature-preparedBy" type="text" name="program_signature[]" placeholder="No. H/P">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="program-signature-preparedBy">Emel</label>
+                                <input class="form-control" id="program-signature-preparedBy" type="text" name="program_signature[]" placeholder="Alamat emel">
+                            </div>
+                        </div>
                     </div>
                     <div class="flex mt-3">
                         <input type="submit" class="btn btn-primary mt-2 animate-up-2" value="Simpan"/>
@@ -331,6 +367,9 @@
 
     var count_row_tentative = 1;
 
+    var duration;
+    var timeAndItems = [];
+
     var dayAndDate = [];
 
     var monthNames = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
@@ -352,16 +391,15 @@
 
         if ({{ $paperworkDetails->learningOutcome }} != null) {
             setSelectedLearningOutcome({{ $paperworkDetails->learningOutcome }});
-            console.log("learning outcome: " + {{ $paperworkDetails->learningOutcome }});
         }
 
         $("#program-date-start").change(checkDates);
-        $("#program-date-start").change(addInputFieldTentative);
+        $("#program-date-start").change(createInputFieldTentative);
         $("#program-date-end").change(checkDates);
-        $("#program-date-end").change(addInputFieldTentative);
+        $("#program-date-end").change(createInputFieldTentative);
 
-        // if program-date is changed, call addInputFieldTentative()
-        $("#program-date").change(addInputFieldTentative);
+        // if program-date is changed, call createInputFieldTentative()
+        $("#program-date").change(createInputFieldTentative);
 
         // disable remove button for background 1
         $('#btn_remove_background_1').prop('disabled', true);
@@ -376,7 +414,7 @@
 
     });
 
-    // remove input for background
+    // remove input field
     function removeInputField(field_id){
         $("#" + field_id).remove();
         
@@ -393,6 +431,19 @@
         // if field_id has targetGroup, decrement count_row_targetGroup
         if (field_id.includes("targetGroup")) {
             count_row_targetGroup--;
+        }
+
+        // if field_id has tentative, decrement count_row_tentative
+        if (field_id.includes("tentative")) {
+            count_row_tentative--;
+        }
+
+        // if field_id has format like tentatives_day_X_Y, get value of X and Y
+        if (field_id.includes("tentatives_day")) {
+            var split = field_id.split("_");
+            var day = split[2];
+            timeAndItems[day]--;
+            updateTimeAndItemsValue();
         }
     }
 
@@ -426,7 +477,7 @@
     }
 
     // add input fields in tentative div
-    function addInputFieldTentative() {
+    function createInputFieldTentative() {
         // get the value of program-date
 
         $("#tentative").show();
@@ -447,20 +498,33 @@
             // format program-date to dd Month yyyy
             var date = new Date(programDate);
             var programDate = date.getDate() + " " + monthNames[date.getMonth()] + " " + date.getFullYear();    
-             $("#program_date").val(programDate);
+            $("#program_date").val(programDate);
+
+            duration = 1;
 
             // clear tentative-inputs div
             $("#tentative-inputs").empty();
 
             // append input fields after tentative-inputs div based on dayAndDate array
             count_tentatives[0] = 0;
+
+            // push duration to timeAndItems array
+            timeAndItems = new Array(duration);
+
+            // set 0s to timeAndItems array
+            for (var i = 0; i < duration; i++) {
+                timeAndItems[i] = 1;
+            }
+
+            updateTimeAndItemsValue();
+            
             $("#tentative-inputs").append(
                 `<div class="row">
                     <div class="mb-3">
                         <label for="tentatives_day_0">`+dayAndDate[0]+`</label>
                         <div class="d-flex m-2" id="tentatives_day_0_` + count_tentatives[0] + `">
-                            <input type="text" class="form-control me-2" placeholder="Masa (format 24 jam, contoh: 08:30)" id="timepicker" name="timepicker_day_0_` + count_tentatives[0] + `" required/>
-                            <input type="text" class="form-control" placeholder="Perkara" id="tentatives-day-0-` + count_tentatives[0] + `" name="tentatives_day_0_` + count_tentatives[0] + `" required>
+                            <input type="text" class="form-control me-2" placeholder="Masa (format 24 jam, contoh: 08:30)" id="timepicker" name="tentatives_time[]" required/>
+                            <input type="text" class="form-control" placeholder="Perkara" id="tentatives-day-0-` + count_tentatives[0] + `" name="tentatives_item[]" required>
                             <button type="button" class="btn btn-outline-danger w-25 h-100 px-2 ms-4" onclick="removeInputField('tentatives_day_0_` + count_tentatives[0] + `')" disabled>X</button>
                         </div>
                         <hr id="tentatives-line-0" hidden>
@@ -478,7 +542,7 @@
             var programDateEnd = new Date(programDateEnd);
 
             // calculate duration of program date
-            var duration = Math.round((programDateEnd - programDateStart) / (1000 * 60 * 60 * 24)) + 1;
+            duration = Math.round((programDateEnd - programDateStart) / (1000 * 60 * 60 * 24)) + 1;
 
             var dayAndDate = getDaysAndDate(programDateStart, programDateEnd, duration);
 
@@ -500,6 +564,19 @@
             $("#tentative-inputs").append("Program ini akan berlangsung selama " + duration + " hari");
             $('#tentative-inputs').append('<br>');
 
+            // attach duration to #program_duration value
+            $("#program-duration").val(duration);
+
+            // push duration to timeAndItems array
+            timeAndItems = new Array(duration);
+            
+            // set 0s to timeAndItems array
+            for (var i = 0; i < duration; i++) {
+                timeAndItems[i] = 1;
+            }
+
+            updateTimeAndItemsValue();
+
             // append input fields after tentative-inputs div based on dayAndDate array
             for (var i = 0; i < dayAndDate.length; i++) {
                 count_tentatives[i] = 0;
@@ -508,8 +585,8 @@
                         <div class="mb-3">
                             <label for="tentatives_day_` + i + `">`+dayAndDate[i]+`</label>
                             <div class="d-flex m-2" id="tentatives_day_` + i + `_` + count_tentatives[i] + `">
-                                <input type="text" class="form-control me-2" placeholder="Masa (format 24 jam, contoh: 08:30)" id="timepicker" name="timepicker_day_` + i + `_` + count_tentatives[i] + `" required/>
-                                <input type="text" class="form-control" placeholder="Perkara" id="tentatives-day-` + i + `-` + count_tentatives[i] + `" name="tentatives_day_` + i + `_` + count_tentatives[i] + `" required>
+                                <input type="text" class="form-control me-2" placeholder="Masa (format 24 jam, contoh: 08:30)" id="timepicker" name="tentatives_time[]" required/>
+                                <input type="text" class="form-control" placeholder="Perkara" id="tentatives-day-` + i + `-` + count_tentatives[i] + `" name="tentatives_item[]" required>
                                 <button type="button" class="btn btn-outline-danger w-25 h-100 px-2 ms-4" onclick="removeInputField('tentatives_day_` + i + `_` + count_tentatives[i] + `')" disabled>X</button>
                             </div>
                             <hr id="tentatives-line-` + i + `" hidden>
@@ -522,19 +599,25 @@
 
     }
 
+    // append current timeAndItems to #program-tentatives-item value
+    function updateTimeAndItemsValue() {
+        $("#program-tentatives-item").val(timeAndItems);
+    }
+
     function addNewInputFieldTentatives(i) {
         count_tentatives[i]++;
         var clone = $("#tentatives_day_" + i + "_0").clone().insertBefore("#tentatives-line-" + i);
         clone.attr("id","tentatives_day_" + i + "_" + count_tentatives[i]);
 
         // change name and id of input timepicker
-        clone.find("#timepicker").attr("name","timepicker_day_" + i + "_"+count_tentatives[i]);
+        clone.find("#timepicker").attr("name","tentatives_time[]");
 
         // clear value of input timepicker
         clone.find("#timepicker").val("");
+        clone.find("#timepicker").timepicker();
 
         // change name and id of input tentatives
-        clone.find("#tentatives-day-" + i + "-0").attr("name","tentatives_day_" + i + "_"+count_tentatives[i]);
+        clone.find("#tentatives-day-" + i + "-0").attr("name","tentatives_item[]");
         clone.find("#tentatives-day-" + i + "-0").attr("id","tentatives-day-" + i + "-"+count_tentatives[i]);
 
         // clear value of input tentatives
@@ -547,9 +630,10 @@
         // enable remove button
         clone.find("button").attr("disabled",false);
 
-        $("#timepicker").timepicker();
+        // $("#timepicker").timepicker();
 
-        console.log(count_tentatives[i]);
+        timeAndItems[i]++;
+        updateTimeAndItemsValue();
     }
 
 
@@ -561,9 +645,6 @@
         // Create Date objects from the start and end dates
         var start = new Date(startDate);
         var end = new Date(endDate);
-
-        // calculate days between dates and add 1 to include the start date in the calculation
-        var duration = (end - start) / (1000 * 60 * 60 * 24) + 1;
 
         if (!isOneDayProgram) {
             if (end < start && endDate != "") {
@@ -592,8 +673,6 @@
             $(".date-day").removeClass("d-none");
             $(".date-start").removeClass("d-block");
             $(".date-end").removeClass("d-block");
-
-            // $("#program-date").change(addInputFieldTentative);
             isOneDayProgram = true;
         } else {
             $(".date-day").addClass("d-none");
@@ -608,7 +687,7 @@
         if ($("#program-date-start").val() == "" || $("#program-date-end").val() == "") {
             $("#tentative").hide();
         } else {
-            addInputFieldTentative();
+            createInputFieldTentative();
         }
 
     });
@@ -669,45 +748,6 @@
             clone.find("button").attr("onclick","removeInputField('targetGroup_"+count_row_targetGroup+"')");
             clone.find("button").attr("disabled",false);
         });
-    });
-
-    // post to route('paperwork-generator.save', $paperwork->id) when click #btn-save
-    $('#btn-save').on('click',function(){
-        var form = $('#form-paperwork');
-        var url = form.attr('action');
-        var method = form.attr('method');
-        var data = form.serialize();
-
-        var paperwork_background = $('textarea[name="paperwork_background[]"]').map(function() {
-            return $(this).val();
-        }).get();
-
-        // encode paperwork_background to json
-        paperwork_background = JSON.stringify(paperwork_background);
-        // console.log (JSON.stringify(paperwork_background));
-
-        // append paperwork_background to data variable
-        data = data + "&paperwork_backgrounds=" + paperwork_background;
-
-        // print paperwork_background from data variable
-        // console.log(data);
-
-        $.ajax({
-            url: "<?php echo route('paperwork-generator.save', $paperwork->id); ?>",
-            method: method,
-            data: data,
-            success: function(response){
-                console.log("success");
-                // prnt paperwork_background
-                // console.log(paperwork_background);
-            },
-            error: function(error){
-                console.log(error);
-            }
-        });
-
-        // get id from {{ $paperwork->id}}
-        // var id = {{$paperwork->id}};
     });
 
     window.setTimeout(function() {
