@@ -6,6 +6,7 @@
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://cdn.rawgit.com/trentrichardson/jQuery-Timepicker-Addon/1.6.3/dist/jquery-ui-timepicker-addon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 
 
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
@@ -21,10 +22,10 @@
                 <!-- Tab -->
                 <nav>
                     <div class="nav nav-tabs mb-4" id="nav-tab" role="tablist">
-                        <a class="nav-item nav-link active" id="nav-info-tab" data-bs-toggle="tab" href="#nav-info" role="tab" aria-controls="nav-info" aria-selected="true">Maklumat Asas</a>
+                        <a class="nav-item nav-link" id="nav-info-tab" data-bs-toggle="tab" href="#nav-info" role="tab" aria-controls="nav-info" aria-selected="true">Maklumat Asas</a>
                         <a class="nav-item nav-link" id="nav-intro-tab" data-bs-toggle="tab" href="#nav-intro" role="tab" aria-controls="nav-intro" aria-selected="false">Pendahuluan</a>
                         <a class="nav-item nav-link" id="nav-tentative-tab" data-bs-toggle="tab" href="#nav-tentative" role="tab" aria-controls="nav-tentative" aria-selected="false">Tentatif</a>
-                        <a class="nav-item nav-link" id="nav-financial-tab" data-bs-toggle="tab" href="#nav-financial" role="tab" aria-controls="nav-financial" aria-selected="false">Kewangan</a>
+                        <a class="nav-item nav-link active" id="nav-financial-tab" data-bs-toggle="tab" href="#nav-financial" role="tab" aria-controls="nav-financial" aria-selected="false">Kewangan</a>
                         <a class="nav-item nav-link" id="nav-ajk-tab" data-bs-toggle="tab" href="#nav-ajk" role="tab" aria-controls="nav-ajk" aria-selected="false">Jawatankuasa</a>
                         <a class="nav-item nav-link" id="nav-signature-tab" data-bs-toggle="tab" href="#nav-signature" role="tab" aria-controls="nav-signature" aria-selected="false">Tandatangan</a>
                     </div>
@@ -32,7 +33,7 @@
                 <form id="form-paperwork" action="{{ route('paperwork-generator.save', $paperwork->id) }}" method="POST" autocomplete="off" enctype="multipart/form-data" novalidate>
                 <div class="tab-content card card-body border-0 shadow mb-4" id="nav-tabContent" >
                     @csrf
-                    <div class="tab-pane fade show active" id="nav-info" role="tabpanel" aria-labelledby="nav-info-tab">
+                    <div class="tab-pane fade" id="nav-info" role="tabpanel" aria-labelledby="nav-info-tab">
                         <h1>Maklumat Asas Program</h1>
                         <div class="row">
                             <div class="mb-3">
@@ -280,11 +281,59 @@
                         </div>
                     </div>
                     {{-- IMPLIKASI KEWANGAN --}}
-                    <div class="tab-pane fade" id="nav-financial" role="tabpanel" aria-labelledby="nav-financial-tab">
+                    <div class="tab-pane fade show active" id="nav-financial" role="tabpanel" aria-labelledby="nav-financial-tab">
                         <h1>Implikasi Kewangan</h1>
-                        <p>Exercitation photo booth stumptown tote bag Banksy, elit small batch freegan sed. Craft beer elit seitan exercitation, photo booth et 8-bit kale chips proident chillwave deep v laborum. Aliquip veniam delectus, Marfa eiusmod
-                            Pinterest in do umami readymade swag.</p>
-                        <p>Day handsome addition horrible sensible goodness two contempt. Evening for married his account removal. Estimable me disposing of be moonlight cordially curiosity.</p>
+                        <div class="table-responsive py-4">
+                            <table class="table table-flush" id="implicationTable">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th scope="col">Bil.</th>
+                                        <th scope="col">Perkara</th>
+                                        <th scope="col">Kuantiti</th>
+                                        <th scope="col">Harga Seunit (RM)</th>
+                                        <th scope="col">Catatan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="table-primary">
+                                        <th scope="col">Contoh </th>
+                                        <td>Makan/Minum :-
+                                            <br>
+                                            <ul>
+                                                <li>Minum Pagi</li>
+                                                <li>Makan Tengahari</li>
+                                            </ul>
+                                        </td>
+                                        <td scope="col">
+                                            <br>
+                                            <ul style="list-style: none;">
+                                                <li>100</li>
+                                                <li>100</li>
+                                            </ul>
+                                        </td>
+                                        <td scope="col">
+                                            <br>
+                                            <ul style="list-style: none;">
+                                                <li>5.00</li>
+                                                <li>7.00</li>
+                                            </ul>
+                                        </td>
+                                        <td>
+                                            <br>
+                                            HEPA
+                                        </td>
+                                    </tr>
+                                    <hr id="implication-line" hidden>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mb-3 row">
+                            <div class="col-12 col-sm-4 col-md-4 offset-md-4">
+                                <div class="d-grid gap-2">
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal-addNewItemImplication">+ Tambah Perkara Baru</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     {{-- JAWATANKUASA PROGRAM --}}
                     <div class="tab-pane fade" id="nav-ajk" role="tabpanel" aria-labelledby="nav-ajk-tab">
@@ -314,6 +363,9 @@
                                 <label for="program-signature-preparedBy">Emel</label>
                                 <input class="form-control" id="program-signature-preparedBy" type="text" name="program_signature[]" placeholder="Alamat emel">
                             </div>
+                            <canvas id="signature-pad" width="200" height="200" style="border:1px solid">
+                                
+                            </canvas>
                         </div>
                         <div class="row">
                             <h5>Maklumat Presiden Kelab</h5>
@@ -349,7 +401,78 @@
         </div>
     </div>
 </div>
+
+{{-- modal to add new item in implication --}}
+<div class="modal fade" id="modal-addNewItemImplication" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="h6 modal-title">Tambah Perkara Baru</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{-- add radio button to add new single item or multiple item --}}
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="item_type" id="singleItem" value="0">
+                    <label class="form-check-label" for="singleItem">
+                        Tambah satu perkara baru
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="item_type" id="multipleItem" value="1" checked>
+                    <label class="form-check-label" for="multipleItem">
+                        Tambah beberapa perkara baru
+                    </label>
+                </div>
+                
+                {{-- add input field for naming item if multipleItem is checked --}}
+                <div class="form-group mb-3" id="implicationIsMultiple">
+                    <hr>
+                    <div class="form-group mb-3">
+                        <label class="form-label required">Perkara baru</label>
+                        <input type="text" class="form-control" name="item_implication_title" id="item_implication_title" placeholder="Nama perkara baru" autocomplete="off" required>
+                    </div>
+                </div>
+                        
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-secondary" id="addImplication">Tambah</button>
+                <button type="button" class="btn btn-link text-gray ms-auto" data-bs-dismiss="modal">Batal</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- <script src="/public/js/implication.js"></script> --}}
+
+{{-- Implication Tab Script --}}
 <script>
+    // $(document).ready(function() {
+
+    // })
+</script>
+
+<script>
+
+    // canvas for signature
+    // select canvas#signature-pad in jquery
+    var canvas = document.querySelector("canvas");
+
+    var signaturePad = new SignaturePad(canvas);
+
+    function resizeCanvas() {
+  const ratio =  Math.max(window.devicePixelRatio || 1, 1);
+  canvas.width = canvas.offsetWidth * ratio;
+  canvas.height = canvas.offsetHeight * ratio;
+  canvas.getContext("2d").scale(ratio, ratio);
+  signaturePad.fromData(signaturePad.toData());
+}
+    window.onresize = resizeCanvas;
+    resizeCanvas();
+
+    // put border to canvas
+    // canvas.style.border = "1px solid black";
 
     var isOneDayProgram;
     // var program-date-start = $("#program-date-start").val();
@@ -360,6 +483,8 @@
     var count_row_background = {{ $rows->background }};
     var count_row_objective = {{ $rows->objective }};
     var count_row_targetGroup = {{ $rows->targetGroup }};
+
+    var count_row_implication = 1;
 
     var row_background = 1;
 
@@ -414,6 +539,172 @@
 
     });
 
+    // implication
+    $(document).ready(function() {     
+        var implicationIsSingle = false;
+        
+        // add input field in implication table
+        $('#addImplication').click(function() {
+            if (implicationIsSingle) {
+                var html = `<tr id="implication_` + count_row_implication + `"><th scope="col">` + count_row_implication + `.</th>
+                                    <td><input class="form-control" type="text" name="implication_title[]" id="implication_col_1">
+                                        <div class="d-grid gap-2 my-2">
+                                            <button type="button" class="btn btn-outline-danger" id="btn_remove_implication" onclick="removeInputField('implication_` + count_row_implication + `')">- Buang Perkara</button>
+                                        </div>
+                                    </td>
+                                    <td scope="col"><input class="form-control" type="text" name="implication_quantity[]" id="implication_col_2"></td>
+                                    <td scope="col"><input class="form-control" type="text" name="implication_pricePerUnit[]" id="implication_col_3"></td>
+                                    <td><input class="form-control" type="text" name="implication_remark[]" id="implication_col_4"></td></tr>`;
+
+                var lastRow = $('#implicationTable tr').last();
+                lastRow.after(html);
+                count_row_implication++;
+
+                // close or dismiss modal
+                $('#modal-addNewItemImplication').modal('hide');
+            } else {
+
+                // check if implication_item_title is empty or null
+                if ($('#item_implication_title').val() == '' || $('#item_implication_title').val() == null) {
+
+                    // add class is-invalid to #implication_item_title
+                    $('#item_implication_title').addClass('is-invalid');
+
+                    // append invalid-feedback after #implication_item_title
+                    $('#item_implication_title').after(`<div class="invalid-feedback">Sila isi tajuk perkara</div>`);
+
+                    // remove invalid-feedback after 3 seconds
+                    setTimeout(function() {
+                        $('.invalid-feedback').remove();
+                    }, 3000);
+
+                    // remove class is-invalid after 3 seconds
+                    setTimeout(function() {
+                        $('#item_implication_title').removeClass('is-invalid');
+                    }, 3000);
+
+                }
+
+                else {
+
+                    // get value of implication_item_title
+                    var implication_item_title = $('#item_implication_title').val();
+
+                    // make implication_item_title empty
+                    $('#item_implication_title').val('');
+
+                    var html = `<tr id="implication_` + count_row_implication + `"><th scope="col">` + count_row_implication + `.</th>
+                                <td>
+                                    <div class="h-2" name="implication_title[]">` + implication_item_title + ` :-</div>
+                                    <br>
+                                    <ul class="" id="implication_`+ count_row_implication +`_col_1">
+                                        <li>
+                                            <input class="form-control" type="text" name="implication_item[]" id="implication_col_1">
+                                        </li> 
+                                    </ul>
+                                    <div class="d-grid gap-2 my-2">
+                                        <button type="button" class="btn btn-outline-primary" id="btn_add_implication_item">+ Tambah Maklumat</button>
+                                        <button type="button" class="btn btn-outline-danger" id="btn_remove_implication_item" onclick="removeInputField('implication_`+ count_row_implication +`_1_col_1')">- Buang Maklumat</button>
+                                        <button type="button" class="btn btn-outline-danger" id="btn_remove_implication" onclick="removeInputField('implication_` + count_row_implication + `')">- Buang Perkara</button>
+                                    </div>
+                                </td>
+                                <td scope="col">
+                                    <div class="h-2">-</div>
+                                    <br>
+                                    <ul class="" style="list-style: none;" id="implication_`+ count_row_implication +`_col_2">
+                                        <li id="implication_`+ count_row_implication +`_1_col_2">
+                                            <input class="form-control" type="text" name="implication_quantity[]">
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td scope="col">
+                                    <div class="h-2">-</div>
+                                    <br>
+                                    <ul class="" style="list-style: none;" id="implication_`+ count_row_implication +`_col_3">
+                                        <li id="implication_`+ count_row_implication +`_1_col_3">
+                                            <input class="form-control" type="text" name="implication_pricePerUnit[]" id="implication_col_3">
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td><input class="form-control h-4" type="text" name="implication_remark[]" id="implication_col_4"></td>
+                            </tr>`;
+
+                    var lastRow = $('#implicationTable tr').last();
+                    lastRow.after(html);
+                    count_row_implication++;
+
+                    // close or dismiss modal
+                    $('#modal-addNewItemImplication').modal('hide');
+
+                     // onclick #btn_add_implication_item, add new item to multiple implication to ul li id="implication_1_col_1"
+                    $('#btn_add_implication_item').click(function() {
+                        // var html = `<li id="implication_` + count_row_implication + `_1_col_2">
+                        //                 <input class="form-control" type="text" name="implication_item[]" id="implication_col_1">
+                        //             </li>`;
+
+                        // var lastRow = $('#implication_1_col_1 li').last();
+                        // lastRow.after(html);
+                        // // count_row_implication++;
+
+                        // console.log(count_row_implication);
+
+                        // console.log(count_row_implication);
+
+                        // var row = $(this).closest('tr');
+                        var row = count_row_implication - 1;
+
+                        var html1 = `<li>
+                                        <input class="form-control" type="text" name="implication_item[]" id="implication_col_1">
+                                    </li>`;
+
+                        var lastRow_col_1 = $('#implication_'+ row +'_col_1 li').last();
+                        // console.log(lastRow_col_1);
+                        lastRow_col_1.after(html1);
+
+                        var html2 = `<li>
+                                        <input class="form-control" type="text" name="implication_quantity[]">
+                                    </li>`;
+                        var lastRow_col_2 = $('#implication_'+ row +'_col_2 li').last();
+                        lastRow_col_2.after(html2);
+
+                        var html3 = `<li>
+                                        <input class="form-control" type="text" name="implication_pricePerUnit[]" id="implication_col_3">
+                                    </li>`;
+                        var lastRow_col_3 = $('#implication_'+ row +'_col_3 li').last();
+                        lastRow_col_3.after(html3);
+                    });
+
+                    // onclick #btn_remove_implication_item, remove last line from ul li id="implication_1_col_1"
+                    $('#btn_remove_implication_item').click(function() {
+                        var row = count_row_implication - 1;
+
+                        var lastRow_col_1 = $('#implication_'+ row +'_col_1 li').last();
+                        lastRow_col_1.remove();
+
+                        var lastRow_col_2 = $('#implication_'+ row +'_col_2 li').last();
+                        lastRow_col_2.remove();
+
+                        var lastRow_col_3 = $('#implication_'+ row +'_col_3 li').last();
+                        lastRow_col_3.remove();
+                    });
+                }
+            }
+
+        });
+
+        $('#multipleItem').click(function() {
+            implicationIsSingle = false;
+            $('#implicationIsMultiple').show();
+        });
+        $('#singleItem').click(function() {
+            implicationIsSingle = true;
+            $('#implicationIsMultiple').hide();
+        });
+
+
+
+    });
+
     // remove input field
     function removeInputField(field_id){
         $("#" + field_id).remove();
@@ -444,6 +735,42 @@
             var day = split[2];
             timeAndItems[day]--;
             updateTimeAndItemsValue();
+        }
+
+        if (field_id.includes("implication")) {
+            count_row_implication--;
+
+            // update tr all with an id #implication_X, exclude the first row and ignore it from the loop (i = 1)
+            var trs = $('#implicationTable tr');
+            for (var i = 0; i < trs.length; i++) {
+                var tr = trs[i];
+                var id = tr.id;
+                if (id.includes("implication")) {
+                    var split = id.split("_");
+                    var number = split[1];
+                    var newId = "implication_" + (i - 1);
+                    tr.id = newId;
+                    var th = tr.children[0];
+                    th.innerHTML = (i - 1) + ".";
+                }
+            }
+        }
+
+        if (field_id.includes("implication" && "col")) {
+
+            // text format is implication_X_Y_col_Z, get value of X, Y and Z
+            var split = field_id.split("_");
+            var x = split[1];
+            var y = split[2]; // y is the row number
+            var col = split[4];
+
+            console.log("x: " + x + ", y: " + y + ", col: " + col);
+
+            if (y != 1) {
+                $("#implication_" + x + "_" + y + "_col_1").remove();
+                $("#implication_" + x + "_" + y + "_col_2").remove();
+                $("#implication_" + x + "_" + y + "_col_3").remove();
+            }
         }
     }
 
