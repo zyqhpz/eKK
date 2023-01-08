@@ -281,7 +281,7 @@
                         </div>
                     </div>
                     {{-- IMPLIKASI KEWANGAN --}}
-                    <div class="tab-pane fade show active" id="nav-financial" role="tabpanel" aria-labelledby="nav-financial-tab">
+                    <div class="tab-pane fade" id="nav-financial" role="tabpanel" aria-labelledby="nav-financial-tab">
                         <h1>Implikasi Kewangan</h1>
                         <div class="table-responsive py-4">
                             <table class="table table-flush" id="implicationTable">
@@ -336,11 +336,87 @@
                         </div>
                     </div>
                     {{-- JAWATANKUASA PROGRAM --}}
-                    <div class="tab-pane fade" id="nav-ajk" role="tabpanel" aria-labelledby="nav-ajk-tab">
+                    <div class="tab-pane fade show active" id="nav-ajk" role="tabpanel" aria-labelledby="nav-ajk-tab">
                         <h1>Senarai Jawatankuasa Program</h1>
-                        <p>Exercitation photo booth stumptown tote bag Banksy, elit small batch freegan sed. Craft beer elit seitan exercitation, photo booth et 8-bit kale chips proident chillwave deep v laborum. Aliquip veniam delectus, Marfa eiusmod
-                            Pinterest in do umami readymade swag.</p>
-                        <p>Day handsome addition horrible sensible goodness two contempt. Evening for married his account removal. Estimable me disposing of be moonlight cordially curiosity.</p>
+                        <div class="container-fluid mb-4">
+                            <div class="row">
+                                <div class="col-5">
+                                    <h5>Jawatan</h5>
+                                </div>
+                                <div class="col-6">
+                                    <h5>Nama Penuh</h5>
+                                </div>
+                                <div class="col-1">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container-fluid mb-4" id="ajk_1">
+                            <div class="row mt-2">
+                                <div class="col-5">
+                                    <input type="text" class="form-control" id="committee_position_1" name="committee_position[]"
+                                value="" />
+                                </div>
+                                <div class="col-6">
+                                    <input type="text" class="form-control" id="committee_name_1_1" name="committee_name[]"
+                                value="" />
+                                </div>
+                                <button type="button" id="add_name_1" class="btn btn-outline-primary col-1" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Tambah Nama">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            <div class="row mt-2" id="ajk_1_2">
+                                <div class="col-5">
+                                </div>
+                                <div class="col-6">
+                                    <input type="text" class="form-control" id="committee_name_1_2" name="committee_name[]"
+                                value="" />
+                                </div>
+                                <button type="button" class="btn btn-outline-danger col-1" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Padam Nama">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                            <hr id="ajk-name-line" hidden>
+                            <div class="row mt-2">
+                                <div class="col-7"></div>
+                                <button type="button" class="btn btn-outline-danger h-auto col-3" onclick="removeInputField('ajk_1')">
+                                    Padam Jawatan
+                                </button>
+                            </div>
+                        </div>
+                        <div class="container-fluid mb-4">
+                            <div class="row mt-2">
+                                <div class="col-5">
+                                    <input type="text" class="form-control" id="committee_position_1" name="committee_position[]"
+                                value="" />
+                                </div>
+                                <div class="col-6">
+                                    <input type="text" class="form-control" id="committee_name_1" name="committee_name[]"
+                                value="" />
+                                </div>
+                                <button type="button" class="btn btn-outline-primary col-1" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Tambah Nama">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-5">
+                                </div>
+                                <div class="col-6">
+                                    <input type="text" class="form-control" id="committee_name_1" name="committee_name[]"
+                                value="" />
+                                </div>
+                                <button type="button" class="btn btn-outline-danger col-1" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Padam Nama">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <hr id="ajk-line" hidden>
+                        <div class="my-3 row">
+                            <div class="col-12 col-sm-4 col-md-4 offset-md-4">
+                                <div class="d-grid gap-2">
+                                    <button type="button" class="btn btn-outline-secondary" id="btn_add_ajk">+ Tambah Jawatan Baru</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     {{-- TANDATANGAN --}}
                     <div class="tab-pane fade" id="nav-signature" role="tabpanel" aria-labelledby="nav-signature-tab">
@@ -486,6 +562,8 @@
 
     var count_row_implication = 1;
     var count_row_implication_item = new Array(count_row_implication);
+
+    var count_row_ajk = 1;
 
     var row_background = 1;
 
@@ -807,8 +885,6 @@
             // count_row_implication = latest_count;
             // console.log("count_row_implication: " + count_row_implication);
         }
-
-
     }
 
     function getDayAndDate(date) {
@@ -1112,7 +1188,26 @@
             clone.find("button").attr("onclick","removeInputField('targetGroup_"+count_row_targetGroup+"')");
             clone.find("button").attr("disabled",false);
         });
+
+        // add new input for ajk
+        $('#btn_add_ajk').on('click',function(){
+            count_row_ajk++;
+            var clone = $("#ajk_1").clone().insertBefore("#ajk-line");
+
+            // console.log(count_row_ajk);
+
+            clone.attr("id","ajk_"+count_row_ajk);
+            clone.find("input").val("");
+            clone.find("input").attr("id","ajk_"+count_row_ajk);
+            clone.find("input").attr("name","paperwork_ajk[]");
+
+            clone.find("button").attr("id","btn_remove_ajk_"+count_row_ajk);
+            clone.find("button").attr("onclick","removeInputField('ajk_"+count_row_ajk+"')");
+            clone.find("button").attr("disabled",false);
+        });
     });
+
+    // program committee
 
     window.setTimeout(function() {
         $(".alert").fadeTo(500, 0).slideUp(500, function(){
