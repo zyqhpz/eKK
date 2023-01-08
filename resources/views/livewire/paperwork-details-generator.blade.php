@@ -485,6 +485,7 @@
     var count_row_targetGroup = {{ $rows->targetGroup }};
 
     var count_row_implication = 1;
+    var count_row_implication_item = new Array(count_row_implication);
 
     var row_background = 1;
 
@@ -546,7 +547,7 @@
         // add input field in implication table
         $('#addImplication').click(function() {
             if (implicationIsSingle) {
-                var html = `<tr id="implication_` + count_row_implication + `"><th scope="col">` + count_row_implication + `.</th>
+                var html = `<tr id="implication_` + count_row_implication + `"><th scope="col">#</th>
                                     <td><input class="form-control" type="text" name="implication_title[]" id="implication_col_1">
                                         <div class="d-grid gap-2 my-2">
                                             <button type="button" class="btn btn-outline-danger" id="btn_remove_implication" onclick="removeInputField('implication_` + count_row_implication + `')">- Buang Perkara</button>
@@ -593,7 +594,7 @@
                     // make implication_item_title empty
                     $('#item_implication_title').val('');
 
-                    var html = `<tr id="implication_` + count_row_implication + `"><th scope="col">` + count_row_implication + `.</th>
+                    var html = `<tr id="implication_` + count_row_implication + `"><th scope="col">#</th>
                                 <td>
                                     <div class="h-2" name="implication_title[]">` + implication_item_title + ` :-</div>
                                     <br>
@@ -603,8 +604,8 @@
                                         </li> 
                                     </ul>
                                     <div class="d-grid gap-2 my-2">
-                                        <button type="button" class="btn btn-outline-primary" id="btn_add_implication_item">+ Tambah Maklumat</button>
-                                        <button type="button" class="btn btn-outline-danger" id="btn_remove_implication_item" onclick="removeInputField('implication_`+ count_row_implication +`_1_col_1')">- Buang Maklumat</button>
+                                        <button type="button" class="btn btn-outline-primary" id="btn_add_implication_item_` + count_row_implication + `">+ Tambah Maklumat</button>
+                                        <button type="button" class="btn btn-outline-danger" id="btn_remove_implication_item_` + count_row_implication + `">- Buang Maklumat</button>
                                         <button type="button" class="btn btn-outline-danger" id="btn_remove_implication" onclick="removeInputField('implication_` + count_row_implication + `')">- Buang Perkara</button>
                                     </div>
                                 </td>
@@ -631,26 +632,20 @@
 
                     var lastRow = $('#implicationTable tr').last();
                     lastRow.after(html);
+
                     count_row_implication++;
+
+                    // var implication_id = count_row_implication + 1;
 
                     // close or dismiss modal
                     $('#modal-addNewItemImplication').modal('hide');
 
+                    // hide #btn_remove_implication_item
+                    $('#btn_remove_implication_item_' + (count_row_implication - 1)).hide();
+
                      // onclick #btn_add_implication_item, add new item to multiple implication to ul li id="implication_1_col_1"
-                    $('#btn_add_implication_item').click(function() {
-                        // var html = `<li id="implication_` + count_row_implication + `_1_col_2">
-                        //                 <input class="form-control" type="text" name="implication_item[]" id="implication_col_1">
-                        //             </li>`;
+                    $('#btn_add_implication_item_' + (count_row_implication - 1)).click(function() {
 
-                        // var lastRow = $('#implication_1_col_1 li').last();
-                        // lastRow.after(html);
-                        // // count_row_implication++;
-
-                        // console.log(count_row_implication);
-
-                        // console.log(count_row_implication);
-
-                        // var row = $(this).closest('tr');
                         var row = count_row_implication - 1;
 
                         var html1 = `<li>
@@ -658,7 +653,6 @@
                                     </li>`;
 
                         var lastRow_col_1 = $('#implication_'+ row +'_col_1 li').last();
-                        // console.log(lastRow_col_1);
                         lastRow_col_1.after(html1);
 
                         var html2 = `<li>
@@ -672,21 +666,36 @@
                                     </li>`;
                         var lastRow_col_3 = $('#implication_'+ row +'_col_3 li').last();
                         lastRow_col_3.after(html3);
+
+                        // show #btn_remove_implication_item
+                        $('#btn_remove_implication_item_' + row).show();
                     });
 
                     // onclick #btn_remove_implication_item, remove last line from ul li id="implication_1_col_1"
-                    $('#btn_remove_implication_item').click(function() {
+                    $('#btn_remove_implication_item_' +  (count_row_implication - 1)).click(function() {
                         var row = count_row_implication - 1;
 
-                        var lastRow_col_1 = $('#implication_'+ row +'_col_1 li').last();
-                        lastRow_col_1.remove();
+                        var count_row_implication_item = $('#implication_'+ row +'_col_1 li').length;
 
-                        var lastRow_col_2 = $('#implication_'+ row +'_col_2 li').last();
-                        lastRow_col_2.remove();
+                        if (count_row_implication_item == 1) {
+                            $('#btn_remove_implication_item_' + (count_row_implication - 1)).hide();
+                        } else {
+                            var lastRow_col_1 = $('#implication_'+ row +'_col_1 li').last();
+                            lastRow_col_1.remove();
+                            
+                            var lastRow_col_2 = $('#implication_'+ row +'_col_2 li').last();
+                            lastRow_col_2.remove();
+                            
+                            var lastRow_col_3 = $('#implication_'+ row +'_col_3 li').last();
+                            lastRow_col_3.remove();
 
-                        var lastRow_col_3 = $('#implication_'+ row +'_col_3 li').last();
-                        lastRow_col_3.remove();
+                            if (count_row_implication_item == 2) {
+                                $('#btn_remove_implication_item_' + row).hide();
+                            }
+                        }
+
                     });
+                    // count_row_implication++;
                 }
             }
 
@@ -700,9 +709,6 @@
             implicationIsSingle = true;
             $('#implicationIsMultiple').hide();
         });
-
-
-
     });
 
     // remove input field
@@ -737,25 +743,6 @@
             updateTimeAndItemsValue();
         }
 
-        if (field_id.includes("implication")) {
-            count_row_implication--;
-
-            // update tr all with an id #implication_X, exclude the first row and ignore it from the loop (i = 1)
-            var trs = $('#implicationTable tr');
-            for (var i = 0; i < trs.length; i++) {
-                var tr = trs[i];
-                var id = tr.id;
-                if (id.includes("implication")) {
-                    var split = id.split("_");
-                    var number = split[1];
-                    var newId = "implication_" + (i - 1);
-                    tr.id = newId;
-                    var th = tr.children[0];
-                    th.innerHTML = (i - 1) + ".";
-                }
-            }
-        }
-
         if (field_id.includes("implication" && "col")) {
 
             // text format is implication_X_Y_col_Z, get value of X, Y and Z
@@ -763,6 +750,8 @@
             var x = split[1];
             var y = split[2]; // y is the row number
             var col = split[4];
+
+            console.log("field_id from i + col: " + field_id);
 
             console.log("x: " + x + ", y: " + y + ", col: " + col);
 
@@ -772,6 +761,54 @@
                 $("#implication_" + x + "_" + y + "_col_3").remove();
             }
         }
+
+        if (field_id.includes("implication") && !field_id.includes("col")) {
+
+            console.log("field_id: " + field_id);
+
+            var latest_count = 0;
+
+            // update tr all with an id #implication_X, exclude the first row and ignore it from the loop (i = 1)
+            var trs = $('#implicationTable tr');
+            console.log("trs.length: " + trs.length);
+            for (var i = 0; i < trs.length; i++) {
+                var tr = trs[i];
+                var id = tr.id;
+                if (id.includes("implication")) {
+                    // console.log("id: " + id);
+                    // var split = id.split("_");
+                    // var number = split[1];
+                    // var newId = "implication_" + i;
+                    // tr.id = newId;
+                    // var th = tr.children[0];
+                    // th.innerHTML = (i - 1) + ".";
+
+                    // // update id of ul of each column
+                    // var ul1 = tr.children[1].children[0];
+                    // var ul2 = tr.children[1].children[1];
+                    // var ul3 = tr.children[1].children[2];
+                    // ul1.id = "implication_" + i + "_col_1";
+                    // ul2.id = "implication_" + i + "_col_2";
+                    // ul3.id = "implication_" + i + "_col_3";
+
+                    // // update add and remove button id
+                    // var addItemBtn = tr.children[2].children[0];
+                    // var removeItemBtn = tr.children[2].children[1];
+                    // addItemBtn.id = "btn_add_implication_item_" + i;
+                    // removeItemBtn.id = "btn_remove_implication_item_" + i;
+                    // var removeImplicationBtn = tr.children[2].children[2];
+                    // removeImplicationBtn.setAttribute("onclick", "removeInputField('implication_" + i + "')");
+
+                    // console.log("current id: " + id)
+                    latest_count++;
+                }
+            }
+            // console.log("latest_count: " + latest_count);
+            // count_row_implication = latest_count;
+            // console.log("count_row_implication: " + count_row_implication);
+        }
+
+
     }
 
     function getDayAndDate(date) {
