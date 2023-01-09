@@ -84,13 +84,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        {{-- <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="program-preparedby">Disediakan oleh</label>
                                 <input class="form-control" id="collab" type="text" name="program_preparedby"
                                         placeholder="Nama pengarah program atau setiausaha">
                             </div>
-                        </div>
+                        </div> --}}
                         <h2 class="h5 my-4">Status Program Terakhir</h2>
                         <div class="row">
                             <div class="col-md-6 mb-3">
@@ -117,7 +117,7 @@
                         <div class="row">
                             <div class="mb-3">
                                 <label for="program-name">Pendahuluan</label>
-                                <textarea class="form-control" id="pendahuluan" name="paperwork_introduction" required></textarea>
+                                <textarea class="form-control" id="pendahuluan" name="paperwork_introduction" required>@if($paperworkDetails->introduction != null){{$paperworkDetails->introduction}}@endif</textarea>
                             </div>
                         </div>
                         <div class="row">
@@ -197,7 +197,7 @@
                         <div class="row">
                             <div class="mb-3">
                                 <label for="anjuran">Anjuran</label>
-                                <textarea class="form-control" id="anjuran" name="paperwork_organizedBy" required></textarea>
+                                <textarea class="form-control" id="anjuran" name="paperwork_organizedBy" required>@if($paperworkDetails->organizedBy != null){{$paperworkDetails->organizedBy}}@endif</textarea>
                             </div>
                         </div>
                         <div class="row">
@@ -357,14 +357,14 @@
                                 value="" />
                                 </div>
                                 <div class="col-6">
-                                    <input type="text" class="form-control" id="committee_name_1_1" name="committee_name[]"
+                                    <input type="text" class="form-control" id="committee_name_1" name="committee_name[]"
                                 value="" />
                                 </div>
-                                <button type="button" id="add_name_1" class="btn btn-outline-primary col-1" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Tambah Nama">
+                                <button type="button" id="add_ajk_name_1" onclick="addNewAjkName('ajk_1')" class="btn btn-outline-primary col-1" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Tambah Nama">
                                     <i class="fas fa-plus"></i>
                                 </button>
                             </div>
-                            <div class="row mt-2" id="ajk_1_2">
+                            {{-- <div class="row mt-2" id="ajk_1_2">
                                 <div class="col-5">
                                 </div>
                                 <div class="col-6">
@@ -374,38 +374,12 @@
                                 <button type="button" class="btn btn-outline-danger col-1" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Padam Nama">
                                     <i class="fas fa-minus"></i>
                                 </button>
-                            </div>
-                            <hr id="ajk-name-line" hidden>
+                            </div> --}}
+                            <hr id="ajk-name-line-1" hidden>
                             <div class="row mt-2">
                                 <div class="col-7"></div>
-                                <button type="button" class="btn btn-outline-danger h-auto col-3" onclick="removeInputField('ajk_1')">
+                                <button type="button" id="btn_remove_ajk_1" class="btn btn-outline-danger h-auto col-3" onclick="removeInputField('ajk_1')" disabled>
                                     Padam Jawatan
-                                </button>
-                            </div>
-                        </div>
-                        <div class="container-fluid mb-4">
-                            <div class="row mt-2">
-                                <div class="col-5">
-                                    <input type="text" class="form-control" id="committee_position_1" name="committee_position[]"
-                                value="" />
-                                </div>
-                                <div class="col-6">
-                                    <input type="text" class="form-control" id="committee_name_1" name="committee_name[]"
-                                value="" />
-                                </div>
-                                <button type="button" class="btn btn-outline-primary col-1" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Tambah Nama">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </div>
-                            <div class="row mt-2">
-                                <div class="col-5">
-                                </div>
-                                <div class="col-6">
-                                    <input type="text" class="form-control" id="committee_name_1" name="committee_name[]"
-                                value="" />
-                                </div>
-                                <button type="button" class="btn btn-outline-danger col-1" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Padam Nama">
-                                    <i class="fas fa-minus"></i>
                                 </button>
                             </div>
                         </div>
@@ -439,9 +413,12 @@
                                 <label for="program-signature-preparedBy">Emel</label>
                                 <input class="form-control" id="program-signature-preparedBy" type="text" name="program_signature[]" placeholder="Alamat emel">
                             </div>
-                            <canvas id="signature-pad" width="200" height="200" style="border:1px solid">
-                                
-                            </canvas>
+                            <div class="col-md-6 mb-3">
+
+                                <canvas id="signature-pad" width="200" height="200" style="border:1px solid">
+                                    
+                                </canvas>
+                            </div>
                         </div>
                         <div class="row">
                             <h5>Maklumat Presiden Kelab</h5>
@@ -528,8 +505,13 @@
 
     // })
 </script>
+    
+
+
 
 <script>
+    //   console.log("<?= $paperworkDetails->tentativeFirebaseId ?>");
+
 
     // canvas for signature
     // select canvas#signature-pad in jquery
@@ -568,6 +550,38 @@
     var row_background = 1;
 
     var count_tentatives;
+
+    function initInputFieldTentatives(i) {
+        // count_tentatives[i]++;
+        var clone = $("#tentatives_day_" + i + "_0").clone().insertBefore("#tentatives-line-" + i);
+        clone.attr("id","tentatives_day_" + i + "_" + count_tentatives[i]);
+
+        // change name and id of input timepicker
+        clone.find("#timepicker").attr("name","tentatives_time[]");
+
+        // clear value of input timepicker
+        clone.find("#timepicker").val("");
+        clone.find("#timepicker").timepicker();
+
+        // change name and id of input tentatives
+        clone.find("#tentatives-day-" + i + "-0").attr("name","tentatives_item[]");
+        clone.find("#tentatives-day-" + i + "-0").attr("id","tentatives-day-" + i + "-"+count_tentatives[i]);
+
+        // clear value of input tentatives
+        clone.find("#tentatives-day-" + i + "-" + count_tentatives[i]).val("");
+
+        // change id of button
+        clone.find("button").attr("onclick","removeInputField('tentatives_day_" + i + "_" + count_tentatives[i] + "')");
+        clone.find("button").attr("id","btn_remove_tentative_" + i + "_"+count_tentatives[i]);
+
+        // enable remove button
+        clone.find("button").attr("disabled",false);
+
+        // $("#timepicker").timepicker();
+
+        timeAndItems[i]++;
+        // updateTimeAndItemsValue();
+    }
 
     var count_row_tentative = 1;
 
@@ -674,7 +688,8 @@
 
                     var html = `<tr id="implication_` + count_row_implication + `"><th scope="col">#</th>
                                 <td>
-                                    <div class="h-2" name="implication_title[]">` + implication_item_title + ` :-</div>
+                                    <input type="text" hidden name="implication_title[]" value="` + implication_item_title + `"/>
+                                    <div class="h-2">` + implication_item_title + ` :-</div>
                                     <br>
                                     <ul class="" id="implication_`+ count_row_implication +`_col_1">
                                         <li>
@@ -788,6 +803,38 @@
             $('#implicationIsMultiple').hide();
         });
     });
+
+    // committee
+    $(document).ready(function() {
+        var count_row_committee = 1;
+        var committeeIsSingle = true;
+
+            $('#btn_add_committee').click(function() {
+                count_row_committee++;
+            });
+    });
+
+    function addNewAjkName(id) {
+        // format text is ajk_X, get X from id
+        var ajk_id = id.split("_")[1];
+        console.log(ajk_id);
+        // var new_id = "ajk_" + ajk_id +  (parseInt(ajk_id) + 1);";
+        var new_id = "ajk_" + ajk_id + "_" + "2";
+        var html = `<div class="row mt-2" id="`+ new_id + `">
+                        <div class="col-5">
+                        </div>
+                        <div class="col-6">
+                            <input type="text" class="form-control" id="committee_name_1_2" name="committee_name[]" value=""/>
+                        </div>
+                        <button type="button" class="btn btn-outline-danger col-1" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Padam Nama" onclick="removeInputField('`+new_id+`')">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>`;
+        // console.log(html);
+
+        // select #ajk-name-line-1, insertBefore html
+        $('#ajk-name-line-' + ajk_id).before(html);
+    }
 
     // remove input field
     function removeInputField(field_id){
@@ -1035,6 +1082,64 @@
                     </div>`
                 );
             }
+
+            var paperworkTentative = '<?php echo $paperworkDetails->tentativeFirebaseId; ?>';
+            // get duration object from $paperworkDetails->tentativeFirebaseId
+            if (paperworkTentative === 'null') {
+                count_tentatives = 0;
+            } else {
+                var tentativeJson = JSON.parse('<?= $paperworkDetails->tentativeFirebaseId ?>');
+                count_tentatives = new Array(tentativeJson.duration);
+
+                timeAndItems = new Array(tentativeJson.duration);
+
+
+                var time = new Array(tentativeJson.duration);
+                var item = new Array(tentativeJson.duration);
+
+                for (var i = 0; i < tentativeJson.duration; i++) {
+                    count_tentatives[i] = tentativeJson.timeAndItem[i].length;
+
+                    // addNewInputFieldTentatives(i);
+
+                    // console.log(tentativeJson.timeAndItem[i]);
+                    // console.log(tentativeJson.timeAndItem[i].length);
+
+                    timeAndItems[i] = new Array(count_tentatives[i]);
+
+                    // create input field for time and item and append to #tentative-inputs
+                    for (var j = 0; j < tentativeJson.timeAndItem[i].length; j++) {
+
+                            var timeItem = tentativeJson.timeAndItem[i][j];
+
+                            var keys = Object.keys(tentativeJson.timeAndItem[i][j]);
+                            for (var key in timeItem) {
+                                // console.log(key, timeItem[key]);
+
+                                // initInputFieldTentatives(i);
+
+                                // var html = '<div class="row mb-3" id="tentatives_day_' + i + '_row_' + j + '">' + key + '</div>';
+                                // var html = '<h1>' + key + ' : ' + timeItem[key] + '</h1>';
+
+                                // console.log(html);
+
+                                // if ($('#tentatives-line-' + i).length) {
+                                //     console.log('tentatives-line-' + i + ' exist');
+                                // } else {
+                                //     console.log('tentatives-line-' + i + ' not exist');
+                                // }
+
+                                // append before #tentative-line-i
+
+                                // $('#tentatives-line-' + i).before(html);
+
+                                // console.log('#tentatives-lines-' + i);
+
+                                fetchInputFieldTentatives(i, j, key, timeItem[key]);
+                        }
+                    }
+                }
+            }
         }
 
     }
@@ -1076,6 +1181,39 @@
         updateTimeAndItemsValue();
     }
 
+    function fetchInputFieldTentatives(i, j, key, value) {
+        // count_tentatives[i]++;
+        j++;
+        var clone = $("#tentatives_day_" + i + "_0").clone().insertBefore("#tentatives-line-" + i);
+        clone.attr("id","tentatives_day_" + i + "_" + j);
+
+        // change name and id of input timepicker
+        clone.find("#timepicker").attr("name","tentatives_time[]");
+
+        // clear value of input timepicker
+        clone.find("#timepicker").val(key);
+        clone.find("#timepicker").timepicker();
+
+        // change name and id of input tentatives
+        clone.find("#tentatives-day-" + i + "-0").attr("name","tentatives_item[]");
+        clone.find("#tentatives-day-" + i + "-0").attr("id","tentatives-day-" + i + "-"+j);
+
+        // clear value of input tentatives
+        clone.find("#tentatives-day-" + i + "-" + count_tentatives[i]).val(value);
+
+        // change id of button
+        clone.find("button").attr("onclick","removeInputField('tentatives_day_" + i + "_" + j + "')");
+        clone.find("button").attr("id","btn_remove_tentative_" + i + "_"+j);
+
+        // enable remove button
+        clone.find("button").attr("disabled",false);
+
+        // $("#timepicker").timepicker();
+
+        // timeAndItems[i]++;
+        // updateTimeAndItemsValue();
+    }
+
 
     function checkDates() {
         // Get the start date and end date from the input fields
@@ -1103,7 +1241,6 @@
             }
         }
     }
-
 
     $('#program-date-type').change(function() {
         if ($(this).is(":checked")) {
@@ -1194,16 +1331,25 @@
             count_row_ajk++;
             var clone = $("#ajk_1").clone().insertBefore("#ajk-line");
 
-            // console.log(count_row_ajk);
-
             clone.attr("id","ajk_"+count_row_ajk);
-            clone.find("input").val("");
-            clone.find("input").attr("id","ajk_"+count_row_ajk);
-            clone.find("input").attr("name","paperwork_ajk[]");
 
-            clone.find("button").attr("id","btn_remove_ajk_"+count_row_ajk);
-            clone.find("button").attr("onclick","removeInputField('ajk_"+count_row_ajk+"')");
-            clone.find("button").attr("disabled",false);
+            clone.find("#committee_position_1").val("");
+            clone.find("#committee_name_1").val("");
+            clone.find("#committee_position_1").attr("id","committee_position_"+count_row_ajk);
+            clone.find("#committee_name_1").attr("id","committee_name_"+count_row_ajk);
+
+            clone.find("#add_ajk_name_1").attr("id","add_ajk_name_"+count_row_ajk);
+            clone.find("#add_ajk_name_"+count_row_ajk).attr("onclick","addNewAjkName('ajk_"+count_row_ajk+"')");
+
+            // clone.finc("#add_ajk_name_"+count_row_ajk).attr("onclick","addInputField('ajk_name_"+count_row_ajk+"')");
+
+            clone.find("#ajk-name-line-1").attr("id","ajk-name-line-"+count_row_ajk);
+
+            clone.find("#btn_remove_ajk_1").attr("id","btn_remove_ajk_"+count_row_ajk);
+            // clone.find("#btn_remove_ajk_name_1").attr("id","btn_remove_ajk_name_"+count_row_ajk);
+
+            clone.find("#btn_remove_ajk_"+count_row_ajk).attr("onclick","removeInputField('ajk_"+count_row_ajk+"')");
+            clone.find("#btn_remove_ajk_"+count_row_ajk).attr("disabled",false);
         });
     });
 

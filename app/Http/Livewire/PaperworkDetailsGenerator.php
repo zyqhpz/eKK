@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
 use Livewire\Component;
 use App\Models\Paperwork;
 use App\Models\PaperworkDetails;
@@ -73,6 +74,10 @@ class PaperworkDetailsGenerator extends Component
 
         $rows = (object) $rows;
 
+        $paperworkDetails->tentativeFirebaseId = $paperworkDetails->tentativeFirebaseId;
+        // $paperworkDetails->tentativeFirebaseId = json_decode($paperworkDetails->tentativeFirebaseId);
+        // $paperworkDetails->tentativeFirebaseId = Response::json($paperworkDetails->tentativeFirebaseId);
+
         // dd($rows);
 
         return view('livewire.paperwork-details-generator', compact('paperwork', 'paperworkDetails', 'rows'));
@@ -93,6 +98,8 @@ class PaperworkDetailsGenerator extends Component
         // dd($request->all());
         $paperwork = Paperwork::find($id);
         $paperworkDetails = PaperworkDetails::find($paperwork->paperworkDetailsId);
+
+        // dd($request->all());
 
         $paperwork->name = $request->program_name = $paperwork->name;
         $paperwork->isGenerated = $request->paperwork_isGenerated ?? $paperwork->isGenerated;
@@ -138,7 +145,6 @@ class PaperworkDetailsGenerator extends Component
         $paperworkDetails->dateVenueTime = $request->paperwork_dateVenueTime ?? null;
 
         // Tentative Program
-        
         $tentatives = null;
 
         if ($request->program_duration != null) {
