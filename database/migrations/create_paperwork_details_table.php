@@ -23,11 +23,11 @@ return new class extends Migration
             $table->string('organizedBy')->nullable();
             $table->string('targetGroup')->nullable();
             $table->string('dateVenueTime')->nullable();
-            $table->string('tentativeFirebaseId')->nullable();
-            $table->string('financialImplicationFirebaseId')->nullable();
+            $table->text('tentative')->nullable();
+            $table->text('financialImplication')->nullable();
             $table->text('programCommittee')->nullable();
             $table->string('closing')->nullable();
-            $table->string('signature')->nullable();
+            $table->text('signature')->nullable();
             $table->timestamps();
         });
     }
