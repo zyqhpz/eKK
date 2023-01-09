@@ -29,6 +29,10 @@ use App\Http\Livewire\Users;
 use App\Http\Livewire\ProfileClub;
 use App\Http\Livewire\PDFGenerator;
 use App\Http\Livewire\PaperworkClub;
+use App\Http\Livewire\PaperworkClubStatus;
+use App\Http\Livewire\PaperworkDetailsGenerator;
+
+use App\Http\Controllers\PaperworkController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,12 +64,34 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile-example', ProfileExample::class)->name('profile-example');
 
     Route::get('/profile-club', ProfileClub::class)->name('profile-club');
-    Route::get('/kertas-kerja-kelab', PaperworkClub::class)->name('paperwork-club');
 
+    
     Route::get('/pdf-generator', PDFGenerator::class)->name('pdf-generator');
     // Route::post('/pdf-generator', PDFGenerator::class)->name('pdf-generator');
     // Route::post("/pdf-generator/view", [PDFGenerator::class, 'viewPDF'])->name('pdf-generator.view');
     Route::post("/pdf-generator/view", [PDFGenerator::class, 'viewPDF'])->name('view-pdf');
+    
+    
+    // Paperwork
+    // Route::get('/paperwork', [PaperworkController::class, 'index'])->name('paperwork.index');
+    // Route::get('/kertas-kerja-kelab', [PaperworkController::class, 'index'])->name('paperwork.index');
+
+
+    // call PaperworkClub.list method from PaperworkClub.php file when /kertas-kerja-kelab is accessed
+    Route::get('/kertas-kerja-kelab', PaperworkClub::class)->name('paperwork-club');
+    Route::get('/kertas-kerja-kelab/{id}', PaperworkClubStatus::class)->name('paperwork-club-status');
+    Route::get('/kertas-kerja-kelab/{id}/viewPDF', [PaperworkClub::class, 'viewPDF'])->name('paperworkViewPDF');
+    Route::get('/kertas-kerja-kelab/{id}/viewFinanceDetails', [PaperworkClub::class, 'viewFinanceDetails'])->name('paperworkFinanceDetails');
+    // Route::get('/kertas-kerja-kelab/{id}', [PaperworkClub::class, 'show'])->name('paperwork-club-status');
+    Route::get('/kertas-kerja-kelab-status', [PaperworkClub::class, 'view'])->name('paperwork-status');
+    Route::post('/paperwork/create', [PaperworkClub::class, 'store'])->name('paperwork.store');
+    Route::post('/paperwork/update/{id}', [PaperworkClub::class, 'update'])->name('paperwork.update');
+    Route::delete('/paperwork/delete/{id}', [PaperworkClub::class, 'delete'])->name('paperwork.delete');
+    Route::post('/paperwork/submit/{id}', [PaperworkClub::class, 'submit'])->name('paperwork.submit');
+
+    // route for PDF generator
+    Route::get('/kertas-kerja-kelab/{id}/paperwork-generator', PaperworkDetailsGenerator::class)->name('paperwork-generator');
+    Route::post('/kertas-kerja-kelab/{id}/paperwork-generator/update', [PaperworkDetailsGenerator::class, 'updatePaperwork'])->name('paperwork-generator.save');
 
 
     Route::get('/users', Users::class)->name('users');

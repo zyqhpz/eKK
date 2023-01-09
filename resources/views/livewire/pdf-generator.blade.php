@@ -239,12 +239,22 @@
             $("#tentative").hide();
         } else {
             // add the days to the tentative div
-            $("#tentative").html("Program ini akan berlangsung selama " + days + " hari");
+            $("#tentative").html("Program ini akan berlangsung selama " + duration + " hari");
             // add new line
             $("#tentative").append("<br>");
             $("#tentative").show();
 
             var days = ["Ahad", "Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu"];
+
+            // create array and duration as its size
+            var tentatives = new Array(duration);
+
+            // initialize the array with 0 based on the duration
+            for (var i = 0; i < duration; i++) {
+                tentatives[i] = 0;
+            }
+
+            console.log(tentatives);
 
             // add X amount of input fields for the tentative dates based on the days
             for (var i = 0; i < duration; i++) {
@@ -263,19 +273,24 @@
                 $("#tentative").append(input);
 
                 // add timepicker for each day of the program and make sure each of them is unique by adding the day number to name
-                var timepicker = '<input type="text" class="form-control" id="timepicker" name="timepicker_hari_' + i + '" required/>';
+                var timepicker = '<input type="text" class="form-control" id="timepicker" name="timepicker_hari_' + i + '_' + tentatives[i] + '" required/>';
                 $("#tentative").append(timepicker);
                 $("#timepicker").timepicker();
                 
                 // add a new button to add new column
                 var button = '<button type="button" class="btn btn-primary mt-2 animate-up-2" id="btn_add_column_name">Tambah masa</button>';
                 $("#tentative").append(button);
+
+                // add horizontal line
+                var hr = '<hr>';
+                $("#tentative").append(hr);
+
                 var count_col_name = 1
 
                 // add new timepicker after the previous one
                 $("#btn_add_column_name").click(function() {
-                    count_col_name++;
-                    var new_timepicker = '<input type="text" class="form-control" id="timepicker" name="timepicker" required/>';
+                    tentatives[i]++;
+                    var new_timepicker = '<input type="text" class="form-control" id="timepicker" name="timepicker_hari_' + i + '_' + tentatives[i] + '" required/>';
                     $("#tentative").append(new_timepicker);
                     $("#timepicker").timepicker();
                 });

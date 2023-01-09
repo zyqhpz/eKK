@@ -209,6 +209,16 @@
                 <span class="sidebar-text">Pengurusan Kertas Kerja</span>
               </a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ route('paperwork-club-status', 1) }}">
+                <span class="sidebar-text">Test 1</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ route('paperwork-status') }}">
+                <span class="sidebar-text">Test 2</span>
+              </a>
+            </li>
           </ul>
         </div>
       </li>
