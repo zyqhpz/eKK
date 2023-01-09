@@ -281,8 +281,9 @@
                         </div>
                     </div>
                     {{-- IMPLIKASI KEWANGAN --}}
-                    <div class="tab-pane fade" id="nav-financial" role="tabpanel" aria-labelledby="nav-financial-tab">
+                    <div class="tab-pane fade show active" id="nav-financial" role="tabpanel" aria-labelledby="nav-financial-tab">
                         <h1>Implikasi Kewangan</h1>
+                        <input type="text" name="implication_details" id="implication_details" hidden>
                         <div class="table-responsive py-4">
                             <table class="table table-flush" id="implicationTable">
                                 <thead class="thead-light">
@@ -324,6 +325,7 @@
                                         </td>
                                     </tr>
                                     <hr id="implication-line" hidden>
+                                    <input type="text" id="implication-items-count" name="implication_count_items" hidden>
                                 </tbody>
                             </table>
                         </div>
@@ -336,7 +338,7 @@
                         </div>
                     </div>
                     {{-- JAWATANKUASA PROGRAM --}}
-                    <div class="tab-pane fade show active" id="nav-ajk" role="tabpanel" aria-labelledby="nav-ajk-tab">
+                    <div class="tab-pane fade" id="nav-ajk" role="tabpanel" aria-labelledby="nav-ajk-tab">
                         <h1>Senarai Jawatankuasa Program</h1>
                         <div class="container-fluid mb-4">
                             <div class="row">
@@ -364,17 +366,6 @@
                                     <i class="fas fa-plus"></i>
                                 </button>
                             </div>
-                            {{-- <div class="row mt-2" id="ajk_1_2">
-                                <div class="col-5">
-                                </div>
-                                <div class="col-6">
-                                    <input type="text" class="form-control" id="committee_name_1_2" name="committee_name[]"
-                                value="" />
-                                </div>
-                                <button type="button" class="btn btn-outline-danger col-1" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Padam Nama">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                            </div> --}}
                             <hr id="ajk-name-line-1" hidden>
                             <div class="row mt-2">
                                 <div class="col-7"></div>
@@ -441,7 +432,7 @@
                         </div>
                     </div>
                     <div class="flex mt-3">
-                        <input type="submit" class="btn btn-primary mt-2 animate-up-2" value="Simpan"/>
+                        <input type="submit" id="btn-save" class="btn btn-primary mt-2 animate-up-2" value="Simpan"/>
                         {{-- <button type="button" class="btn btn-primary mt-2 animate-up-2" id="btn-save">Simpan</button> --}}
                         <button type="button" class="btn btn-secondary mt-2 animate-up-2">Hantar</button>
                         <button type="button" class="btn btn-gray-100 mt-2 animate-up-2">Lihat PDF</button>
@@ -484,10 +475,9 @@
                     <hr>
                     <div class="form-group mb-3">
                         <label class="form-label required">Perkara baru</label>
-                        <input type="text" class="form-control" name="item_implication_title" id="item_implication_title" placeholder="Nama perkara baru" autocomplete="off" required>
+                        <input type="text" class="form-control" id="input_implication_title" placeholder="Nama perkara baru" autocomplete="off" required>
                     </div>
                 </div>
-                        
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-secondary" id="addImplication">Tambah</button>
@@ -506,8 +496,6 @@
     // })
 </script>
     
-
-
 
 <script>
     //   console.log("<?= $paperworkDetails->tentativeFirebaseId ?>");
@@ -542,7 +530,15 @@
     var count_row_objective = {{ $rows->objective }};
     var count_row_targetGroup = {{ $rows->targetGroup }};
 
-    var count_row_implication = 1;
+    var count_row_implication = 0;
+    var count_row_implication_items = new Array();
+
+    for (var i = 0; i < count_row_implication; i++) {
+        count_row_implication_items[i] = 0;
+    }
+
+    // count_row_implication_items[] = 0;
+
     var count_row_implication_item = new Array(count_row_implication);
 
     var count_row_ajk = 1;
@@ -550,38 +546,6 @@
     var row_background = 1;
 
     var count_tentatives;
-
-    function initInputFieldTentatives(i) {
-        // count_tentatives[i]++;
-        var clone = $("#tentatives_day_" + i + "_0").clone().insertBefore("#tentatives-line-" + i);
-        clone.attr("id","tentatives_day_" + i + "_" + count_tentatives[i]);
-
-        // change name and id of input timepicker
-        clone.find("#timepicker").attr("name","tentatives_time[]");
-
-        // clear value of input timepicker
-        clone.find("#timepicker").val("");
-        clone.find("#timepicker").timepicker();
-
-        // change name and id of input tentatives
-        clone.find("#tentatives-day-" + i + "-0").attr("name","tentatives_item[]");
-        clone.find("#tentatives-day-" + i + "-0").attr("id","tentatives-day-" + i + "-"+count_tentatives[i]);
-
-        // clear value of input tentatives
-        clone.find("#tentatives-day-" + i + "-" + count_tentatives[i]).val("");
-
-        // change id of button
-        clone.find("button").attr("onclick","removeInputField('tentatives_day_" + i + "_" + count_tentatives[i] + "')");
-        clone.find("button").attr("id","btn_remove_tentative_" + i + "_"+count_tentatives[i]);
-
-        // enable remove button
-        clone.find("button").attr("disabled",false);
-
-        // $("#timepicker").timepicker();
-
-        timeAndItems[i]++;
-        // updateTimeAndItemsValue();
-    }
 
     var count_row_tentative = 1;
 
@@ -629,67 +593,106 @@
         $('#btn_remove_targetGroup_1').prop('disabled', true);
 
         $("#timepicker").timepicker();
+    });
 
+    $('#btn-save').click(function() {
+        // append all inputs with attribute name="implication", to #implication_details value of each input
+        // $('#implication_details').val(" ");
+        // for (var i = 0; i <= count_row_implication; i++) {
+        //     // $('#implication_details').val("i_"+ i);
+
+        //     // append new value to #implication_details without deleting previous
+        //     $('#implication_details').val($('#implication_details').val() + $('#implication_' + i).val() + " ");
+
+        //     // append all inputs with attribute name="implication_item", to #implication_item_details value of each input
+        //     // $('#implication_item_details').val("");
+        // }
+
+        updateImplicationItemsCount();
+
+        $('#implication_details').val(count_row_implication_item);
+        
+        // append input with name "implication_item", to #implication_item_details value of each input
     });
 
     // implication
     $(document).ready(function() {     
         var implicationIsSingle = false;
+
+        var single = 0;
+        var multiple = 0;
         
         // add input field in implication table
         $('#addImplication').click(function() {
-            if (implicationIsSingle) {
+
+            var implication_title = $('#input_implication_title').val();
+
+            // check if implication_item_title is empty or null
+            if ($('#input_implication_title').val() == '' || $('#input_implication_title').val() == null) {
+
+                // add class is-invalid to #implication_item_title
+                $('#input_implication_title').addClass('is-invalid');
+
+                // append invalid-feedback after #implication_item_title
+                $('#input_implication_title').after(`<div class="invalid-feedback">Sila isi tajuk perkara</div>`);
+
+                // remove invalid-feedback after 3 seconds
+                setTimeout(function() {
+                    $('.invalid-feedback').remove();
+                }, 3000);
+
+                // remove class is-invalid after 3 seconds
+                setTimeout(function() {
+                    $('#input_implication_title').removeClass('is-invalid');
+                }, 3000);
+
+            } else {
+
+                // make implication_item_title empty
+                $('#input_implication_title').val('');
+
+                if (implicationIsSingle) {
                 var html = `<tr id="implication_` + count_row_implication + `"><th scope="col">#</th>
-                                    <td><input class="form-control" type="text" name="implication_title[]" id="implication_col_1">
-                                        <div class="d-grid gap-2 my-2">
-                                            <button type="button" class="btn btn-outline-danger" id="btn_remove_implication" onclick="removeInputField('implication_` + count_row_implication + `')">- Buang Perkara</button>
-                                        </div>
-                                    </td>
-                                    <td scope="col"><input class="form-control" type="text" name="implication_quantity[]" id="implication_col_2"></td>
-                                    <td scope="col"><input class="form-control" type="text" name="implication_pricePerUnit[]" id="implication_col_3"></td>
-                                    <td><input class="form-control" type="text" name="implication_remark[]" id="implication_col_4"></td></tr>`;
+                                <td>
+                                    <input type="text" name="single_implication[]" value="`+ implication_title +`" hidden>
+                                    <input class="form-control" type="text" name="implication_titles[]" value="`+ implication_title +`" id="implication_col_1">
+                                    <div class="d-grid gap-2 my-2">
+                                        <button type="button" class="btn btn-outline-danger" id="btn_remove_implication" onclick="removeInputField('implication_` + count_row_implication + `')">- Buang Perkara</button>
+                                    </div>
+                                </td>
+                                <td scope="col"><input class="form-control" type="text" name="implication_quantity[]" id="implication_col_2"></td>
+                                <td scope="col"><input class="form-control" type="text" name="implication_pricePerUnit[]" id="implication_col_3"></td>
+                                <td><input class="form-control" type="text" name="implication_remark[]" id="implication_col_4"></td></tr>`;
 
                 var lastRow = $('#implicationTable tr').last();
                 lastRow.after(html);
                 count_row_implication++;
 
+                // try {
+                //     count_row_implication_items[count_row_implication]++;
+                // } catch (error) {
+                //     count_row_implication_items.push(1);
+                // }
+
+                single++;
+
                 // close or dismiss modal
                 $('#modal-addNewItemImplication').modal('hide');
-            } else {
+                
+                } else {
 
-                // check if implication_item_title is empty or null
-                if ($('#item_implication_title').val() == '' || $('#item_implication_title').val() == null) {
-
-                    // add class is-invalid to #implication_item_title
-                    $('#item_implication_title').addClass('is-invalid');
-
-                    // append invalid-feedback after #implication_item_title
-                    $('#item_implication_title').after(`<div class="invalid-feedback">Sila isi tajuk perkara</div>`);
-
-                    // remove invalid-feedback after 3 seconds
-                    setTimeout(function() {
-                        $('.invalid-feedback').remove();
-                    }, 3000);
-
-                    // remove class is-invalid after 3 seconds
-                    setTimeout(function() {
-                        $('#item_implication_title').removeClass('is-invalid');
-                    }, 3000);
-
-                }
-
-                else {
+                    multiple++;
 
                     // get value of implication_item_title
-                    var implication_item_title = $('#item_implication_title').val();
+                    // var implication_item_title = $('#item_implication_title').val();
 
                     // make implication_item_title empty
-                    $('#item_implication_title').val('');
 
                     var html = `<tr id="implication_` + count_row_implication + `"><th scope="col">#</th>
                                 <td>
-                                    <input type="text" hidden name="implication_title[]" value="` + implication_item_title + `"/>
-                                    <div class="h-2">` + implication_item_title + ` :-</div>
+                                    <input type="text" name="multiple_implication[]" value="` + implication_title + `" hidden>
+                                    <input type="text" name="implication_titles[]" value="` + implication_title + `" hidden>
+                                    <div class="h-2">` + implication_title + ` :-</div>
                                     <br>
                                     <ul class="" id="implication_`+ count_row_implication +`_col_1">
                                         <li>
@@ -726,9 +729,9 @@
                     var lastRow = $('#implicationTable tr').last();
                     lastRow.after(html);
 
-                    count_row_implication++;
+                    count_row_implication_items.push(1);
 
-                    // var implication_id = count_row_implication + 1;
+                    count_row_implication++;
 
                     // close or dismiss modal
                     $('#modal-addNewItemImplication').modal('hide');
@@ -736,7 +739,7 @@
                     // hide #btn_remove_implication_item
                     $('#btn_remove_implication_item_' + (count_row_implication - 1)).hide();
 
-                     // onclick #btn_add_implication_item, add new item to multiple implication to ul li id="implication_1_col_1"
+                        // onclick #btn_add_implication_item, add new item to multiple implication to ul li id="implication_1_col_1"
                     $('#btn_add_implication_item_' + (count_row_implication - 1)).click(function() {
 
                         var row = count_row_implication - 1;
@@ -762,6 +765,8 @@
 
                         // show #btn_remove_implication_item
                         $('#btn_remove_implication_item_' + row).show();
+                        
+                        count_row_implication_items[count_row_implication - 1]++;
                     });
 
                     // onclick #btn_remove_implication_item, remove last line from ul li id="implication_1_col_1"
@@ -785,10 +790,10 @@
                             if (count_row_implication_item == 2) {
                                 $('#btn_remove_implication_item_' + row).hide();
                             }
-                        }
 
+                            count_row_implication_items[count_row_implication - 1]--;
+                        }
                     });
-                    // count_row_implication++;
                 }
             }
 
@@ -796,13 +801,17 @@
 
         $('#multipleItem').click(function() {
             implicationIsSingle = false;
-            $('#implicationIsMultiple').show();
+            // $('#implicationIsMultiple').show();
         });
         $('#singleItem').click(function() {
             implicationIsSingle = true;
-            $('#implicationIsMultiple').hide();
+            // $('#implicationIsMultiple').hide();
         });
     });
+
+    function updateImplicationItemsCount() {
+        $('#implication-items-count').val(count_row_implication_items);
+    }
 
     // committee
     $(document).ready(function() {
@@ -1089,55 +1098,34 @@
                 count_tentatives = 0;
             } else {
                 var tentativeJson = JSON.parse('<?= $paperworkDetails->tentativeFirebaseId ?>');
-                count_tentatives = new Array(tentativeJson.duration);
+                // set 0s to timeAndItems array
+                for (var i = 0; i < duration; i++) {
+                    timeAndItems[i] = 0;
+                }
 
-                timeAndItems = new Array(tentativeJson.duration);
-
-
-                var time = new Array(tentativeJson.duration);
-                var item = new Array(tentativeJson.duration);
+                updateTimeAndItemsValue();
 
                 for (var i = 0; i < tentativeJson.duration; i++) {
-                    count_tentatives[i] = tentativeJson.timeAndItem[i].length;
-
-                    // addNewInputFieldTentatives(i);
-
-                    // console.log(tentativeJson.timeAndItem[i]);
-                    // console.log(tentativeJson.timeAndItem[i].length);
-
-                    timeAndItems[i] = new Array(count_tentatives[i]);
-
+                    // count_tentatives[i] = tentativeJson.timeAndItem[i].length - 1;
+                    count_tentatives[i] = 0;
+                    
                     // create input field for time and item and append to #tentative-inputs
                     for (var j = 0; j < tentativeJson.timeAndItem[i].length; j++) {
 
-                            var timeItem = tentativeJson.timeAndItem[i][j];
+                        timeAndItems[i]++;
+                        updateTimeAndItemsValue();
 
-                            var keys = Object.keys(tentativeJson.timeAndItem[i][j]);
-                            for (var key in timeItem) {
-                                // console.log(key, timeItem[key]);
+                        var timeItem = tentativeJson.timeAndItem[i][j];
 
-                                // initInputFieldTentatives(i);
-
-                                // var html = '<div class="row mb-3" id="tentatives_day_' + i + '_row_' + j + '">' + key + '</div>';
-                                // var html = '<h1>' + key + ' : ' + timeItem[key] + '</h1>';
-
-                                // console.log(html);
-
-                                // if ($('#tentatives-line-' + i).length) {
-                                //     console.log('tentatives-line-' + i + ' exist');
-                                // } else {
-                                //     console.log('tentatives-line-' + i + ' not exist');
-                                // }
-
-                                // append before #tentative-line-i
-
-                                // $('#tentatives-line-' + i).before(html);
-
-                                // console.log('#tentatives-lines-' + i);
-
-                                fetchInputFieldTentatives(i, j, key, timeItem[key]);
+                        var keys = Object.keys(tentativeJson.timeAndItem[i][j]);
+                        for (var key in timeItem) {
+                            fetchInputFieldTentatives(i, j, key, timeItem[key]);
                         }
                     }
+
+                    updateTimeAndItemsValue();
+
+                    $("#tentatives_day_" + i + "_0").remove();
                 }
             }
         }
@@ -1175,43 +1163,42 @@
         // enable remove button
         clone.find("button").attr("disabled",false);
 
-        // $("#timepicker").timepicker();
+        $("#timepicker").timepicker();
 
         timeAndItems[i]++;
         updateTimeAndItemsValue();
     }
 
     function fetchInputFieldTentatives(i, j, key, value) {
-        // count_tentatives[i]++;
-        j++;
         var clone = $("#tentatives_day_" + i + "_0").clone().insertBefore("#tentatives-line-" + i);
+        
         clone.attr("id","tentatives_day_" + i + "_" + j);
 
         // change name and id of input timepicker
         clone.find("#timepicker").attr("name","tentatives_time[]");
 
         // clear value of input timepicker
-        clone.find("#timepicker").val(key);
         clone.find("#timepicker").timepicker();
+        clone.find("#timepicker").val(key);
 
         // change name and id of input tentatives
         clone.find("#tentatives-day-" + i + "-0").attr("name","tentatives_item[]");
-        clone.find("#tentatives-day-" + i + "-0").attr("id","tentatives-day-" + i + "-"+j);
+        clone.find("#tentatives-day-" + i + "-0").attr("id","tentatives-day-" + i + "-" + j);
 
         // clear value of input tentatives
-        clone.find("#tentatives-day-" + i + "-" + count_tentatives[i]).val(value);
+        clone.find("#tentatives-day-" + i + "-" + j).val(value);
 
         // change id of button
         clone.find("button").attr("onclick","removeInputField('tentatives_day_" + i + "_" + j + "')");
         clone.find("button").attr("id","btn_remove_tentative_" + i + "_"+j);
 
-        // enable remove button
-        clone.find("button").attr("disabled",false);
-
         // $("#timepicker").timepicker();
 
-        // timeAndItems[i]++;
-        // updateTimeAndItemsValue();
+        if (j != 0) {
+            // enable remove button
+            clone.find("button").attr("disabled",false);
+
+        }
     }
 
 

@@ -123,7 +123,6 @@ class PaperworkDetailsGenerator extends Component
         $paperwork->currentProgressState = $request->paperwork_currentProgressState ?? $paperwork->currentProgressState;
         $paperwork->progressStates = $request->paperwork_progressStates ?? $paperwork->progressStates;
         
-        $paperwork->save();
 
         // update paperoworkDetails
         $paperworkDetails->introduction = $request->paperwork_introduction ?? $paperworkDetails->introduction;
@@ -165,8 +164,6 @@ class PaperworkDetailsGenerator extends Component
                 $tentatives['timeAndItem'][$i] = $program_itemPerDay[$i];
             }
 
-            $items = array();
-
             // tentative - data format v1
             // for ($i=0; $i < $program_duration; $i++) {
             //     for ($j=0; $j < $program_itemPerDay[$i]; $j++) {
@@ -181,25 +178,114 @@ class PaperworkDetailsGenerator extends Component
 
             // tentative - data format v2
             for ($i=0; $i < $program_duration; $i++) {
+                $items = array();
                 for ($j=0; $j < $program_itemPerDay[$i]; $j++) {
                     $items[$j] = array(
                         $request->tentatives_time[$k] => $request->tentatives_item[$k]
                     );
+                    // echo 'row: '.$k . ' ' . $request->tentatives_time[$k] . ' ' . $request->tentatives_item[$k] . '<br>';
                     $k++;
                 }
                 $tentatives['timeAndItem'][$i] = $items;
             }
             $paperworkDetails->tentativeFirebaseId = json_encode($tentatives);
+            // dd($totalItems, $program_itemPerDay, $paperworkDetails->tentativeFirebaseId);
         } else {
             $paperworkDetails->tentativeFirebaseId = null;
         }
+
+        // Implication
+        $name_implication = $request->implication_titles;
+        $item_implication = $request->implication_item;
+        $item_quantity = $request->implication_quantity;
+        $item_pricePerUnit = $request->implication_pricePerUnit;
+        $implication_remark = $request->implication_remark;
+
+        $implication_titles_size = count($request->implication_titles);
+
+        $financialImplication = array(
+            'name' => $request->implication_titles,
+            'item' => $item_implication,
+            'items' => $request->implication_count_items,
+            'quantity' => $item_quantity,
+            'pricePerUnit' => $item_pricePerUnit,
+            'remark' => $implication_remark,
+            'details' => $request->implication_details,
+            'single' => $request->single_implication,
+            'multiple' => $request->multiple_implication
+        );
+
+        $singleImplication = $request->single_implication;
+        $multipleImplication = $request->multiple_implication;
+
+        $implication_array = array(
+            'implications_count' => $implication_titles_size,
+            'implications' => array(),
+        );
+
+        $implication_multiple_item_counter = 0;
+
+        $implication_multiple_item_by_title = explode(',', $request->implication_count_items);
+
+        for ($i=0; $i < $implication_titles_size; $i++) {
+            
+            // check if $request->implication_titles in $multipleImplication
+            if (in_array($request->implication_titles[$i], $multipleImplication)) {
+
+                // get index in array
+                $index = array_search($request->implication_titles[$i], $multipleImplication);
+
+                $title = $request->implication_titles[$i];
+                $isSingle = false;
+
+                $implication = array(
+                    'title' => $title,
+                    'isSingle' => $isSingle,
+                    'item' => array(),
+                    'remark' => $request->implication_remark[$i],
+                );
+
+                for ($j = 0; $j < $implication_multiple_item_by_title[$index]; $j++) {
+                    $item = array(
+                        'name' => $request->implication_item[$implication_multiple_item_counter],
+                        'quantity' => $request->implication_quantity[$i],
+                        'pricePerUnit' => $request->implication_pricePerUnit[$i],
+                    );
+                    array_push($implication['item'], $item);
+
+                    $implication_multiple_item_counter++;
+                }
+                array_push($implication_array['implications'], $implication);
+            } else {
+
+                $index = array_search($request->implication_titles[$i], $singleImplication);
+
+                $title = $request->implication_titles[$i];
+                $isSingle = true;
+
+                $implication = array(
+                    'title' => $title,
+                    'isSingle' => $isSingle,
+                    'quantity' => $request->implication_quantity[$i],
+                    'pricePerUnit' => $request->implication_pricePerUnit[$i],
+                    'remark' => $request->implication_remark[$i],
+                );
+                array_push($implication_array['implications'], $implication);
+            }
+        }
+
+        $paperworkDetails->financialImplicationFirebaseId = json_encode($implication_array) ?? $paperworkDetails->financialImplicationFirebaseId;
         
         // $paperworkDetails->tentativeFirebaseId = $request->paperwork_tentativeFirebaseId ?? $paperworkDetails->tentativeFirebaseId;
-        $paperworkDetails->financialImplicationFirebaseId = $request->paperwork_financialImplicationFirebaseId ?? $paperworkDetails->financialImplicationFirebaseId;
+        // $paperworkDetails->financialImplicationFirebaseId = $request->paperwork_financialImplicationFirebaseId ?? $paperworkDetails->financialImplicationFirebaseId;
+
+        // $paperworkDetails->financialImplicationFirebaseId = $request->paperwork_financialImplicationFirebaseId ?? $paperworkDetails->financialImplicationFirebaseId;
+
         $paperworkDetails->programCommittee = $request->paperwork_programCommittee ?? $paperworkDetails->programCommittee;
         $paperworkDetails->signature = $request->paperwork_signature ?? $paperworkDetails->signature;
         $paperworkDetails->closing = $request->paperwork_closing ?? $paperworkDetails->closing;
 
+        $paperwork->save();
         $paperworkDetails->save();
 
         return redirect()->back()
