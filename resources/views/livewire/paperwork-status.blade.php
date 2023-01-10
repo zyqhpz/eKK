@@ -1,9 +1,57 @@
 <title>eKK PDF Generator</title>
+
+<style>
+    #SelectValue {
+        width: auto;
+        height: auto;
+        position: absolute;
+        top: -10px;
+        text-align: center;
+        line-height: 45px;
+        background: #000;
+        border-radius: 4px;
+    }
+
+    #SelectValue::after {
+        content: '',
+        position: absolute;
+        bottom: 14px;
+        left: 0;
+    }
+
+    #selector {
+        height: 100px;
+        width: 50px;
+        position: absolute;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 2;
+    }
+
+    #SelectBtn {
+        height: 40px;
+        width: 40px;
+        position: absolute;
+        border-radius: 50%;
+        bottom: 0;
+    }
+
+    #statusRange {
+        width: 100%;
+        height: 40px;
+        outline: none;
+        border-radius: 3px;
+    }
+
+</style>
+
 <div>
     <script src="https://code.jquery.com/jquery-3.6.1.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </div>
+
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
     <div class="d-block mb-4 mb-md-0">
         <nav aria-label="breadcrumb" class="d-none d-md-inline-block">
@@ -67,9 +115,18 @@
             @elseif($paperwork->status == 1)
                 <div class="progress-bar bg-warning" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
             @else
-                <div class="progress-bar bg-danger" role="progressbar" style="width: 3%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar bg-danger" role="progressbar" style="width: 25%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
             @endif
         </div>
+        <div>
+            <label for="statusRange" class="form-label">Status</label>
+            <input type="range" class="form-range" min="0" max="100" step="1" id="statusRange">
+            <div id="selector">
+                <div id="SelectBtn"></div>
+                <div id="SelectValue" class="text-white w-auto px-2 text-nowrap"></div>
+            </div>
+        </div>
+    </div>
         @if ($paperwork->progressStates != null)
             <div class="progress-states">
                 <div class="d-flex flex-row">
@@ -136,6 +193,44 @@
     //         }
     //     });
     // });
+
+    var slider = document.getElementById("statusRange");
+    var selector = document.getElementById("selector");
+    var SelectValue = document.getElementById("SelectValue");
+
+    $(document).ready(function() {
+
+        var progression = ["Draf", "Penasihat Kelab", "HEPA", "TNC (HEPA)", "Lulus"];
+
+        var progressionBarValue = [20, 40, 60, 80, 100];
+
+        if ( {{ $paperwork->currentProgressState }} != null && {{ $paperwork->currentProgressState }} != 0) {
+            SelectValue.innerHTML = progression[{{ $paperwork->currentProgressState }} - 1];
+
+            // slider.value = progressionBarValue[{{ $paperwork->currentProgressState }} - 1];
+
+            $('#statusRange').val(progressionBarValue[{{ $paperwork->currentProgressState }} - 1]);
+
+            if ( ({{ $paperwork->currentProgressState }} == 1) || ({{ $paperwork->currentProgressState }} == 2) && ({{ $paperwork->status }} == 3) ) {
+                $('#SelectValue').addClass("bg-warning");
+            } else if ( {{ $paperwork->currentProgressState }} == 4) {
+                $('#SelectValue').addClass("bg-success");
+            } else {
+                $('#SelectValue').addClass("bg-danger");
+            }
+
+        } else {
+            SelectValue.innerHTML = "Belum Dihantar";
+        }
+
+        updateSliderValue();
+
+    });
+
+    function updateSliderValue() {
+        // SelectValue.innerHTML = slider.value;
+        selector.style.left = slider.value + "%";
+    }
 
     $('#btn-viewImplication').on('click',function(){
         console.log("clicked");
