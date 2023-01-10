@@ -352,17 +352,16 @@
                                 </div>
                             </div>
                         </div>
+                        <input type="text" class="form-control" id="committee_row_1" name="committee_row[]" hidden />
                         <div class="container-fluid mb-4" id="ajk_1">
                             <div class="row mt-2">
                                 <div class="col-5">
-                                    <input type="text" class="form-control" id="committee_position_1" name="committee_position[]"
-                                value="" />
+                                    <input type="text" class="form-control" id="committee_position_1" name="committee_position[]" value="" />
                                 </div>
                                 <div class="col-6">
-                                    <input type="text" class="form-control" id="committee_name_1" name="committee_name[]"
-                                value="" />
+                                    <input type="text" class="form-control" id="committee_name_1" name="committee_name[]" value="" />
                                 </div>
-                                <button type="button" id="add_ajk_name_1" onclick="addNewAjkName('ajk_1')" class="btn btn-outline-primary col-1" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Tambah Nama">
+                                <button type="button" id="add_ajk_name_1" onclick="addNewAjkName('ajk_1')" class="btn btn-outline-primary col-1" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Tambah Nama" disabled>
                                     <i class="fas fa-plus"></i>
                                 </button>
                             </div>
@@ -390,44 +389,44 @@
                             <h5>Maklumat Penyedia Kertas Kerja</h5>
                             <div class="col-md-6 mb-3">
                                 <label for="program-signature-preparedBy">Nama Penuh</label>
-                                <input class="form-control" id="program-signature-preparedBy" type="text" name="program_signature[]" placeholder="Nama pengarah program atau setiausaha">
+                                <input class="form-control" id="program-signature-preparedBy-0" type="text" name="program_signature[]" placeholder="Nama pengarah program atau setiausaha">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="program-signature-preparedBy">Jawatan</label>
-                                <input class="form-control" id="program-signature-preparedBy" type="text" name="program_signature[]" placeholder="Jawatan dalam program atau kelab">
+                                <input class="form-control" id="program-signature-preparedBy-1" type="text" name="program_signature[]" placeholder="Jawatan dalam program atau kelab">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="program-signature-preparedBy">No. H/P</label>
-                                <input class="form-control" id="program-signature-preparedBy" type="text" name="program_signature[]" placeholder="No. H/P">
+                                <input class="form-control" id="program-signature-preparedBy-2" type="text" name="program_signature[]" placeholder="No. H/P">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="program-signature-preparedBy">Emel</label>
-                                <input class="form-control" id="program-signature-preparedBy" type="text" name="program_signature[]" placeholder="Alamat emel">
+                                <input class="form-control" id="program-signature-preparedBy-3" type="text" name="program_signature[]" placeholder="Alamat emel">
                             </div>
                             <div class="col-md-6 mb-3">
 
-                                <canvas id="signature-pad" width="200" height="200" style="border:1px solid">
+                                {{-- <canvas id="signature-pad" width="200" height="200" style="border:1px solid">
                                     
-                                </canvas>
+                                </canvas> --}}
                             </div>
                         </div>
                         <div class="row">
                             <h5>Maklumat Presiden Kelab</h5>
                             <div class="col-md-6 mb-3">
                                 <label for="program-signature-preparedBy">Nama Penuh</label>
-                                <input class="form-control" id="program-signature-preparedBy" type="text" name="program_signature[]" placeholder="Nama presiden kelab">
+                                <input class="form-control" id="program-signature-preparedBy-4" type="text" name="program_signature[]" placeholder="Nama presiden kelab">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="program-signature-preparedBy">Jawatan</label>
-                                <input class="form-control" id="program-signature-preparedBy" type="text" name="program_signature[]" placeholder="Jawatan dalam program atau kelab" value="Presiden" disabled>
+                                <input class="form-control" id="program-signature-preparedBy-5" type="text" name="program_signature[]" placeholder="Jawatan dalam program atau kelab" value="Presiden" disabled>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="program-signature-preparedBy">No. H/P</label>
-                                <input class="form-control" id="program-signature-preparedBy" type="text" name="program_signature[]" placeholder="No. H/P">
+                                <input class="form-control" id="program-signature-preparedBy-6" type="text" name="program_signature[]" placeholder="No. H/P">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="program-signature-preparedBy">Emel</label>
-                                <input class="form-control" id="program-signature-preparedBy" type="text" name="program_signature[]" placeholder="Alamat emel">
+                                <input class="form-control" id="program-signature-preparedBy-7" type="text" name="program_signature[]" placeholder="Alamat emel">
                             </div>
                         </div>
                     </div>
@@ -487,38 +486,7 @@
     </div>
 </div>
 
-{{-- <script src="/public/js/implication.js"></script> --}}
-
-{{-- Implication Tab Script --}}
 <script>
-    // $(document).ready(function() {
-
-    // })
-</script>
-    
-
-<script>
-    //   console.log("<?= $paperworkDetails->tentativeFirebaseId ?>");
-
-
-    // canvas for signature
-    // select canvas#signature-pad in jquery
-    var canvas = document.querySelector("canvas");
-
-    var signaturePad = new SignaturePad(canvas);
-
-    function resizeCanvas() {
-  const ratio =  Math.max(window.devicePixelRatio || 1, 1);
-  canvas.width = canvas.offsetWidth * ratio;
-  canvas.height = canvas.offsetHeight * ratio;
-  canvas.getContext("2d").scale(ratio, ratio);
-  signaturePad.fromData(signaturePad.toData());
-}
-    window.onresize = resizeCanvas;
-    resizeCanvas();
-
-    // put border to canvas
-    // canvas.style.border = "1px solid black";
 
     var isOneDayProgram;
     // var program-date-start = $("#program-date-start").val();
@@ -533,15 +501,18 @@
     var count_row_implication = 0;
     var count_row_implication_items = new Array();
 
-    for (var i = 0; i < count_row_implication; i++) {
-        count_row_implication_items[i] = 0;
-    }
-
-    // count_row_implication_items[] = 0;
+    // for (var i = 0; i < count_row_implication; i++) {
+    //     count_row_implication_items[i] = 0;
+    // }
 
     var count_row_implication_item = new Array(count_row_implication);
 
+    var single = 0;
+    var multiple = 0;
+
     var count_row_ajk = 1;
+    var count_row_each_ajk = new Array(count_row_ajk);
+    count_row_each_ajk[0] = 1;
 
     var row_background = 1;
 
@@ -610,6 +581,8 @@
 
         updateImplicationItemsCount();
 
+        $('#committee_row_1').val(count_row_each_ajk);
+
         $('#implication_details').val(count_row_implication_item);
         
         // append input with name "implication_item", to #implication_item_details value of each input
@@ -619,8 +592,7 @@
     $(document).ready(function() {     
         var implicationIsSingle = false;
 
-        var single = 0;
-        var multiple = 0;
+        fetchInputFieldImplications();
         
         // add input field in implication table
         $('#addImplication').click(function() {
@@ -668,12 +640,6 @@
                 lastRow.after(html);
                 count_row_implication++;
 
-                // try {
-                //     count_row_implication_items[count_row_implication]++;
-                // } catch (error) {
-                //     count_row_implication_items.push(1);
-                // }
-
                 single++;
 
                 // close or dismiss modal
@@ -682,11 +648,6 @@
                 } else {
 
                     multiple++;
-
-                    // get value of implication_item_title
-                    // var implication_item_title = $('#item_implication_title').val();
-
-                    // make implication_item_title empty
 
                     var html = `<tr id="implication_` + count_row_implication + `"><th scope="col">#</th>
                                 <td>
@@ -739,7 +700,7 @@
                     // hide #btn_remove_implication_item
                     $('#btn_remove_implication_item_' + (count_row_implication - 1)).hide();
 
-                        // onclick #btn_add_implication_item, add new item to multiple implication to ul li id="implication_1_col_1"
+                    // onclick #btn_add_implication_item, add new item to multiple implication to ul li id="implication_1_col_1"
                     $('#btn_add_implication_item_' + (count_row_implication - 1)).click(function() {
 
                         var row = count_row_implication - 1;
@@ -796,7 +757,6 @@
                     });
                 }
             }
-
         });
 
         $('#multipleItem').click(function() {
@@ -813,6 +773,203 @@
         $('#implication-items-count').val(count_row_implication_items);
     }
 
+    function fetchInputFieldImplications() {
+        var financial = '<?php echo $paperworkDetails->financialImplicationFirebaseId; ?>';
+
+        if (financial != null && financial != '') {
+            var financialJson = JSON.parse(financial);
+
+            for (var i = 0; i < financialJson.implications.length; i++) {
+                
+                let imp = financialJson.implications[i];
+                if (imp.isSingle) {
+                    var html = `<tr id="implication_` + (i + 1) + `"><th scope="col">#</th>
+                                    <td>
+                                        <input type="text" name="single_implication[]" value="`+ imp.title +`" hidden>
+                                        <input class="form-control" type="text" name="implication_titles[]" value="`+ imp.title +`" id="implication_col_1">
+                                        <div class="d-grid gap-2 my-2">
+                                            <button type="button" class="btn btn-outline-danger" id="btn_remove_implication" onclick="removeInputField('implication_` + (i+1) + `')">- Buang Perkara</button>
+                                        </div>
+                                    </td>
+                                    <td scope="col"><input class="form-control" type="text" name="implication_quantity[]" value="`+ imp.quantity +`" id="implication_col_2"></td>
+                                    <td scope="col"><input class="form-control" type="text" name="implication_pricePerUnit[]" value="`+ imp.pricePerUnit +`" id="implication_col_3"></td>
+                                    <td><input class="form-control" type="text" name="implication_remark[]" value="`+ imp.remark +`" id="implication_col_4"></td>
+                                </tr>`;
+
+                    var lastRow = $('#implicationTable tr').last();
+                    lastRow.after(html);
+
+                    count_row_implication++;
+
+                    single++;
+                } else if (!imp.isSingle) {
+                    var html = `<tr id="implication_` + (i + 1) + `"><th scope="col">#</th>
+                        <td>
+                            <input type="text" name="multiple_implication[]" value="` + imp.title + `" hidden>
+                            <input type="text" name="implication_titles[]" value="` + imp.title + `" hidden>
+                            <div class="h-2">` + imp.title + ` :-</div>
+                            <br>
+                            <ul class="" id="implication_`+ (i+1) +`_col_1">
+                                <li>
+                                    <input class="form-control" type="text" name="implication_item[]" id="implication_col_1">
+                                </li> 
+                            </ul>
+                            <div class="d-grid gap-2 my-2">
+                                <button type="button" class="btn btn-outline-primary" id="btn_add_implication_item_` + (i+1) + `">+ Tambah Maklumat</button>
+                                <button type="button" class="btn btn-outline-danger" id="btn_remove_implication_item_` + (i+1) + `">- Buang Maklumat</button>
+                                <button type="button" class="btn btn-outline-danger" id="btn_remove_implication" onclick="removeInputField('implication_` + (i+1)+ `')">- Buang Perkara</button>
+                            </div>
+                        </td>
+                        <td scope="col">
+                            <div class="h-2">-</div>
+                            <br>
+                            <ul class="" style="list-style: none;" id="implication_`+ (i+1) +`_col_2">
+                                <li id="implication_`+ (i+1) +`_1_col_2">
+                                    <input class="form-control" type="text" name="implication_quantity[]">
+                                </li>
+                            </ul>
+                        </td>
+                        <td scope="col">
+                            <div class="h-2">-</div>
+                            <br>
+                            <ul class="" style="list-style: none;" id="implication_`+ (i+1) +`_col_3">
+                                <li id="implication_`+ (i+1) +`_1_col_3">
+                                    <input class="form-control" type="text" name="implication_pricePerUnit[]" id="implication_col_3">
+                                </li>
+                            </ul>
+                        </td>
+                        <td><input class="form-control h-4" type="text" name="implication_remark[]" id="implication_col_4" value="` +  imp.remark + `"></td>
+                    </tr>`;
+
+                    var lastRow = $('#implicationTable tr').last();
+                    lastRow.after(html);
+
+                    if (count_row_implication_items[i] == 0) {
+                        count_row_implication_items[i]++;
+                    } else {
+                        count_row_implication_items.push(1);
+                    }
+
+                    // count_row_implication_items.push(1);
+                    // count_row_implication_items[i]++;
+                    count_row_implication++;
+
+                    multiple++;
+
+                    $('#btn_remove_implication_item_' + (i+1)).hide();
+
+                    if (imp.item.length > 0) {
+                        var row = count_row_implication;
+
+                        for (var j=0; j < imp.item.length; j++) {
+                            var html1 = `<li>
+                                            <input class="form-control" type="text" name="implication_item[]" id="implication_col_1" value="` +  imp.item[j].name + `">
+                                        </li>`;
+    
+                            var lastRow_col_1 = $('#implication_'+ row +'_col_1 li').last();
+                            lastRow_col_1.after(html1);
+    
+                            var html2 = `<li>
+                                            <input class="form-control" type="text" name="implication_quantity[]" value="` +  imp.item[j].quantity+ `">
+                                        </li>`;
+                            var lastRow_col_2 = $('#implication_'+ row +'_col_2 li').last();
+                            lastRow_col_2.after(html2);
+    
+                            var html3 = `<li>
+                                            <input class="form-control" type="text" name="implication_pricePerUnit[]" id="implication_col_3" value="` +  imp.item[j].pricePerUnit + `">
+                                        </li>`;
+                            var lastRow_col_3 = $('#implication_'+ row +'_col_3 li').last();
+                            lastRow_col_3.after(html3);
+    
+                            // show #btn_remove_implication_item
+                            $('#btn_remove_implication_item_' + row).show();
+                            
+                            // count_row_implication_items[count_row_implication]++;
+
+                            // console.log(count_row_implication);
+                            // console.log(count_row_implication_items);
+                            // console.log(count_row_implication_items[i]);
+                            // console.log(count_row_implication_items[count_row_implication]);
+                            // console.log(count_row_implication_items[count_row_implication - 1]);
+                        }
+
+                        // console.log(count_row_implication_items[count_row_implication - 1]);
+
+                        var lastRow_col_1 = $('#implication_'+ row +'_col_1 li').first();
+                        lastRow_col_1.remove();
+                        
+                        var lastRow_col_2 = $('#implication_'+ row +'_col_2 li').first();
+                        lastRow_col_2.remove();
+                        
+                        var lastRow_col_3 = $('#implication_'+ row +'_col_3 li').first();
+                        lastRow_col_3.remove();
+
+                        if (count_row_implication_item[i] == 2) {
+                            $('#btn_remove_implication_item_' + row).hide();
+                        }
+                    }
+
+                    // onclick #btn_add_implication_item, add new item to multiple implication to ul li id="implication_1_col_1"
+                    $('#btn_add_implication_item_' + (i+1)).click(function() {
+
+                        var row = count_row_implication - 1;
+
+                        var html1 = `<li>
+                                        <input class="form-control" type="text" name="implication_item[]" id="implication_col_1">
+                                    </li>`;
+
+                        var lastRow_col_1 = $('#implication_'+ row +'_col_1 li').last();
+                        lastRow_col_1.after(html1);
+
+                        var html2 = `<li>
+                                        <input class="form-control" type="text" name="implication_quantity[]">
+                                    </li>`;
+                        var lastRow_col_2 = $('#implication_'+ row +'_col_2 li').last();
+                        lastRow_col_2.after(html2);
+
+                        var html3 = `<li>
+                                        <input class="form-control" type="text" name="implication_pricePerUnit[]" id="implication_col_3">
+                                    </li>`;
+                        var lastRow_col_3 = $('#implication_'+ row +'_col_3 li').last();
+                        lastRow_col_3.after(html3);
+
+                        // show #btn_remove_implication_item
+                        $('#btn_remove_implication_item_' + row).show();
+                        
+                        count_row_implication_items[count_row_implication]++;
+                        console.log("after add ", count_row_implication_items[count_row_implication]);
+                    });
+
+                    // onclick #btn_remove_implication_item, remove last line from ul li id="implication_1_col_1"
+                    $('#btn_remove_implication_item_' +  (i+1)).click(function() {
+                        var row = count_row_implication - 1;
+
+                        var count_row_implication_item = $('#implication_'+ row +'_col_1 li').length;
+
+                        if (count_row_implication_item == 1) {
+                            $('#btn_remove_implication_item_' + (count_row_implication - 1)).hide();
+                        } else {
+                            var lastRow_col_1 = $('#implication_'+ row +'_col_1 li').last();
+                            lastRow_col_1.remove();
+                            
+                            var lastRow_col_2 = $('#implication_'+ row +'_col_2 li').last();
+                            lastRow_col_2.remove();
+                            
+                            var lastRow_col_3 = $('#implication_'+ row +'_col_3 li').last();
+                            lastRow_col_3.remove();
+
+                            if (count_row_implication_item == 2) {
+                                $('#btn_remove_implication_item_' + row).hide();
+                            }
+
+                            count_row_implication_items[count_row_implication - 1]--;
+                        }
+                    });
+                }
+            }
+        } 
+    }
+
     // committee
     $(document).ready(function() {
         var count_row_committee = 1;
@@ -821,14 +978,48 @@
             $('#btn_add_committee').click(function() {
                 count_row_committee++;
             });
+
+            fetchInputFieldCommittee();
+
+            // add new input for ajk
+            $('#btn_add_ajk').on('click',function(){
+                count_row_ajk++;
+
+                count_row_each_ajk.push(1);
+
+                var clone = $("#ajk_1").clone().insertBefore("#ajk-line");
+
+                clone.attr("id","ajk_"+count_row_ajk);
+
+                clone.find("#committee_position_1").val("");
+                clone.find("#committee_name_1").val("");
+                clone.find("#committee_position_1").attr("id","committee_position_"+count_row_ajk);
+                clone.find("#committee_name_1").attr("id","committee_name_"+count_row_ajk);
+
+                clone.find("#add_ajk_name_1").attr("id","add_ajk_name_"+count_row_ajk);
+                clone.find("#add_ajk_name_"+count_row_ajk).attr("onclick","addNewAjkName('ajk_"+count_row_ajk+"')");
+                clone.find("#add_ajk_name_"+count_row_ajk).attr("disabled", false);
+
+                // clone.finc("#add_ajk_name_"+count_row_ajk).attr("onclick","addInputField('ajk_name_"+count_row_ajk+"')");
+
+                clone.find("#ajk-name-line-1").attr("id","ajk-name-line-"+count_row_ajk);
+
+                clone.find("#btn_remove_ajk_1").attr("id","btn_remove_ajk_"+count_row_ajk);
+                // clone.find("#btn_remove_ajk_name_1").attr("id","btn_remove_ajk_name_"+count_row_ajk);
+
+                clone.find("#btn_remove_ajk_"+count_row_ajk).attr("onclick","removeInputField('ajk_"+count_row_ajk+"')");
+                clone.find("#btn_remove_ajk_"+count_row_ajk).attr("disabled",false);
+            });
     });
 
     function addNewAjkName(id) {
         // format text is ajk_X, get X from id
         var ajk_id = id.split("_")[1];
-        console.log(ajk_id);
+        // console.log(ajk_id);
+
+        count_row_each_ajk[ajk_id-1]++;
         // var new_id = "ajk_" + ajk_id +  (parseInt(ajk_id) + 1);";
-        var new_id = "ajk_" + ajk_id + "_" + "2";
+        var new_id = "ajk_" + ajk_id + "_" + "new";
         var html = `<div class="row mt-2" id="`+ new_id + `">
                         <div class="col-5">
                         </div>
@@ -843,6 +1034,113 @@
 
         // select #ajk-name-line-1, insertBefore html
         $('#ajk-name-line-' + ajk_id).before(html);
+    }
+
+    function fetchInputFieldCommittee() {
+        var ajk = '<?php echo $paperworkDetails->programCommittee; ?>';
+
+        if (ajk != null && ajk != "") {
+            var ajkJson = JSON.parse(ajk);
+
+            count_row_ajk = 0;
+
+            for (var i = 0; i < ajkJson.length; i++) {
+
+                for (var key in ajkJson[i]) {
+                    count_row_ajk++;
+
+                    count_row_each_ajk.push(1);
+
+                    var clone = $("#ajk_1").clone().insertBefore("#ajk-line");
+
+                    clone.attr("id","ajk_"+count_row_ajk);
+
+                    clone.find("#committee_position_1").val("");
+                    clone.find("#committee_name_1").val("");
+                    clone.find("#committee_position_1").attr("id","committee_position_"+count_row_ajk);
+                    clone.find("#committee_name_1").attr("id","committee_name_"+count_row_ajk);
+
+                    $("#committee_position_"+count_row_ajk).val(key);
+
+                    clone.find("#add_ajk_name_1").attr("id","add_ajk_name_"+count_row_ajk);
+                    clone.find("#add_ajk_name_"+count_row_ajk).attr("onclick","addNewAjkName('ajk_"+count_row_ajk+"')");
+                    clone.find("#add_ajk_name_"+count_row_ajk).attr("disabled", false);
+
+                    clone.find("#btn_remove_ajk_1").attr("id","btn_remove_ajk_"+count_row_ajk);
+                    clone.find("#ajk-name-line-1").attr("id","ajk-name-line-"+count_row_ajk);
+
+                    clone.find("#btn_remove_ajk_"+count_row_ajk).attr("onclick","removeInputField('ajk_"+count_row_ajk+"')");
+                    clone.find("#btn_remove_ajk_"+count_row_ajk).attr("disabled",false);
+
+                    // delete the last row of #ajk_1
+                    if (count_row_ajk == 1) {
+                        $("#ajk_1").remove();
+                        clone.find("#add_ajk_name_"+count_row_ajk).attr("disabled", true);
+                        clone.find("#btn_remove_ajk_"+count_row_ajk).attr("disabled",true);
+
+                        count_row_each_ajk[0] = 0;
+                    }
+
+                    $("#committee_position_"+count_row_ajk).val(key);
+
+                    // add new ajk name
+                    if (Array.isArray(ajkJson[i][key])) {
+                        count_row_each_ajk[count_row_ajk] = 0;
+                        for (var j = 0; j < ajkJson[i][key].length; j++) {
+                            count_row_each_ajk[count_row_ajk]++;
+
+                            if ( j == 0 ) {
+                                $("#committee_name_"+count_row_ajk).val(ajkJson[i][key][j]);
+                            }
+
+                            else {
+                                var new_id = "ajk_" + count_row_ajk + "_" + "new";
+                                var html = `<div class="row mt-2" id="`+ new_id + `">
+                                                <div class="col-5">
+                                                </div>
+                                                <div class="col-6">
+                                                    <input type="text" class="form-control" id="committee_name_1_2" name="committee_name[]" value="`+ ajkJson[i][key][j] +`"/>
+                                                </div>
+                                                <button type="button" class="btn btn-outline-danger col-1" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Padam Nama" onclick="removeInputField('`+new_id+`')">
+                                                    <i class="fas fa-minus"></i>
+                                                </button>
+                                            </div>`;
+    
+                                // select #ajk-name-line-1, insertBefore html
+                                $('#ajk-name-line-' + count_row_ajk).before(html);
+                            }
+                        }
+                    } else {
+                        $("#committee_name_"+count_row_ajk).val(ajkJson[i][key]);
+                        count_row_each_ajk[count_row_ajk] = 1;
+                    }
+
+                }
+            }
+        }
+    }
+
+    // Signature
+    $(document).ready(function() {
+        fetchInputFieldSignature();
+    });
+
+    function fetchInputFieldSignature() {
+        var signature = '<?php echo $paperworkDetails->signature ?>';
+
+        if (signature != null && signature != "") {
+            var signatureJson = JSON.parse(signature);
+
+            $('#program-signature-preparedBy-0').val(signatureJson.writer_name);
+            $('#program-signature-preparedBy-1').val(signatureJson.writer_position);
+            $('#program-signature-preparedBy-2').val(signatureJson.writer_phone);
+            $('#program-signature-preparedBy-3').val(signatureJson.writer_email);
+
+            $('#program-signature-preparedBy-4').val(signatureJson.president_name);
+            $('#program-signature-preparedBy-5').val(signatureJson.president_position);
+            $('#program-signature-preparedBy-6').val(signatureJson.president_phone);
+            $('#program-signature-preparedBy-7').val(signatureJson.president_email);
+        }
     }
 
     // remove input field
@@ -940,6 +1238,24 @@
             // console.log("latest_count: " + latest_count);
             // count_row_implication = latest_count;
             // console.log("count_row_implication: " + count_row_implication);
+        }
+
+        if (field_id.includes("ajk")) {
+            var split = field_id.split("_");
+            var x = split[1];
+
+            count_row_each_ajk[x-1] = 0;
+            // console.log(count_row_each_ajk);
+        }
+
+        if (field_id.includes("ajk" && "new")) {
+            // text format is ajk_X_new, get X
+
+            var split = field_id.split("_");
+            var x = split[1];
+
+            count_row_each_ajk[x-1]++;
+            console.log(count_row_each_ajk);
         }
     }
 
@@ -1201,7 +1517,6 @@
         }
     }
 
-
     function checkDates() {
         // Get the start date and end date from the input fields
         var startDate = $("#program-date-start").val();
@@ -1312,35 +1627,7 @@
             clone.find("button").attr("onclick","removeInputField('targetGroup_"+count_row_targetGroup+"')");
             clone.find("button").attr("disabled",false);
         });
-
-        // add new input for ajk
-        $('#btn_add_ajk').on('click',function(){
-            count_row_ajk++;
-            var clone = $("#ajk_1").clone().insertBefore("#ajk-line");
-
-            clone.attr("id","ajk_"+count_row_ajk);
-
-            clone.find("#committee_position_1").val("");
-            clone.find("#committee_name_1").val("");
-            clone.find("#committee_position_1").attr("id","committee_position_"+count_row_ajk);
-            clone.find("#committee_name_1").attr("id","committee_name_"+count_row_ajk);
-
-            clone.find("#add_ajk_name_1").attr("id","add_ajk_name_"+count_row_ajk);
-            clone.find("#add_ajk_name_"+count_row_ajk).attr("onclick","addNewAjkName('ajk_"+count_row_ajk+"')");
-
-            // clone.finc("#add_ajk_name_"+count_row_ajk).attr("onclick","addInputField('ajk_name_"+count_row_ajk+"')");
-
-            clone.find("#ajk-name-line-1").attr("id","ajk-name-line-"+count_row_ajk);
-
-            clone.find("#btn_remove_ajk_1").attr("id","btn_remove_ajk_"+count_row_ajk);
-            // clone.find("#btn_remove_ajk_name_1").attr("id","btn_remove_ajk_name_"+count_row_ajk);
-
-            clone.find("#btn_remove_ajk_"+count_row_ajk).attr("onclick","removeInputField('ajk_"+count_row_ajk+"')");
-            clone.find("#btn_remove_ajk_"+count_row_ajk).attr("disabled",false);
-        });
     });
-
-    // program committee
 
     window.setTimeout(function() {
         $(".alert").fadeTo(500, 0).slideUp(500, function(){

@@ -101,7 +101,7 @@ class PaperworkDetailsGenerator extends Component
 
         // dd($request->all());
 
-        $paperwork->name = $request->program_name = $paperwork->name;
+        $paperwork->name = $request->program_name ?? $paperwork->name;
         $paperwork->isGenerated = $request->paperwork_isGenerated ?? $paperwork->isGenerated;
         $paperwork->filePath = $request->paperwork_file ?? $paperwork->filePath;
 
@@ -227,6 +227,8 @@ class PaperworkDetailsGenerator extends Component
 
         $implication_multiple_item_by_title = explode(',', $request->implication_count_items);
 
+        // dd($financialImplication);
+
         for ($i=0; $i < $implication_titles_size; $i++) {
             
             // check if $request->implication_titles in $multipleImplication
@@ -245,6 +247,8 @@ class PaperworkDetailsGenerator extends Component
                     'remark' => $request->implication_remark[$i],
                 );
 
+                // var_dump( $implication_multiple_item_by_title);
+
                 for ($j = 0; $j < $implication_multiple_item_by_title[$index]; $j++) {
                     $item = array(
                         'name' => $request->implication_item[$implication_multiple_item_counter],
@@ -252,7 +256,6 @@ class PaperworkDetailsGenerator extends Component
                         'pricePerUnit' => $request->implication_pricePerUnit[$i],
                     );
                     array_push($implication['item'], $item);
-
                     $implication_multiple_item_counter++;
                 }
                 array_push($implication_array['implications'], $implication);
@@ -274,15 +277,123 @@ class PaperworkDetailsGenerator extends Component
             }
         }
 
+        // dd($implication_array);
+
         $paperworkDetails->financialImplicationFirebaseId = json_encode($implication_array) ?? $paperworkDetails->financialImplicationFirebaseId;
+
+        // AJK
+        if ($request->committee_row != null) {
+
+            $committee = array();
+
+            $ajk_position_counter = 0;
+            $ajk_name_counter = 0;
+
+            // get row of ajk
+            $ajk_countPerRow = explode(',', $request->committee_row[0]); // num items per row
+            $ajk_row = count(explode(',', $request->committee_row[0])); // total items
+
+            // dd($ajk_countPerRow);
+
+            for ($ajk_counter = 0; $ajk_counter < $ajk_row; $ajk_counter++) {
+
+                $committee_item = array();
+
+
+                if ($ajk_countPerRow[$ajk_counter] != 0) {
+                    if ($ajk_countPerRow[$ajk_counter] > 1) {
+
+                        $ajk_name_array = array();
+
+                        for ($i=0; $i < $ajk_countPerRow[$ajk_counter]; $i++) {
+                            // echo $request->committee_name[$ajk_name_counter];
+                            array_push($ajk_name_array, $request->committee_name[$ajk_name_counter]);
+                            $ajk_name_counter++;
+                        }
+
+                        $committee_item = array(
+                            $request->committee_position[$ajk_position_counter] => $ajk_name_array
+                        );
+
+                        // var_dump( $ajk_name_array);
+
+                        $ajk_position_counter++;
+
+                    } else {
+                        $committee_item = array(
+                            $request->committee_position[$ajk_position_counter] => $request->committee_name[$ajk_name_counter]
+                        );
+
+                        $ajk_position_counter++;
+                        $ajk_name_counter++;
+                    }
+
+                    array_push($committee, $committee_item);
+                }
+            }
+        }
+        // dd(json_encode($committee), $committee, $ajk_countPerRow, $ajk_row, $request->committee_row, $request->committee_position, $request->committee_name);
+        // dd($request->committee_row, $request->committee_position, $request->committee_name);
+        $paperworkDetails->programCommittee = json_encode($committee) ?? $paperworkDetails->programCommittee;
+
         
         // $paperworkDetails->tentativeFirebaseId = $request->paperwork_tentativeFirebaseId ?? $paperworkDetails->tentativeFirebaseId;
         // $paperworkDetails->financialImplicationFirebaseId = $request->paperwork_financialImplicationFirebaseId ?? $paperworkDetails->financialImplicationFirebaseId;
 
         // $paperworkDetails->financialImplicationFirebaseId = $request->paperwork_financialImplicationFirebaseId ?? $paperworkDetails->financialImplicationFirebaseId;
 
-        $paperworkDetails->programCommittee = $request->paperwork_programCommittee ?? $paperworkDetails->programCommittee;
-        $paperworkDetails->signature = $request->paperwork_signature ?? $paperworkDetails->signature;
+        // Signature
+        $writer_name = null;
+        $writer_position = null;
+        $writer_phone = null;
+        $writer_email = null;
+
+        $president_name = null;
+        $president_position = null;
+        $president_phone = null;
+        $president_email = null;
+
+        if ($request->program_signature[0] != null) {
+            $writer_name = $request->program_signature[0];
+        }
+        if ($request->program_signature[1] != null) {
+            $writer_position = $request->program_signature[1];
+        }
+
+        if ($request->program_signature[2] != null) {
+            $writer_phone = $request->program_signature[2];
+        }
+
+        if ($request->program_signature[3] != null) {
+            $writer_email = $request->program_signature[3];
+        }
+
+        if ($request->program_signature[4] != null) {
+            $president_name = $request->program_signature[4];
+        }
+
+        if ($request->program_signature[5] != null) {
+            $president_phone = $request->program_signature[5];
+        }
+
+        if ($request->program_signature[6] != null) {
+            $president_email = $request->program_signature[6];
+        }
+
+        $signature = array(
+            'writer_name' => $writer_name,
+            'writer_position' => $writer_position,
+            'writer_phone' => $writer_phone,
+            'writer_email' => $writer_email,
+            'president_name' => $president_name,
+            'president_position' => 'Presiden',
+            'president_phone' => $president_phone,
+            'president_email' => $president_email,
+        );
+
+        // dd($request->program_signature, $signature);
+        $paperworkDetails->signature = json_encode($signature) ?? null;
+
         $paperworkDetails->closing = $request->paperwork_closing ?? $paperworkDetails->closing;
 
         $paperwork->save();
