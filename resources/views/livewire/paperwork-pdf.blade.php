@@ -9,6 +9,18 @@
     * {
         font-family: Arial;
     }
+
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 70%;
+        }
+
+    td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
 </style>
 </head>
 <body class="mx-auto d-block">
@@ -31,33 +43,38 @@
             // $tarikh_main_page .= ' - '.$days[date('w', strtotime($paperwork->programDateEnd))].', '.date('j', strtotime($paperwork->programDateEnd)).' '.$months[date('n', strtotime($paperwork->programDateEnd))-1].' '.date('Y', strtotime($paperwork->programDateEnd));
         }
     ?>
+    
+    <div id="main-page">
 
-    <div class="mx-auto d-block text-center">
-        <img class="align-middle" style="height: 130px;" src="{{ public_path('img/UTEM.png') }}" alt="">
-    </div>
+        <br><br>
 
-    <br>
-    <br>
+        <div class="mx-auto d-block text-center">
+            <img class="align-middle" style="height: 140px;" src="{{ public_path('img/UTEM.png') }}" alt="">
+        </div>
 
-    <div class="mx-auto d-block text-center">
-        <p class="text-uppercase text-bold"><b>KERTAS KERJA <br> {{ $paperwork->name }}</b></p>
-        <p class="text-uppercase text-bold"><b>TARIKH<br> {{ $tarikh_main_page }}</b></p>
-        <p class="text-uppercase text-bold"><b>TEMPAT<br> {{ $paperwork->venue }}</b></p>
-        <p class="text-uppercase text-bold"><b>ANJURAN<br> {{ $tarikh_main_page }}</b></p>
-        {{-- <p class="text-uppercase text-bold"><b>{{ $paperwork->name }}</b></p> --}}
-    </div>
+        <br><br>
 
-    <div class="mt-6 mx-auto d-block text-center">
-        <p>TARIKH</p>
-        <p class="text-uppercase">{{ $paperwork->name }}</p>
-    </div>
+        <div class="mx-auto d-block text-center">
+            <p class="text-uppercase text-bold"><b>KERTAS KERJA <br> {{ $paperwork->name }}</b></p>
+            <p class="text-uppercase text-bold"><b>TARIKH<br> {{ $tarikh_main_page }}</b></p>
+            <p class="text-uppercase text-bold"><b>TEMPAT<br> {{ $paperwork->venue }}</b></p>
+            <p class="text-uppercase text-bold"><b>ANJURAN<br> {{ $paperwork->collaborations }}</b></p>
+            <p class="text-uppercase text-bold"><b>DISEDIAKAN OLEH : <br> {{ json_decode($paperworkDetails->signature, true)['writer_name'] }}</b></p>
+        </div>
 
-    <div class="mt-6 mx-auto d-block text-center">
-        <p>TEMPAT</p>
-        <p class="text-uppercase">{{ $paperwork->venue }}</p>
-    </div>
+        <br><br>
+        
+        <table class="mx-auto">
+                <td>Tarikh Program terakhir yang dilulus dan dilaksanakan</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Status Laporan Program Terakhir</td>
+                <td>Hantar/Tidak (Mesti dinyatakan)</td>
+            </tr>
+        </table>
 
-    <div class="d-flex align-items-center justify-content-center"">
+        <div class="d-flex align-items-center justify-content-center" style="page-break-after: always;">
 
         <p class="align-items-center">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
             tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
@@ -66,6 +83,9 @@
             cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
             proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
         </div>
+
+    </div>
+
 </body>
 
 </html>

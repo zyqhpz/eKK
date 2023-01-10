@@ -39,6 +39,7 @@
         echo '<div class="alert alert-danger" role="alert" fade show>RM ' . session('output') . '</div>';
     }
     ?>
+    <div class="alert alert-success" role="alert" id="response-submitted" fade show hidden>Kertas kerja berjaya dihantar</div>
 </div>
 <div class="card card-body shadow border-0 table-wrapper table-responsive">
     <div>Nama Kertas Kerja: {{ $paperwork->name }}</div>
@@ -81,22 +82,27 @@
     </div>
 
     <div>
-        <a class="btn btn-primary" href="{{ route('paperworkViewPDF', $paperwork->id ) }}" type="button">Lihat Kertas Kerja</a>
         {{-- <button class="btn btn-primary" href="/paperworks/{{ $paperwork->filePath }}" type="button">Lihat Kertas Kerja</button> --}}
         @if($paperwork->status == 0)
-            <?php if ($paperwork->isGenerated) { ?>
-                <a class="btn btn-outline-secondary" href="{{ route('paperwork-generator', $paperwork->id) }}" type="button">Sunting di penjana</a>
+        <?php if ($paperwork->isGenerated) { ?>
+            <a class="btn btn-outline-secondary" href="{{ route('paperwork-generator', $paperwork->id) }}" type="button">Sunting di penjana</a>
             <?php } else { ?>
-                <button type="button" data-bs-toggle="modal" data-bs-target="#modal-editPaperwork" class="btn btn-outline-secondary">Sunting</button>
+            <button type="button" data-bs-toggle="modal" data-bs-target="#modal-editPaperwork" class="btn btn-outline-secondary">Sunting</button>
             <?php } ?>
-            <form action="{{ route('paperwork.submit', $paperwork->id ) }}" method="POST">
-                @csrf
-                <button class="btn btn-success text-white" id="btn-submit" type="submit">Hantar</button>
-            </form>
+            <button class="btn btn-success text-white" id="btn-submit" type="button" data-bs-toggle="modal" data-bs-target="#modal-submitPaperwork" >Hantar</button>
+                {{-- <form action="{{ route('paperwork.submit', $paperwork->id ) }}" method="POST">
+                    @csrf
+                    <button class="btn btn-success text-white" id="btn-submit" type="submit">Hantar</button>
+                </form> --}}
         @endif
-        <a class="btn btn-secondary" href="{{ route('paperworkFinanceDetails', $paperwork->id ) }}" type="button">Lihat Implikasi</a>
+            
+        <?php if ($paperwork->isGenerated) { ?>
+        <a class="btn btn-primary" href="{{ route('paperwork-generator.viewPDF', $paperwork->id) }}" target="_blank" type="button">Lihat PDF</a>
+        <?php } else { ?>
+        <a class="btn btn-primary" href="{{ route('paperworkViewPDF', $paperwork->id ) }}" target="_blank" type="button">Lihat PDF</a>
+        <?php } ?>
 
-
+        <a class="btn btn-secondary" id="btn-viewImplication" href="{{ route('paperworkFinanceDetails', $paperwork->id ) }}" type="button">Lihat Implikasi Kewangan</a>
 
         {{-- @if($paperwork->status == 2)
             <form action="{{ route('paperwork.unsubmit', $paperwork->id ) }}" method="POST">
@@ -130,16 +136,68 @@
     //         }
     //     });
     // });
+
+    $('#btn-viewImplication').on('click',function(){
+        console.log("clicked");
+        $.ajax({
+            type: "GET",
+            url: "{{ route('paperworkFinanceDetails', $paperwork->id) }}",
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response){
+                // console.log(response);
+                // $('#response-submitted').html(response);
+                $('#response-submitted').attr('hidden', false);
+                $('#response-submitted').val(response);
+            }
+        });
+    });
+    
+    // $('#btn-submit').on('click',function(){
+    //     console.log("clicked");
+    //     $.ajax({
+    //         type: "POST",
+    //         url: "{{ route('paperwork.submit', $paperwork->id) }}",
+    //         headers: {
+    //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    //         },
+    //         success: function(response){
+    //             console.log(response);
+    //         }
+    //     });
+    // });
 </script>
 
+{{-- modal to submit paperwork--}}
+<div class="modal fade" id="modal-submitPaperwork" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form action="{{ route('paperwork.submit', $paperwork->id) }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-header">
+                    <h2 class="h6 modal-title">Hantar Kertas Kerja</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5 class="text-bold">Adakah anda pasti untuk menghantar kertas kerja ini?</h5>
+                    <p class="text-danger">Kertas kerja ini tidak boleh di sunting selepas dihantar.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-secondary">Hantar</button>
+                    <button type="button" class="btn btn-link text-gray ms-auto" data-bs-dismiss="modal">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
+{{-- modal to edit paperwork --}}
 <div class="modal fade" id="modal-editPaperwork" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
 
         <div class="modal-content">
-
             {{-- create a form to add a new paperwork with attributes: name, method to upload paperwork --}}
-            {{-- <form action="{{ route('paperwork.store') }}" method="POST" enctype="multipart/form-data"> --}}
             <form action="{{ route('paperwork.update', $paperwork->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-header">
@@ -164,7 +222,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-secondary">Tambah</button>
-                    <button type="button" class="btn btn-link text-gray ms-auto" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-link text-gray ms-auto" data-bs-dismiss="modal">Tutup</button>
                 </div>
             </form>
         </div>

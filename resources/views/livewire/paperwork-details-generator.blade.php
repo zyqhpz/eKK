@@ -22,10 +22,10 @@
                 <!-- Tab -->
                 <nav>
                     <div class="nav nav-tabs mb-4" id="nav-tab" role="tablist">
-                        <a class="nav-item nav-link" id="nav-info-tab" data-bs-toggle="tab" href="#nav-info" role="tab" aria-controls="nav-info" aria-selected="true">Maklumat Asas</a>
+                        <a class="nav-item nav-link active" id="nav-info-tab" data-bs-toggle="tab" href="#nav-info" role="tab" aria-controls="nav-info" aria-selected="true">Maklumat Asas</a>
                         <a class="nav-item nav-link" id="nav-intro-tab" data-bs-toggle="tab" href="#nav-intro" role="tab" aria-controls="nav-intro" aria-selected="false">Pendahuluan</a>
                         <a class="nav-item nav-link" id="nav-tentative-tab" data-bs-toggle="tab" href="#nav-tentative" role="tab" aria-controls="nav-tentative" aria-selected="false">Tentatif</a>
-                        <a class="nav-item nav-link active" id="nav-financial-tab" data-bs-toggle="tab" href="#nav-financial" role="tab" aria-controls="nav-financial" aria-selected="false">Kewangan</a>
+                        <a class="nav-item nav-link" id="nav-financial-tab" data-bs-toggle="tab" href="#nav-financial" role="tab" aria-controls="nav-financial" aria-selected="false">Kewangan</a>
                         <a class="nav-item nav-link" id="nav-ajk-tab" data-bs-toggle="tab" href="#nav-ajk" role="tab" aria-controls="nav-ajk" aria-selected="false">Jawatankuasa</a>
                         <a class="nav-item nav-link" id="nav-signature-tab" data-bs-toggle="tab" href="#nav-signature" role="tab" aria-controls="nav-signature" aria-selected="false">Tandatangan</a>
                     </div>
@@ -33,7 +33,7 @@
                 <form id="form-paperwork" action="{{ route('paperwork-generator.save', $paperwork->id) }}" method="POST" autocomplete="off" enctype="multipart/form-data" novalidate>
                 <div class="tab-content card card-body border-0 shadow mb-4" id="nav-tabContent" >
                     @csrf
-                    <div class="tab-pane fade" id="nav-info" role="tabpanel" aria-labelledby="nav-info-tab">
+                    <div class="tab-pane fade show active" id="nav-info" role="tabpanel" aria-labelledby="nav-info-tab">
                         <h1>Maklumat Asas Program</h1>
                         <div class="row">
                             <div class="mb-3">
@@ -80,7 +80,8 @@
                                 <div class="form-group">
                                     <label for="program-collab">Dengan kerjasama (jika ada)</label>
                                     <input class="form-control" id="collab" type="text" name="program_collaborations"
-                                        placeholder="Kelab ABC, Kelab DEF">
+                                        placeholder="Kelab ABC, Kelab DEF"
+                                        @if($paperwork->collaborations != null) { value="{{ $paperwork->collaborations }}"} @endif>
                                 </div>
                             </div>
                         </div>
@@ -281,7 +282,7 @@
                         </div>
                     </div>
                     {{-- IMPLIKASI KEWANGAN --}}
-                    <div class="tab-pane fade show active" id="nav-financial" role="tabpanel" aria-labelledby="nav-financial-tab">
+                    <div class="tab-pane fade" id="nav-financial" role="tabpanel" aria-labelledby="nav-financial-tab">
                         <h1>Implikasi Kewangan</h1>
                         <input type="text" name="implication_details" id="implication_details" hidden>
                         <div class="table-responsive py-4">

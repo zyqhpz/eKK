@@ -118,7 +118,7 @@ class PaperworkDetailsGenerator extends Component
         }
 
         $paperwork->venue = $request->paperwork_venue ?? null;
-        $paperwork->collaborations = $request->paperwork_collaborations ?? null;
+        $paperwork->collaborations = $request->program_collaborations ?? null;
         $paperwork->status = $request->paperwork_status ?? $paperwork->status;
         $paperwork->currentProgressState = $request->paperwork_currentProgressState ?? $paperwork->currentProgressState;
         $paperwork->progressStates = $request->paperwork_progressStates ?? $paperwork->progressStates;
