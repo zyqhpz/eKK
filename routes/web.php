@@ -92,6 +92,7 @@ Route::middleware('auth')->group(function () {
     // route for PDF generator
     Route::get('/kertas-kerja-kelab/{id}/paperwork-generator', PaperworkDetailsGenerator::class)->name('paperwork-generator');
     Route::post('/kertas-kerja-kelab/{id}/paperwork-generator/update', [PaperworkDetailsGenerator::class, 'updatePaperwork'])->name('paperwork-generator.save');
+    Route::get('/kertas-kerja-kelab/{id}/paperwork-generator/viewPDF', [PDFGenerator::class, 'viewGeneratedPDF'])->name('paperwork-generator.viewPDF');
 
 
     Route::get('/users', Users::class)->name('users');

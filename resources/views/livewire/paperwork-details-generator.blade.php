@@ -434,7 +434,7 @@
                         <input type="submit" id="btn-save" class="btn btn-primary mt-2 animate-up-2" value="Simpan"/>
                         {{-- <button type="button" class="btn btn-primary mt-2 animate-up-2" id="btn-save">Simpan</button> --}}
                         <button type="button" class="btn btn-secondary mt-2 animate-up-2">Hantar</button>
-                        <button type="button" class="btn btn-gray-100 mt-2 animate-up-2">Lihat PDF</button>
+                        <button type="button" id="btn-viewPDF" class="btn btn-gray-100 mt-2 animate-up-2">Lihat PDF</button>
                         <button type="button" class="btn btn-danger mt-2 animate-up-2">Batal</button>
                     </div>
                 </div>
@@ -586,6 +586,14 @@
         $('#implication_details').val(count_row_implication_item);
         
         // append input with name "implication_item", to #implication_item_details value of each input
+    });
+
+    // Open PDF in new tab when Lihat PDF clicked
+    $('#btn-viewPDF').click(function() {
+        fetch("{{ route('paperwork-generator.viewPDF', $paperwork->id) }}")
+            .then(function(response) {
+                window.open(response.url, '_blank');
+            });
     });
 
     // implication
