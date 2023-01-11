@@ -86,6 +86,10 @@
     if (session('output')) {
         echo '<div class="alert alert-danger" role="alert" fade show>RM ' . session('output') . '</div>';
     }
+
+    if (session('rejected')) {
+        echo '<div class="alert alert-danger" role="alert" fade show>' . session('rejected') . '</div>';
+    }
     ?>
     <div class="alert alert-success" role="alert" id="response-submitted" fade show hidden>Kertas kerja berjaya dihantar</div>
 </div>
@@ -97,9 +101,9 @@
         <div class="progress-info">
             <div class="progress-label">
                 Status: 
-                @if ($paperwork->status == 4)
-                    <span class="text-success">Dihantar</span>
-                @elseif($paperwork->status == 1 || $paperwork->status == 2 || $paperwork->status == 3)
+                @if ($paperwork->status == 2)
+                    <span class="text-success">Lulus</span>
+                @elseif($paperwork->status == 1)
                     <span class="text-warning">Dalam proses</span>
                 @else
                     <span class="text-danger">Draf</span>
@@ -110,11 +114,11 @@
         <div class="progress">
             @if ($paperwork->status == 4 )
                 <div class="progress-bar bg-success" role="progressbar" style="width: 100%;" aria-valuenow="99" aria-valuemin="0" aria-valuemax="100"></div>
-            @elseif($paperwork->status == 1)
+            @elseif($paperwork->currentProgressState == 1)
                 <div class="progress-bar bg-warning" role="progressbar" style="width: 35%;" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
-            @elseif ($paperwork->status == 2)
+            @elseif ($paperwork->currentProgressState == 2)
                 <div class="progress-bar bg-warning" role="progressbar" style="width: 61%;" aria-valuenow="61" aria-valuemin="0" aria-valuemax="100"></div>
-            @elseif($paperwork->status == 3)
+            @elseif($paperwork->currentProgressState == 3)
                 <div class="progress-bar bg-warning" role="progressbar" style="width: 93%;" aria-valuenow="93" aria-valuemin="0" aria-valuemax="100"></div>
             @else
                 <div class="progress-bar bg-danger" role="progressbar" style="width: 25%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
@@ -164,11 +168,23 @@
 
         {{-- <a class="btn btn-secondary" id="btn-viewImplication" href="{{ route('paperworkFinanceDetails', $paperwork->id ) }}" type="button">Lihat Implikasi Kewangan</a> --}}
 
-        @if ($paperwork->status == 1 && auth()->user()->role == 2)
+        @if ($paperwork->currentProgressState == 2 && auth()->user()->role == 0)
             <a class="btn btn-secondary" id="btn-updatePaperworkStatus" href="" data-bs-toggle="modal" data-bs-target="#modal-updatePaperworkStatus" type="button">Kemaskini Status</a>
         @endif
 
-        @if ($paperwork->status == 2 && auth()->user()->role == 0)
+        @if ($paperwork->currentProgressState == 1 && auth()->user()->role == 2)
+            <a class="btn btn-secondary" id="btn-updatePaperworkStatus" href="" data-bs-toggle="modal" data-bs-target="#modal-updatePaperworkStatus" type="button">Kemaskini Status</a>
+        @endif
+
+        @if ($paperwork->currentProgressState == 2 && auth()->user()->role == 3)
+            <a class="btn btn-secondary" id="btn-updatePaperworkStatus" href="" data-bs-toggle="modal" data-bs-target="#modal-updatePaperworkStatus" type="button">Kemaskini Status</a>
+        @endif
+
+        @if ($paperwork->currentProgressState == 3 && auth()->user()->role == 4)
+            <a class="btn btn-secondary" id="btn-updatePaperworkStatus" href="" data-bs-toggle="modal" data-bs-target="#modal-updatePaperworkStatus" type="button">Kemaskini Status</a>
+        @endif
+
+        @if ($paperwork->currentProgressState == 4 && auth()->user()->role == 5)
             <a class="btn btn-secondary" id="btn-updatePaperworkStatus" href="" data-bs-toggle="modal" data-bs-target="#modal-updatePaperworkStatus" type="button">Kemaskini Status</a>
         @endif
     </div>

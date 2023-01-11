@@ -18,17 +18,35 @@ class PaperworkClub extends Component
 {
     public function render()
     {
-        // $paperworks = Paperwork::all();
-        // filter by user id
-        $paperworks = Paperwork::where('clubId', auth()->user()->id)->get();
-
-        // if (user role == 0), show all paperwork with status > 0
+        // admin
         if (auth()->user()->role == 0) {
-            $paperworks = Paperwork::where('status', '>', 1)->get();
+            // $paperworks = Paperwork::where('status', '>', 1)->get();
+            $paperworks = Paperwork::where('currentProgressState', '>', 1)->get();
         }
 
+        // club
+        if (auth()->user()->role == 1) {
+            $paperworks = Paperwork::where('clubId', auth()->user()->id)->get();
+        }
+
+        // advisor
         if (auth()->user()->role == 2) {
             $paperworks = Paperwork::where('clubId', auth()->user()->advisorOf)->where('status', '>', 0)->get();
+        }
+
+        // HEPA
+        if (auth()->user()->role == 3) {
+            $paperworks = Paperwork::where('currentProgressState', '>', 1)->get();
+        }
+
+        // TNC (HEPA)
+        if (auth()->user()->role == 4) {
+            $paperworks = Paperwork::where('currentProgressState', '>', 2)->get();
+        }
+
+        // NC
+        if (auth()->user()->role == 5) {
+            $paperworks = Paperwork::where('currentProgressState', '>', 3)->where('status', '!=', 2)->get();
         }
 
         return view('livewire.paperwork-club', compact('paperworks'));
