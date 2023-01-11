@@ -112,28 +112,32 @@
         </div>
 
         <div class="progress">
-            @if (count(json_decode($paperwork->progressStates)) > 4)
-                @if ($paperwork->currentProgressState == 4 )
-                    <div class="progress-bar bg-success" role="progressbar" style="width: 100%;" aria-valuenow="99" aria-valuemin="0" aria-valuemax="100"></div>
-                @elseif($paperwork->currentProgressState == 1)
-                    <div class="progress-bar bg-warning" role="progressbar" style="width: 35%;" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
-                @elseif ($paperwork->currentProgressState == 2)
-                    <div class="progress-bar bg-warning" role="progressbar" style="width: 61%;" aria-valuenow="61" aria-valuemin="0" aria-valuemax="100"></div>
-                @elseif($paperwork->currentProgressState == 3)
-                    <div class="progress-bar bg-warning" role="progressbar" style="width: 93%;" aria-valuenow="93" aria-valuemin="0" aria-valuemax="100"></div>
+            @if ($paperwork->progressStates != null)
+                @if (count(json_decode($paperwork->progressStates)) > 4)
+                    @if ($paperwork->currentProgressState == 4 )
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 100%;" aria-valuenow="99" aria-valuemin="0" aria-valuemax="100"></div>
+                    @elseif($paperwork->currentProgressState == 1)
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 35%;" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
+                    @elseif ($paperwork->currentProgressState == 2)
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 61%;" aria-valuenow="61" aria-valuemin="0" aria-valuemax="100"></div>
+                    @elseif($paperwork->currentProgressState == 3)
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 93%;" aria-valuenow="93" aria-valuemin="0" aria-valuemax="100"></div>
+                    @else
+                        <div class="progress-bar bg-danger" role="progressbar" style="width: 25%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                    @endif
                 @else
-                    <div class="progress-bar bg-danger" role="progressbar" style="width: 25%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                    @if ($paperwork->currentProgressState == 4 )
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 100%;" aria-valuenow="99" aria-valuemin="0" aria-valuemax="100"></div>
+                    @elseif($paperwork->currentProgressState == 1)
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 50%;" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
+                    @elseif ($paperwork->currentProgressState == 2)
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 75%;" aria-valuenow="61" aria-valuemin="0" aria-valuemax="100"></div>
+                    @else
+                        <div class="progress-bar bg-danger" role="progressbar" style="width: 25%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                    @endif
                 @endif
             @else
-                @if ($paperwork->currentProgressState == 4 )
-                    <div class="progress-bar bg-success" role="progressbar" style="width: 100%;" aria-valuenow="99" aria-valuemin="0" aria-valuemax="100"></div>
-                @elseif($paperwork->currentProgressState == 1)
-                    <div class="progress-bar bg-warning" role="progressbar" style="width: 50%;" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
-                @elseif ($paperwork->currentProgressState == 2)
-                    <div class="progress-bar bg-warning" role="progressbar" style="width: 75%;" aria-valuenow="61" aria-valuemin="0" aria-valuemax="100"></div>
-                @else
-                    <div class="progress-bar bg-danger" role="progressbar" style="width: 25%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                @endif
+                <div class="progress-bar bg-danger" role="progressbar" style="width: 25%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
             @endif
         </div>
 

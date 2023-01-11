@@ -64,6 +64,12 @@ class PaperworkDetailsGenerator extends Component
         } else {
             $paperworkDetails->targetGroup = null;
         }
+        
+        if ($paperworkDetails->learningOutcome != null) {
+            $paperworkDetails->learningOutcome = json_decode($paperworkDetails->learningOutcome);
+        } else {
+            $paperworkDetails->learningOutcome = -1;
+        }
 
         // // dateVenueTime - convert string to json
         // if ( $paperworkDetails->dateVenueTime != null) {
@@ -147,6 +153,7 @@ class PaperworkDetailsGenerator extends Component
         $tentatives = null;
 
         if ($request->program_duration != null) {
+
             // split $request->program_tentatives string to int array by comma and count the length
             $program_itemPerDay = explode(',', $request->program_tentatives); // num items per day
             $program_duration = count(explode(',', $request->program_tentatives)); // num days
@@ -188,10 +195,26 @@ class PaperworkDetailsGenerator extends Component
                 }
                 $tentatives['timeAndItem'][$i] = $items;
             }
-            $paperworkDetails->tentativeFirebaseId = json_encode($tentatives);
+            $paperworkDetails->tentative = json_encode($tentatives);
             // dd($totalItems, $program_itemPerDay, $paperworkDetails->tentativeFirebaseId);
-        } else {
-            $paperworkDetails->tentativeFirebaseId = null;
+        } else if ($paperwork->programDate != null) {
+
+            for ($j=0; $j < $request->program_tentatives; $j++) {
+                $items[$j] = array(
+                    $request->tentatives_time[$j] => $request->tentatives_item[$j]
+                );
+            }
+
+            $tentatives = array(
+                'duration' => 1,
+                'timeAndItem' => array()
+            );
+
+            $tentatives['timeAndItem'] = $items;
+
+            // dd($tentatives);
+
+            $paperworkDetails->tentative = json_encode($tentatives);
         }
 
         // Implication
@@ -201,85 +224,83 @@ class PaperworkDetailsGenerator extends Component
         $item_pricePerUnit = $request->implication_pricePerUnit;
         $implication_remark = $request->implication_remark;
 
-        $implication_titles_size = count($request->implication_titles);
+        if ($request->implication_titles != null) {
+            $implication_titles_size = count($request->implication_titles);
 
-        $financialImplication = array(
-            'name' => $request->implication_titles,
-            'item' => $item_implication,
-            'items' => $request->implication_count_items,
-            'quantity' => $item_quantity,
-            'pricePerUnit' => $item_pricePerUnit,
-            'remark' => $implication_remark,
-            'details' => $request->implication_details,
-            'single' => $request->single_implication,
-            'multiple' => $request->multiple_implication
-        );
+            $financialImplication = array(
+                'name' => $request->implication_titles,
+                'item' => $item_implication,
+                'items' => $request->implication_count_items,
+                'quantity' => $item_quantity,
+                'pricePerUnit' => $item_pricePerUnit,
+                'remark' => $implication_remark,
+                'details' => $request->implication_details,
+                'single' => $request->single_implication,
+                'multiple' => $request->multiple_implication
+            );
 
-        $singleImplication = $request->single_implication;
-        $multipleImplication = $request->multiple_implication;
+            $singleImplication = $request->single_implication;
+            $multipleImplication = $request->multiple_implication;
 
-        $implication_array = array(
-            'implications_count' => $implication_titles_size,
-            'implications' => array(),
-        );
+            $implication_array = array(
+                'implications_count' => $implication_titles_size,
+                'implications' => array(),
+            );
 
-        $implication_multiple_item_counter = 0;
+            $implication_multiple_item_counter = 0;
 
-        $implication_multiple_item_by_title = explode(',', $request->implication_count_items);
+            $implication_multiple_item_by_title = explode(',', $request->implication_count_items);
 
-        // dd($financialImplication);
+            for ($i=0; $i < $implication_titles_size; $i++) {
+                
+                // check if $request->implication_titles in $multipleImplication
+                if (in_array($request->implication_titles[$i], $multipleImplication)) {
 
-        for ($i=0; $i < $implication_titles_size; $i++) {
-            
-            // check if $request->implication_titles in $multipleImplication
-            if (in_array($request->implication_titles[$i], $multipleImplication)) {
+                    // get index in array
+                    $index = array_search($request->implication_titles[$i], $multipleImplication);
 
-                // get index in array
-                $index = array_search($request->implication_titles[$i], $multipleImplication);
+                    $title = $request->implication_titles[$i];
+                    $isSingle = false;
 
-                $title = $request->implication_titles[$i];
-                $isSingle = false;
+                    $implication = array(
+                        'title' => $title,
+                        'isSingle' => $isSingle,
+                        'item' => array(),
+                        'remark' => $request->implication_remark[$i],
+                    );
 
-                $implication = array(
-                    'title' => $title,
-                    'isSingle' => $isSingle,
-                    'item' => array(),
-                    'remark' => $request->implication_remark[$i],
-                );
+                    for ($j = 0; $j < $implication_multiple_item_by_title[$index]; $j++) {
+                        $item = array(
+                            'name' => $request->implication_item[$implication_multiple_item_counter],
+                            'quantity' => $request->implication_quantity[$i],
+                            'pricePerUnit' => $request->implication_pricePerUnit[$i],
+                        );
+                        array_push($implication['item'], $item);
+                        $implication_multiple_item_counter++;
+                    }
+                    array_push($implication_array['implications'], $implication);
+                } else {
 
-                // var_dump( $implication_multiple_item_by_title);
+                    $index = array_search($request->implication_titles[$i], $singleImplication);
 
-                for ($j = 0; $j < $implication_multiple_item_by_title[$index]; $j++) {
-                    $item = array(
-                        'name' => $request->implication_item[$implication_multiple_item_counter],
+                    $title = $request->implication_titles[$i];
+                    $isSingle = true;
+
+                    $implication = array(
+                        'title' => $title,
+                        'isSingle' => $isSingle,
                         'quantity' => $request->implication_quantity[$i],
                         'pricePerUnit' => $request->implication_pricePerUnit[$i],
+                        'remark' => $request->implication_remark[$i],
                     );
-                    array_push($implication['item'], $item);
-                    $implication_multiple_item_counter++;
+                    array_push($implication_array['implications'], $implication);
                 }
-                array_push($implication_array['implications'], $implication);
-            } else {
-
-                $index = array_search($request->implication_titles[$i], $singleImplication);
-
-                $title = $request->implication_titles[$i];
-                $isSingle = true;
-
-                $implication = array(
-                    'title' => $title,
-                    'isSingle' => $isSingle,
-                    'quantity' => $request->implication_quantity[$i],
-                    'pricePerUnit' => $request->implication_pricePerUnit[$i],
-                    'remark' => $request->implication_remark[$i],
-                );
-                array_push($implication_array['implications'], $implication);
             }
+
+            $paperworkDetails->financialImplication = json_encode($implication_array) ?? $paperworkDetails->financialImplication;
+        } else {
+            $paperworkDetails->financialImplication = null;
         }
-
-        // dd($implication_array);
-
-        $paperworkDetails->financialImplicationFirebaseId = json_encode($implication_array) ?? $paperworkDetails->financialImplicationFirebaseId;
 
         // AJK
         if ($request->committee_row != null) {

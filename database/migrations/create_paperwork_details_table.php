@@ -15,12 +15,12 @@ return new class extends Migration
     {
         Schema::create('paperwork_details', function (Blueprint $table) {
             $table->id();
-            $table->string('introduction')->nullable();
+            $table->text('introduction')->nullable();
             $table->text('background')->nullable();
             $table->text('objective')->nullable();
             $table->string('learningOutcome')->nullable();
             $table->string('theme')->nullable();
-            $table->string('organizedBy')->nullable();
+            $table->text('organizedBy')->nullable();
             $table->string('targetGroup')->nullable();
             $table->string('dateVenueTime')->nullable();
             $table->text('tentative')->nullable();

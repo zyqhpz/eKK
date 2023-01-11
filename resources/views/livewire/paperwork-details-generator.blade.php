@@ -543,7 +543,8 @@
             $("#program-date-type").change();
         }
 
-        if ({{ $paperworkDetails->learningOutcome }} != null) {
+        if ({{ $paperworkDetails->learningOutcome }} === '' || {{ $paperworkDetails->learningOutcome }} === null) {
+        } else {
             setSelectedLearningOutcome({{ $paperworkDetails->learningOutcome }});
         }
 
@@ -783,7 +784,7 @@
     }
 
     function fetchInputFieldImplications() {
-        var financial = '<?php echo $paperworkDetails->financialImplicationFirebaseId; ?>';
+        var financial = '<?php echo $paperworkDetails->financialImplication; ?>';
 
         if (financial != null && financial != '') {
             var financialJson = JSON.parse(financial);
@@ -1216,37 +1217,9 @@
                 var tr = trs[i];
                 var id = tr.id;
                 if (id.includes("implication")) {
-                    // console.log("id: " + id);
-                    // var split = id.split("_");
-                    // var number = split[1];
-                    // var newId = "implication_" + i;
-                    // tr.id = newId;
-                    // var th = tr.children[0];
-                    // th.innerHTML = (i - 1) + ".";
-
-                    // // update id of ul of each column
-                    // var ul1 = tr.children[1].children[0];
-                    // var ul2 = tr.children[1].children[1];
-                    // var ul3 = tr.children[1].children[2];
-                    // ul1.id = "implication_" + i + "_col_1";
-                    // ul2.id = "implication_" + i + "_col_2";
-                    // ul3.id = "implication_" + i + "_col_3";
-
-                    // // update add and remove button id
-                    // var addItemBtn = tr.children[2].children[0];
-                    // var removeItemBtn = tr.children[2].children[1];
-                    // addItemBtn.id = "btn_add_implication_item_" + i;
-                    // removeItemBtn.id = "btn_remove_implication_item_" + i;
-                    // var removeImplicationBtn = tr.children[2].children[2];
-                    // removeImplicationBtn.setAttribute("onclick", "removeInputField('implication_" + i + "')");
-
-                    // console.log("current id: " + id)
                     latest_count++;
                 }
             }
-            // console.log("latest_count: " + latest_count);
-            // count_row_implication = latest_count;
-            // console.log("count_row_implication: " + count_row_implication);
         }
 
         if (field_id.includes("ajk")) {
@@ -1254,7 +1227,6 @@
             var x = split[1];
 
             count_row_each_ajk[x-1] = 0;
-            // console.log(count_row_each_ajk);
         }
 
         if (field_id.includes("ajk" && "new")) {
@@ -1354,6 +1326,40 @@
                 </div>`
             );
 
+            var paperworkTentative = '<?php echo $paperworkDetails->tentative; ?>';
+            // get duration object from $paperworkDetails->tentativeFirebaseId
+            if (paperworkTentative === 'null') {
+                count_tentatives = 0;
+            } else {
+                var tentativeJson = JSON.parse('<?= $paperworkDetails->tentative ?>');
+                // set 0s to timeAndItems array
+                // for (var i = 0; i < duration; i++) {
+                //     timeAndItems[i] = 0;
+                // }
+
+                updateTimeAndItemsValue();
+
+                    // create input field for time and item and append to #tentative-inputs
+                for (var j = 0; j < tentativeJson.timeAndItem.length; j++) {
+
+                    timeAndItems[i]++;
+                    updateTimeAndItemsValue();
+
+                    var timeItem = tentativeJson.timeAndItem[j];
+
+                    var keys = Object.keys(tentativeJson.timeAndItem[j]);
+                    for (var key in timeItem) {
+                        fetchInputFieldTentativesOneDay(j, key, timeItem[key]);
+                    }
+
+                    // console.log(timeAndItems);
+                }
+
+                updateTimeAndItemsValue();
+
+                $("#tentatives_day_" + 0 + "_0").remove();
+            }
+
         } else if ($("#program-date-start").val() != "" && $("#program-date-end").val() != "") {
 
             var programDateStart = $("#program-date-start").val();
@@ -1417,12 +1423,12 @@
                 );
             }
 
-            var paperworkTentative = '<?php echo $paperworkDetails->tentativeFirebaseId; ?>';
+            var paperworkTentative = '<?php echo $paperworkDetails->tentative; ?>';
             // get duration object from $paperworkDetails->tentativeFirebaseId
             if (paperworkTentative === 'null') {
                 count_tentatives = 0;
             } else {
-                var tentativeJson = JSON.parse('<?= $paperworkDetails->tentativeFirebaseId ?>');
+                var tentativeJson = JSON.parse('<?= $paperworkDetails->tentative ?>');
                 // set 0s to timeAndItems array
                 for (var i = 0; i < duration; i++) {
                     timeAndItems[i] = 0;
@@ -1492,6 +1498,38 @@
 
         timeAndItems[i]++;
         updateTimeAndItemsValue();
+    }
+
+    function fetchInputFieldTentativesOneDay(j, key, value) {
+        var clone = $("#tentatives_day_" + 0 + "_0").clone().insertBefore("#tentatives-line-" + 0);
+        
+        clone.attr("id","tentatives_day_" + 0 + "_" + j);
+
+        // change name and id of input timepicker
+        clone.find("#timepicker").attr("name","tentatives_time[]");
+
+        // clear value of input timepicker
+        clone.find("#timepicker").timepicker();
+        clone.find("#timepicker").val(key);
+
+        // change name and id of input tentatives
+        clone.find("#tentatives-day-" + 0 + "-0").attr("name","tentatives_item[]");
+        clone.find("#tentatives-day-" + 0 + "-0").attr("id","tentatives-day-" + 0 + "-" + j);
+
+        // clear value of input tentatives
+        clone.find("#tentatives-day-" + 0 + "-" + j).val(value);
+
+        // change id of button
+        clone.find("button").attr("onclick","removeInputField('tentatives_day_" + 0 + "_" + j + "')");
+        clone.find("button").attr("id","btn_remove_tentative_" + 0 + "_"+j);
+
+        // $("#timepicker").timepicker();
+
+        if (j != 0) {
+            // enable remove button
+            clone.find("button").attr("disabled",false);
+
+        }
     }
 
     function fetchInputFieldTentatives(i, j, key, value) {
@@ -1573,7 +1611,8 @@
         }
 
         if ($("#program-date-start").val() == "" || $("#program-date-end").val() == "") {
-            $("#tentative").hide();
+            // $("#tentative").hide();
+            createInputFieldTentative();
         } else {
             createInputFieldTentative();
         }
