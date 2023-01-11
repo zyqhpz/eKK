@@ -152,7 +152,7 @@ class PaperworkDetailsGenerator extends Component
         // Tentative Program
         $tentatives = null;
 
-        if ($request->program_duration != null) {
+        if ($request->program_duration != null && $request->tentatives_item != null && $request->tentatives_time != null) {
 
             // split $request->program_tentatives string to int array by comma and count the length
             $program_itemPerDay = explode(',', $request->program_tentatives); // num items per day

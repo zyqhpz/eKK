@@ -12,6 +12,9 @@ use App\Models\PaperworkDetails;
 
 use PDF;
 use Dompdf\Dompdf;
+use DateTime;
+use DateInterval;
+use DatePeriod;
 
 class PDFGenerator extends Component
 {
@@ -26,12 +29,9 @@ class PDFGenerator extends Component
         $paperworkDetails = PaperworkDetails::find($paperwork->paperworkDetailsId);
         $user = User::find($paperwork->clubId);
 
-        // $pdf = new PDF();
-
         $learningOutcome = ""; 
         
         if ($paperworkDetails->learningOutcome == null || $paperworkDetails->learningOutcome == '') {
-            // $learningOutcome = json_decode($paperworkDetails->learningOutcome, true);
             $learningOutcome = ""; 
         } else {
         
@@ -46,102 +46,73 @@ class PDFGenerator extends Component
             }
         }
 
-        $tentative = json_decode($paperworkDetails->tentative, true);
-        // dd($tentative['duration']);
+        if ($paperworkDetails->tentative == null || $paperworkDetails->tentative == '') {
+            $tentative_html = '';
+        } else {
+            $tentative = json_decode($paperworkDetails->tentative, true);
 
-        if ($paperwork->isOneDay == 1) {
-            $tentative_dayAndDate = $paperwork->programDate;
+            $days = ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu'];
 
-            // $tentative_html = '<tr><td rowspan="'. count($tentative['timeAndItem']) .'" class="fw-bold">'. $tentative_dayAndDate .'</td>
-            //                     <td>7:30 am - 8:00 am</td>
-            //                     <td >Ketibaan dan pendaftaran peserta di PPP</td>
-            //                     </tr>';
+            if ($paperwork->isOneDay == 1) {
 
-            foreach ($tentative['timeAndItem'][0] as $key => $value) {
-                    // echo "Key: " . $key . ", Value: " . $value . "<br>";
+                $tentative_dayAndDate = $days[date('w', strtotime($paperwork->programDate))] . '<br>(' . date('d/m/Y', strtotime($paperwork->programDate)) . ')';
 
-                $tentative_html = '<tr><td rowspan="'. count($tentative['timeAndItem']) .'" class="fw-bold">'. $tentative_dayAndDate .'</td>
-                                    <td>'.$key.'</td>
-                                    <td>'. $value.'</td>
-                                    </tr>';
-            }
+                foreach ($tentative['timeAndItem'][0] as $key => $value) {
+                    $tentative_html = '<tr><td rowspan="'. count($tentative['timeAndItem']) .'" class="fw-bold">'. $tentative_dayAndDate .'</td>
+                                        <td>'.$key.'</td>
+                                        <td>'. $value.'</td>
+                                        </tr>';
+                }
 
-            for ($i = 1; $i < count($tentative['timeAndItem']); $i++) {
-                // echo $tentative['timeAndItem'][$i];
-                // dd($tentative['timeAndItem'][$i]);
+                for ($i = 1; $i < count($tentative['timeAndItem']); $i++) {
+                    // get key and value from array
+                    foreach ($tentative['timeAndItem'][$i] as $key => $value) {
+                        $tentative_html .= '<tr><td>'.$key.'</td><td>'. $value.'</td></tr>';
+                    }
+                }
+            } else {
 
-                // get key and value from array
-                foreach ($tentative['timeAndItem'][$i] as $key => $value) {
+                $tentative_html = '';
 
-                    $tentative_html .= '<tr><td>'.$key.'</td><td>'. $value.'</td></tr>';
-                    
-                    // echo $key . " => " . $value . "<br>";
-                    // dd($key . " => " . $value . "<br>");
+                // get all dates between two dates 
+                $start = new DateTime($paperwork->programDateStart);
+                $end = new DateTime($paperwork->programDateEnd);
+                $interval = new DateInterval('P1D'); // P1D means a period of 1 day
+                $period = new DatePeriod($start, $interval, $end);
 
+                $period_arr = iterator_to_array($period);
+                $count = count($period_arr);
+
+                $date_array = array();
+
+                foreach ($period as $date) {
+                    array_push($date_array, $date->format('Y-m-d'));
+                }
+
+                array_push($date_array, $end->format('Y-m-d'));
+
+                for ($i = 0; $i < $tentative['duration']; $i++) {
+
+                    $tentative_dayAndDate = $days[date('w', strtotime($date_array[$i]))] . '<br>(' . date('d/m/Y', strtotime($date_array[$i])) . ')';
+
+                    foreach ($tentative['timeAndItem'][$i][0] as $key => $value) {
+                        $tentative_html .= '<tr><td rowspan="'. count($tentative['timeAndItem'][$i]) .'" class="fw-bold">'. $tentative_dayAndDate .'</td>
+                                            <td>'.$key.'</td>
+                                            <td>'. $value.'</td>
+                                            </tr>';
+                    }
+
+                    for ($k = 1; $k < count($tentative['timeAndItem'][$i]); $k++) {
+                        // get key and value from array
+                        foreach ($tentative['timeAndItem'][$i][$k] as $key => $value) {
+                                $tentative_html .= '<tr><td>'.$key.'</td><td>'. $value.'</td></tr>';
+                        }
+                    }
+   
                 }
             }
-
-                // $tentative_dayAndDate = $tentative['timeAndItem'][$i];
-            //     $tentative_html .= '<tr>
-            //                             <td>' . $tentative['duration'][$i] . '</td>
-            //                             <td>' . $tentative['activity'][$i] . '</td>
-            //                         </tr>';
-            // }
-            // $tentative_html .= '<tr>
-            //                         <td>' . $tentative['duration'][$i] . '</td>
-            //                         <td>' . $tentative['activity'][$i] . '</td>
-            //                     </tr>';
-        } else {
-
         }
 
-        // for ($i = 0; $i < $tentative['duration']; $i++) {
-        //     $tentative_dayAndDate = $tentative['timeAndItem'][$i];
-        //     $tentative_html .= '<tr>
-        //                             <td>' . $tentative['duration'][$i] . '</td>
-        //                             <td>' . $tentative['activity'][$i] . '</td>
-        //                         </tr>';
-        // }
-        
-        // $tentative_html = '<tr><td rowspan="9" class="fw-bold">Sabtu(11/2/2022)</td>
-        //                         <td>7:30 am - 8:00 am</td>
-        //                         <td >Ketibaan dan pendaftaran peserta di PPP</td>
-        //                     </tr>
-        //                     <tr>
-        //                         <td>8:00 am - 8:30 am</td>
-        //                         <td>Sarapan dan Taklimat</td>
-        //                     </tr>
-        //                     <tr>
-        //                         <td>8:30 am - 3:30 pm</td>
-        //                         <td>Berangkat ke UMT</td>
-        //                     </tr>
-        //                     <tr>
-        //                         <td>3:30 pm - 4:30 pm</td>
-        //                         <td>Check-in penginapan</td>
-        //                     </tr>
-        //                     <tr>
-        //                         <td>4:30 pm - 6:45 pm</td>
-        //                         <td>Slot 1:Ceramah Komunikasi</td>
-        //                     </tr>
-        //                     <tr>
-        //                         <td>6:45 pm - 8:00 pm</td>
-        //                         <td>ReSoMa</td>
-        //                     </tr>
-        //                     <tr>
-        //                         <td>8:00 pm - 9:30 pm</td>
-        //                         <td>Slot 2: Ceramah Kepimpinan</td>
-        //                     </tr>
-        //                     <tr>
-        //                         <td>9:30 pm - 11:00 pm</td>
-        //                         <td>LDK 1: Ice-breaking</td>
-        //                     </tr>
-        //                     <tr>
-        //                         <td>11:00 pm</td>
-        //                         <td>Rehat</td>
-        //                     </tr>';
-
-                            // dd($tentative_html);
-        
         $data = [
             'user' => $user,
             'paperwork' => $paperwork,
