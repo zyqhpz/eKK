@@ -119,7 +119,76 @@ class PDFGenerator extends Component
             $financialImplication = '';
         } else {
             $financialImplication = $this->calculateTotalImplication($paperworkDetails->financialImplication);
-            dd($financialImplication);
+
+            $financialImplication_html = '';
+
+            $counter = 0;
+            $financial_html = '';
+
+            foreach ($financialImplication['items'] as $key => $value) {
+
+                if (isset($value['detail'])) {
+
+                        $details = $value['detail'];
+
+                        $financial_html .=  '<tr>
+                                                <th scope="row">'.++$counter.'.</th>
+                                                <td class="text-start">'. $value['item'] .' :-';
+
+                                                
+                                                for ($i = 0; $i < count($details); $i++) {
+                                                        $financial_html .= '<br>'. $details[$i]['item'];
+                                                }
+
+                                                $financial_html .= '</td><td>';
+
+                                                for ($i = 0; $i < count($details); $i++) {
+                                                        $financial_html .= '<br>'. $details[$i]['quantity'];
+                                                }
+
+                                                $financial_html .= '</td><td>';
+
+                                                for ($i = 0; $i < count($details); $i++) {
+                                                        $financial_html .= '<br>'. $details[$i]['pricePerUnit'];
+                                                }
+
+                                                $financial_html .= '</td><td>';
+
+                                                for ($i = 0; $i < count($details); $i++) {
+                                                        $financial_html .= '<br>'. $details[$i]['subTotal'];
+                                                }
+
+                                                $financial_html .= '</td><td class="align-middle">'. $value['total'] .'</td>
+                                                <td class="align-middle">'. $value['remark'] .'</td>
+                                            </tr>';
+                } else {
+                        $financial_html .=   '<tr>
+                                                <th scope="row">'.++$counter.'.</th>
+                                                <td class="text-start">'. $value['item'] .'</td>
+                                                <td>'. $value['quantity'] .'</td>
+                                                <td>'. $value['pricePerUnit'] .'</td>
+                                                <td>'. $value['subTotal'] .'</td>
+                                                <td class="align-middle">'. $value['total'] .'</td>
+                                                <td class="align-middle">'. $value['remark'] .'</td>
+                                            </tr>';
+                }
+            }
+
+            $total_all = 0;
+
+            foreach ($financialImplication['totalByRemark'] as $key => $value) {
+                $financial_html .= '<tr>
+                                        <td colspan="5" class="align-middle"><b>JUMLAH KESELURUHAN IMPLIKASI KEWANGAN ('. $key .' SAHAJA)</b></td>
+                                        <td colspan="2" class="align-middle"><b>RM'. $value .'</b></td>
+                                    </tr>';
+
+                $total_all += $value;
+            }
+
+                $financial_html .= '<tr>
+                                        <td colspan="5" class="align-middle"><b>JUMLAH KESELURUHAN IMPLIKASI KEWANGAN</b></td>
+                                        <td colspan="2" class="align-middle"><b>RM'. $total_all .'</b></td>
+                                    </tr>';
         }
 
         $data = [
@@ -127,6 +196,10 @@ class PDFGenerator extends Component
             'paperwork' => $paperwork,
             'paperworkDetails' => $paperworkDetails,
             'tentative' => $tentative_html,
+            'financialImplication' => array(
+                'implikasi' => $financial_html,
+                'jumlah_implikasi' => $total_all
+            )
         ];
         
         $pdf = PDF::loadView('livewire.paperwork-pdf', $data);
@@ -144,9 +217,6 @@ class PDFGenerator extends Component
         $totalEach = array();
 
         $totalImplication = $financialImplication['implications_count'];
-
-        // set array size 
-        // $totalByRemark = array_fill(0, $totalImplication, 0);
 
         // set remark to array $totalByRemark
         foreach ($financialImplication['implications'] as $key => $value) {
@@ -215,7 +285,7 @@ class PDFGenerator extends Component
 
                 $items = array(
                     'item' => $value['title'],
-                    'detail' => $detail,
+                    'detail' => $details,
                     'total' => $total,
                     'remark' => $value['remark'],
                 );
@@ -225,7 +295,6 @@ class PDFGenerator extends Component
                 array_push($item_details, $items);
             }
         }
-        // dd($item_details);
         return array(
             "items"=> $item_details,
             "totalByRemark" => $totalByRemark,

@@ -276,7 +276,7 @@
                         </table>
                     </li>
                     <li id="implikasi-kewangan" class="fw-bold px-2 table-responsive" style="page-break-before: always;"><span>0<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>IMPLIKASI KEWANGAN</b></span></span>
-                        <p class="fw-normal">Anggaran perbelanjaan keseluruhan bagi penganjuran {{ $paperwork->name }} ini adalah sebanyak RM 2,000.00.</p>
+                        <p class="fw-normal">Anggaran perbelanjaan keseluruhan bagi penganjuran {{ $paperwork->name }} ini adalah sebanyak RM {{ $financialImplication['jumlah_implikasi'] }}.</p>
                         <table class="table fw-normal mx-auto" id="table-implikasi">
                             <thead>
                                 <tr>
@@ -290,73 +290,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <th scope="row">1.</th>
-                                    <td class="text-start">Makan/Minum:-
-                                    <br>a)Minum Pagi
-                                    <br>b)Makan Tengahari
-                                    </td>
-                                    <td>
-                                    <br>100
-                                    <br>100
-                                    </td>
-                                    <td>
-                                    <br>5.00
-                                    <br>7.00
-                                    </td>
-                                    <td>
-                                    <br>500.00
-                                    <br>700.00
-                                    </td>
-                                    <td class="align-middle">1,200.00</td>
-                                    <td class="align-middle">HEPA</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">2.</th>
-                                    <td class="text-start">Pencetakan:-
-                                    <br>Kain Rentang
-                                    <br>Gegantung
-                                    <td>
-                                    <br>1 Helai
-                                    <br>2 Helai
-                                    </td>
-                                    <td>
-                                    <br>150.00
-                                    <br>70.00
-                                    </td>
-                                    <td>
-                                    <br>150.00
-                                    <br>140.00
-                                    </td>
-                                    <td class="align-middle">290.00</td>
-                                    <td class="align-middle">Penerbit Universiti (mohon pengecualian)</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">4.</th>
-                                    <td class="text-start">Air Mineral</td>
-                                    <td>2 Kotak</td>
-                                    <td>13.00</td>
-                                    <td>26.00</td>
-                                    <td class="align-middle">26.00</td>
-                                    <td class="align-middle">HEPA</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">5.</th>
-                                    <td class="text-start">Bas</td>
-                                    <td>1 Buah</td>
-                                    <td>262.26</td>
-                                    <td>262.26</td>
-                                    <td class="align-middle">262.26</td>
-                                    <td class="align-middle">Bahagian Aset & Kenderaan PPF (mohon pengeculian)</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="5" class="align-middle"><b>JUMLAH KESELURUHAN IMPLIKASI KEWANGAN</b></td>
-                                    <td colspan="2" class="align-middle"><b>RM1,827.26</b></td>
-                                </tr>
-                                <tr>
-                                    <td colspan="5" class="align-middle"><b>JUMLAH KESELURUHAN IMPLIKASI KEWANGAN(HEPA SAHAJA)</b></td>
-                                    <td colspan="2" class="align-middle"><b>RM1,226.00</b></td>
-                                </tr>
+                                <?php echo $financialImplication['implikasi']; ?>
                             </tbody>
                         </table>
                     </li>
