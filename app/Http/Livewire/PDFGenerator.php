@@ -46,6 +46,7 @@ class PDFGenerator extends Component
             }
         }
 
+        // TENTATIVE
         if ($paperworkDetails->tentative == null || $paperworkDetails->tentative == '') {
             $tentative_html = '';
         } else {
@@ -113,6 +114,14 @@ class PDFGenerator extends Component
             }
         }
 
+        // FINANCIAL IMPLICATION
+        if ($paperworkDetails->financialImplication == null || $paperworkDetails->financialImplication == '') {
+            $financialImplication = '';
+        } else {
+            $financialImplication = $this->calculateTotalImplication($paperworkDetails->financialImplication);
+            dd($financialImplication);
+        }
+
         $data = [
             'user' => $user,
             'paperwork' => $paperwork,
@@ -126,6 +135,101 @@ class PDFGenerator extends Component
 
         $pdf->render();
         return $pdf->stream();
+    }
+
+    public function calculateTotalImplication($financialImplication) {
+
+        $financialImplication = json_decode($financialImplication, true);
+
+        $totalEach = array();
+
+        $totalImplication = $financialImplication['implications_count'];
+
+        // set array size 
+        // $totalByRemark = array_fill(0, $totalImplication, 0);
+
+        // set remark to array $totalByRemark
+        foreach ($financialImplication['implications'] as $key => $value) {
+            $totalByRemark[$value['remark']] = 0;
+        }
+
+        $item_details = array();
+
+        foreach ($financialImplication['implications'] as $key => $value) {
+
+            $item = array(
+                'item' => '',
+                'quantity' => '',
+                'pricePerUnit' => '',
+                'subTotal' => '',
+                'total' => '',
+                'remark' => '',
+            );
+
+            $items = array(
+                'item' => '',
+                'detail' => '',
+                'total' => '',
+                'remark' => '',
+            );
+
+            if ($value['isSingle']) {
+                // echo 'single';
+
+                $subTotal = $value['quantity'] * $value['pricePerUnit'];
+
+                $item = array(
+                    'item' => $value['title'],
+                    'quantity' => $value['quantity'],
+                    'pricePerUnit' => $value['pricePerUnit'],
+                    'subTotal' => $subTotal,
+                    'total' => $subTotal,
+                    'remark' => $value['remark'],
+                );
+
+                $totalByRemark[$value['remark']] += $subTotal;
+
+                array_push($item_details, $item);
+            } else {
+
+                $values = $value['item'];
+
+                $total = 0;
+
+                $details = array();
+
+                for ($i = 0; $i < count($values); $i++) {
+
+                    $subTotal = $values[$i]['quantity'] * $values[$i]['pricePerUnit'];
+                    $total += $subTotal;
+
+                    $detail = array(
+                        'item' => $values[$i]['name'],
+                        'quantity' => $values[$i]['quantity'],
+                        'pricePerUnit' => $values[$i]['pricePerUnit'],
+                        'subTotal' => $subTotal,
+                    );
+
+                    array_push($details, $detail);
+                }
+
+                $items = array(
+                    'item' => $value['title'],
+                    'detail' => $detail,
+                    'total' => $total,
+                    'remark' => $value['remark'],
+                );
+
+                $totalByRemark[$value['remark']] += $total;
+
+                array_push($item_details, $items);
+            }
+        }
+        // dd($item_details);
+        return array(
+            "items"=> $item_details,
+            "totalByRemark" => $totalByRemark,
+        );
     }
 
     public function viewPDF(Request $request)
