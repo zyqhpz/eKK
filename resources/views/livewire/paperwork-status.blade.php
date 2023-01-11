@@ -5,7 +5,7 @@
         width: auto;
         height: auto;
         position: absolute;
-        top: -10px;
+        top: -35px;
         text-align: center;
         line-height: 45px;
         background: #000;
@@ -93,45 +93,48 @@
     <div>Nama Kertas Kerja: {{ $paperwork->name }}</div>
 
     <div class="progress-wrapper">
+
         <div class="progress-info">
             <div class="progress-label">
                 Status: 
-                @if ($paperwork->status == 2)
+                @if ($paperwork->status == 4)
                     <span class="text-success">Dihantar</span>
-                @elseif($paperwork->status == 1)
+                @elseif($paperwork->status == 1 || $paperwork->status == 2 || $paperwork->status == 3)
                     <span class="text-warning">Dalam proses</span>
                 @else
                     <span class="text-danger">Draf</span>
                 @endif
             </div>
-            <div class="progress-percentage">
-                {{-- <span>30%</span> --}}
-            </div>
         </div>
+
         <div class="progress">
-            {{-- <div class="progress-bar bg-danger" role="progressbar" style="width: 30%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div> --}}
-            @if ($paperwork->status == 2)
-                <div class="progress-bar bg-success" role="progressbar" style="width: 100%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+            @if ($paperwork->status == 4 )
+                <div class="progress-bar bg-success" role="progressbar" style="width: 100%;" aria-valuenow="99" aria-valuemin="0" aria-valuemax="100"></div>
             @elseif($paperwork->status == 1)
-                <div class="progress-bar bg-warning" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar bg-warning" role="progressbar" style="width: 35%;" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
+            @elseif ($paperwork->status == 2)
+                <div class="progress-bar bg-warning" role="progressbar" style="width: 61%;" aria-valuenow="61" aria-valuemin="0" aria-valuemax="100"></div>
+            @elseif($paperwork->status == 3)
+                <div class="progress-bar bg-warning" role="progressbar" style="width: 93%;" aria-valuenow="93" aria-valuemin="0" aria-valuemax="100"></div>
             @else
                 <div class="progress-bar bg-danger" role="progressbar" style="width: 25%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
             @endif
         </div>
+
         <div>
-            <label for="statusRange" class="form-label">Status</label>
-            <input type="range" class="form-range" min="0" max="100" step="1" id="statusRange">
+            {{-- <label for="statusRange" class="form-label">Status</label> --}}
+            <input type="range" class="form-range" min="0" max="100" step="1" id="statusRange" hidden>
             <div id="selector">
                 <div id="SelectBtn"></div>
                 <div id="SelectValue" class="text-white w-auto px-2 text-nowrap"></div>
             </div>
         </div>
-    </div>
         @if ($paperwork->progressStates != null)
             <div class="progress-states">
-                <div class="d-flex flex-row">
+                {{-- <div class="d-flex flex-row w-full text-center mx-auto justify-content-center"> --}}
+                <div class="d-flex flex-row w-full text-center mx-auto justify-content-between px-5 py-3">
                     @foreach ($paperwork->progressStates as $text)
-                        <div class="p-2">{{ $text }}</div>
+                        <div class="p-2 text-center">{{ $text }}</div>
                     @endforeach
                 </div>
             </div>
@@ -159,13 +162,15 @@
         <a class="btn btn-primary" href="{{ route('paperworkViewPDF', $paperwork->id ) }}" target="_blank" type="button">Lihat PDF</a>
         <?php } ?>
 
-        <a class="btn btn-secondary" id="btn-viewImplication" href="{{ route('paperworkFinanceDetails', $paperwork->id ) }}" type="button">Lihat Implikasi Kewangan</a>
+        {{-- <a class="btn btn-secondary" id="btn-viewImplication" href="{{ route('paperworkFinanceDetails', $paperwork->id ) }}" type="button">Lihat Implikasi Kewangan</a> --}}
 
-        {{-- @if($paperwork->status == 2)
-            <form action="{{ route('paperwork.unsubmit', $paperwork->id ) }}" method="POST">
-                @csrf
-                <button class="btn btn-danger text-white" id="btn-submit" type="submit">Batal Hantar</button>
-            </form> --}}
+        @if ($paperwork->status == 1 && auth()->user()->role == 2)
+            <a class="btn btn-secondary" id="btn-updatePaperworkStatus" href="" data-bs-toggle="modal" data-bs-target="#modal-updatePaperworkStatus" type="button">Kemaskini Status</a>
+        @endif
+
+        @if ($paperwork->status == 2 && auth()->user()->role == 0)
+            <a class="btn btn-secondary" id="btn-updatePaperworkStatus" href="" data-bs-toggle="modal" data-bs-target="#modal-updatePaperworkStatus" type="button">Kemaskini Status</a>
+        @endif
     </div>
 </div>
 
@@ -176,24 +181,6 @@
         });
     }, 4000);
 
-
-    // $('#btn-submit').on('click',function(){
-
-    //     $.ajax({
-    //         url: "<?php echo route('paperwork.submit', $paperwork->id ); ?>",
-    //         method: "POST",
-    //         data: {
-    //             _token: "{{ csrf_token() }}",
-    //         },
-    //         success: function(response){
-    //             console.log("success");
-    //         },
-    //         error: function(error){
-    //             console.log(error);
-    //         }
-    //     });
-    // });
-
     var slider = document.getElementById("statusRange");
     var selector = document.getElementById("selector");
     var SelectValue = document.getElementById("SelectValue");
@@ -202,16 +189,14 @@
 
         var progression = ["Draf", "Penasihat Kelab", "HEPA", "TNC (HEPA)", "Lulus"];
 
-        var progressionBarValue = [20, 40, 60, 80, 100];
+        var progressionBarValue = [35, 61, 93, 99];
 
         if ( {{ $paperwork->currentProgressState }} != null && {{ $paperwork->currentProgressState }} != 0) {
             SelectValue.innerHTML = progression[{{ $paperwork->currentProgressState }} - 1];
 
-            // slider.value = progressionBarValue[{{ $paperwork->currentProgressState }} - 1];
-
             $('#statusRange').val(progressionBarValue[{{ $paperwork->currentProgressState }} - 1]);
 
-            if ( ({{ $paperwork->currentProgressState }} == 1) || ({{ $paperwork->currentProgressState }} == 2) && ({{ $paperwork->status }} == 3) ) {
+            if ( ({{ $paperwork->currentProgressState }} == 1) || ({{ $paperwork->currentProgressState }} == 2) || ({{ $paperwork->status }} == 3) ) {
                 $('#SelectValue').addClass("bg-warning");
             } else if ( {{ $paperwork->currentProgressState }} == 4) {
                 $('#SelectValue').addClass("bg-success");
@@ -230,6 +215,14 @@
     function updateSliderValue() {
         // SelectValue.innerHTML = slider.value;
         selector.style.left = slider.value + "%";
+
+        // disable slider
+        slider.disabled = true;
+    }
+
+    slider.oninput = function() {
+        updateSliderValue();
+        console.log(slider.value);
     }
 
     $('#btn-viewImplication').on('click',function(){
@@ -317,6 +310,30 @@
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-secondary">Tambah</button>
+                    <button type="button" class="btn btn-link text-gray ms-auto" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{-- modal to update paperwork status --}}
+<div class="modal fade" id="modal-updatePaperworkStatus" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+
+        <div class="modal-content">
+            <form action="{{ route('paperwork.updatePaperworkStatus', $paperwork->id )}}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-header">
+                    <h2 class="h6 modal-title">Kemaskini Status Kertas Kerja</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5 class="text-bold">Adakah anda ingin meluluskan kertas kerja ini?</h5>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-info" name="paperwork_updateStatus" value="Lulus">
+                    <input type="submit" class="btn btn-outline-danger" name="paperwork_updateStatus" value="Tolak">
                     <button type="button" class="btn btn-link text-gray ms-auto" data-bs-dismiss="modal">Tutup</button>
                 </div>
             </form>

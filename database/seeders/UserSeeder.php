@@ -16,6 +16,13 @@ class UserSeeder extends Seeder
     public function run()
     {
         DB::table("users")->insert([
+            'name' => 'Admin User',
+            'role' => 0,
+            'email' => 'admin@volt.com',
+            'password' => Hash::make('secret'),
+        ]);
+
+        DB::table("users")->insert([
             'name' => 'Kelab A',
             'role' => 1,
             'email' => 'kelab.a@volt.com',
@@ -29,10 +36,33 @@ class UserSeeder extends Seeder
             'password' => Hash::make('secret'),
         ]);
 
+        
         DB::table("users")->insert([
-            'name' => 'Admin User',
-            'role' => 0,
-            'email' => 'admin@volt.com',
+            'name' => 'Penasihat Kelab A',
+            'role' => 2,
+            'advisorOf' => 1,
+            'email' => 'penasihat.a@volt.com',
+            'password' => Hash::make('secret'),
+        ]);
+
+        DB::table("users")->insert([
+            'name' => 'Pegawai HEPA A',
+            'role' => 3,
+            'email' => 'hepa.a@volt.com',
+            'password' => Hash::make('secret'),
+        ]);
+
+        DB::table("users")->insert([
+            'name' => 'Timbalan Naib Canselor (HEPA)',
+            'role' => 4,
+            'email' => 'tnc.hepa@volt.com',
+            'password' => Hash::make('secret'),
+        ]);
+
+        DB::table("users")->insert([
+            'name' => 'Naib Canselor (HEPA)',
+            'role' => 5,
+            'email' => 'nc@volt.com',
             'password' => Hash::make('secret'),
         ]);
     }

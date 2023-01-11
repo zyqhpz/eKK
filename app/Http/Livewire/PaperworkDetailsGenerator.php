@@ -396,6 +396,9 @@ class PaperworkDetailsGenerator extends Component
 
         $paperworkDetails->closing = $request->paperwork_closing ?? $paperworkDetails->closing;
 
+        $paperwork->updated_at = now();
+        $paperworkDetails->updated_at = now();
+
         $paperwork->save();
         $paperworkDetails->save();
 

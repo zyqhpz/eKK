@@ -28,4 +28,32 @@ class PaperworkClubStatus extends Component
 
         return view('livewire.paperwork-status', compact('paperwork'));
     }
+
+    public function updatePaperworkStatus(Request $request, $id)
+    {
+        $paperwork = Paperwork::find($id);
+
+        if (auth()->user()->role == 2) {
+            if ($request->paperwork_updateStatus == "Lulus") {
+                $paperwork->status = 2;
+                $paperwork->currentProgressState = 2;
+            } else {
+                $paperwork->status = 0;
+                $paperwork->currentProgressState = 0;
+            }
+        } else if (auth()->user()->role == 0) {
+            if ($request->paperwork_updateStatus == "Lulus") {
+                $paperwork->status = 3;
+                $paperwork->currentProgressState = 3;
+            } else {
+                $paperwork->status = 1;
+                $paperwork->currentProgressState = 1;
+            }
+        }
+        
+        $paperwork->save();
+
+        return redirect()->back()
+            ->with('updated', 'Kertas kerja ini telah diluluskan.');
+    }
 }

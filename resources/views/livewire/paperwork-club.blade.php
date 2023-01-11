@@ -87,17 +87,71 @@
                     // format date to DD/MM/YYYY format and in Malaysia timezone (UTC+8)
                     $date = $paperwork->updated_at;
                     $formatted_date = $date->timezone('Asia/Kuala_Lumpur')->format('d/m/Y');
+
+                    $formatted_programDateStartEnd = '-';
+
+                    if ($paperwork->isOneDay == 0) {
+                        $programDateStart = $paperwork->programDateStart;
+                        $programDateEnd = $paperwork->programDateEnd;
+
+                        if ($programDateStart != '' && $programDateEnd != '' && $programDateStart != null && $programDateEnd != null) {
+                        // format YYYY/MM/DD it to DD MONTH YYYY format and in Malaysia timezone (UTC+8)
+
+                        $startDate = new DateTime($programDateStart, new DateTimeZone('UTC'));
+                        $endDate = new DateTime($programDateEnd, new DateTimeZone('UTC'));
+
+                        $startDate->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+                        $endDate->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+
+                        $interval = DateInterval::createFromDateString('1 day');
+                        $period = new DatePeriod($startDate, $interval, $endDate);
+
+                        $formatter = new IntlDateFormatter('ms_MY', IntlDateFormatter::LONG, IntlDateFormatter::NONE);
+                        $formatter->setPattern("d");
+
+                        $dateString = $formatter->format($startDate);
+                        $dateString .= "-";
+                        $dateString .= $formatter->format($endDate);
+                        $dateString .= " ";
+                        $formatter->setPattern("MMMM y");
+                        $dateString .= $formatter->format($startDate);
+                        $formatted_programDateStartEnd = $dateString;
+
+                        } else {
+                            $formatted_programDateStartEnd = '-';
+                        }
+                    } else {
+
+                        $programDate = $paperwork->programDate;
+
+                        if ($programDate != '' && $programDate != null) {
+                        // format YYYY/MM/DD it to DD MONTH YYYY format and in Malaysia timezone (UTC+8)
+
+                            $programDate = new DateTime($programDate, new DateTimeZone('UTC'));
+
+                            $programDate->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+
+                            $formatter = new IntlDateFormatter('ms_MY', IntlDateFormatter::LONG, IntlDateFormatter::NONE);
+                            $formatter->setPattern("d MMMM y");
+
+                            $dateString = $formatter->format($programDate);
+                            $formatted_programDateStartEnd = $dateString;
+
+                        } else {
+                            $formatted_programDateStartEnd = '-';
+                        }
+                    }
                 ?>
                 <tr>
                     <td><span class="fw-normal">{{ $numbering }}.</span></td>
                     <td><span class="fw-normal">{{ $paperwork->name }}</span></td>
                     <td><span class="fw-normal">{{ $formatted_date }}</span></td>
-                    <td><span class="fw-normal d-flex align-items-center">-</span></td>
+                    <td><span class="fw-normal d-flex align-items-center">{{ $formatted_programDateStartEnd }}</span></td>
                     <?php if($paperwork->status == 0) { ?>
                         <td><span class="fw-normal text-danger">Draf</span></td>
-                    <?php } else if($paperwork->status == 1) { ?>
+                    <?php } else if($paperwork->status == 1 || $paperwork->status == 2 || $paperwork->status == 3) { ?>
                         <td><span class="fw-normal text-warning">Dalam proses</span></td>
-                    <?php } else if($paperwork->status == 2) { ?>
+                    <?php } else if($paperwork->status == 4) { ?>
                         <td><span class="fw-normal text-success">Diluluskan</span></td>
                     <?php } ?>
                     <td>
@@ -112,7 +166,9 @@
                                 <li><a class="dropdown-item" href="#">Sunting</a></li>
                                 {{-- if status is draft, show delete option. else, hidden --}}
                                 <li><hr class="dropdown-divider"></li>
-                                <li class="dropdown-item bg-danger"><a data-bs-target="#modal-deletePaperwork{{ $paperwork->id }}" id="btn-deletePaperwork" value="{{$paperwork->id}}" data-bs-toggle="modal">Padam</a></li>
+                                @if ($paperwork->status == 0)
+                                <li class="dropdown-item bg-danger text-white"><a data-bs-target="#modal-deletePaperwork" id="btn-deletePaperwork-{{ $paperwork->id }}" value="{{$paperwork->id}}" data-bs-toggle="modal">Padam</a></li>
+                                @endif
                                 {{-- <li class="bg-danger"><button class="dropdown-item text-white" id="btn-deletePaperwork-{{ $paperwork->id }}" data-bs-toggle="modal" data-bs-target="#modal-deletePaperwork{{ $paperwork->id }}" value="{{ $paperwork->id }}">Padam</button></li> --}}
                             </ul>
                         </div>
@@ -122,6 +178,9 @@
             @endforeach
         </tbody>
     </table>
+    {{-- <div id="jumlah-paperwork">
+        <p class="text-muted">Jumlah kertas kerja: {{ $paperworks->count() }}</p>
+    </div> --}}
 </div>
 
 {{-- modal to add new paperwork --}}
@@ -129,7 +188,6 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
 
         <div class="modal-content">
-
             {{-- create a form to add a new paperwork with attributes: name, method to upload paperwork --}}
             <form action="{{ route('paperwork.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
@@ -187,6 +245,8 @@
         console.log(id);
         $('#modal-deletePaperwork'+id).modal('show');
     });
+
+    
 </script>
 
 {{-- modal confirmation to delete paperwork --}}

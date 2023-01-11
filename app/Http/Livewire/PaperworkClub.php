@@ -21,6 +21,16 @@ class PaperworkClub extends Component
         // $paperworks = Paperwork::all();
         // filter by user id
         $paperworks = Paperwork::where('clubId', auth()->user()->id)->get();
+
+        // if (user role == 0), show all paperwork with status > 0
+        if (auth()->user()->role == 0) {
+            $paperworks = Paperwork::where('status', '>', 1)->get();
+        }
+
+        if (auth()->user()->role == 2) {
+            $paperworks = Paperwork::where('clubId', auth()->user()->advisorOf)->where('status', '>', 0)->get();
+        }
+
         return view('livewire.paperwork-club', compact('paperworks'));
     }
 
