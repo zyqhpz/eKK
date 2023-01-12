@@ -228,7 +228,7 @@
                             <img src="../assets/img/team/profile-picture-1.jpg"
                                 class="avatar-xl rounded-circle mx-auto mt-n7 mb-4" alt="Neil Portrait">
                             <h4 class="h3">
-                                {{  auth()->user()->first_name ? auth()->user()->first_name . ' ' . auth()->user()->last_name : 'User Name'}}
+                                {{  auth()->user()->name ? auth()->user()->name : 'User Name'}}
                             </h4>
                             <h5 class="fw-normal">Senior Software Engineer</h5>
                             <p class="text-gray mb-4">New York, USA</p>
