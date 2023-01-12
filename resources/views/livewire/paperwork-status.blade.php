@@ -147,15 +147,15 @@
             @endif
         </div>
 
-        <div>
-            {{-- <label for="statusRange" class="form-label">Status</label> --}}
-            <input type="range" class="form-range" min="0" max="100" step="1" id="statusRange" hidden>
-            <div id="selector">
-                <div id="SelectBtn"></div>
-                <div id="SelectValue" class="text-white w-auto px-2 text-nowrap"></div>
+        @if ($paperwork->status != 0 && $paperwork->status != null && $paperwork->progressStates != null)
+            <div>
+                {{-- <label for="statusRange" class="form-label">Status</label> --}}
+                <input type="range" class="form-range" min="0" max="100" step="1" id="statusRange" hidden>
+                <div id="selector">
+                    <div id="SelectBtn"></div>
+                    <div id="SelectValue" class="text-white w-auto px-2 text-nowrap"></div>
+                </div>
             </div>
-        </div>
-        @if ($paperwork->progressStates != null)
             <div class="progress-states">
                 {{-- <div class="d-flex flex-row w-full text-center mx-auto justify-content-center"> --}}
                 <div class="d-flex flex-row w-full text-center mx-auto justify-content-between px-5 py-3">
@@ -163,7 +163,7 @@
                         <div class="p-2 text-center">{{ $text }}</div>
                     @endforeach
                 </div>
-            </div>
+        </div>
         @endif
     </div>
 
