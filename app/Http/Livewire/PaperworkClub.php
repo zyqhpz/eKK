@@ -10,6 +10,11 @@ use App\Models\PaperworkDetails;
 
 use Symfony\Component\Process\Process;
 
+use App\Mail\StatusUpdateMail;
+use App\Http\Controllers\MailController;
+
+use App\Http\Livewire\PDFGenerator;
+
 use PDF;
 use File;
 use Response;
@@ -169,6 +174,7 @@ class PaperworkClub extends Component
     public function submit(Request $request, $id)
     {
         $paperwork = Paperwork::find($id);
+        $paperworkDetails = PaperworkDetails::find($paperwork->paperworkDetailsId);
 
         // $paperwork->isOneDay = $request->paperwork_isOneDay ?? $paperwork->isOneDay;
         // $paperwork->programDate = $request->paperwork_programDate ?? $paperwork->programDate;
@@ -177,13 +183,6 @@ class PaperworkClub extends Component
         // $paperwork->venue = $request->paperwork_venue ?? $paperwork->venue;
         $paperwork->status = 1;
 
-        // $progression = array(
-        //     'submitted' => true,
-        //     'approved' => false,
-        //     'rejected' => false,
-        //     'completed' => false
-        // );
-
         $progression = array(
             0 => "Draf",
             1 => "Penasihat Kelab",
@@ -191,8 +190,40 @@ class PaperworkClub extends Component
             3 => "TNC (HEPA)"
         );
 
-        // convert array to json
-        $paperwork->progressStates = json_encode($progression);
+        $progression_NC = array(
+            0 => "Draf",
+            1 => "Penasihat Kelab",
+            2 => "HEPA",
+            3 => "TNC (HEPA)",
+            4 => "NC",
+        );
+
+        $mailController = new MailController();
+        $mailController->sendEmail($paperwork->id);
+
+        if ($paperwork->isGenerated == 1) {
+
+            $pdf_generator = new PDFGenerator();
+            $financialImplication = $pdf_generator->calculateTotalImplication($paperworkDetails->financialImplication);
+
+            $total_all = 0;
+
+            foreach ($financialImplication['totalByRemark'] as $key => $value) {
+                $total_all += $value;
+            }
+
+            if ($total_all >= 20000) {
+                $paperwork->progressStates = json_encode($progression_NC);
+            } else {
+                $paperwork->progressStates = json_encode($progression);
+                // dd($paperwork->progressStates);
+            }
+        } else {
+            // use AI
+            
+                    // convert array to json
+            $paperwork->progressStates = json_encode($progression);
+        }
         $paperwork->currentProgressState = 1;
         // $paperwork->currentProgressState = $request->paperwork_currentProgressState ?? $paperwork->currentProgressState;
         // $paperwork->progressStates = $request->paperwork_progressStates ?? $paperwork->progressStates;

@@ -113,7 +113,7 @@
 
         <div class="progress">
             @if ($paperwork->progressStates != null)
-                @if (count(json_decode($paperwork->progressStates)) > 4)
+                @if (count($paperwork->progressStates) == 4)
                     @if ($paperwork->currentProgressState == 4 )
                         <div class="progress-bar bg-success" role="progressbar" style="width: 100%;" aria-valuenow="99" aria-valuemin="0" aria-valuemax="100"></div>
                     @elseif($paperwork->currentProgressState == 1)
@@ -123,7 +123,7 @@
                     @elseif($paperwork->currentProgressState == 3)
                         <div class="progress-bar bg-warning" role="progressbar" style="width: 93%;" aria-valuenow="93" aria-valuemin="0" aria-valuemax="100"></div>
                     @else
-                        <div class="progress-bar bg-danger" role="progressbar" style="width: 25%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-danger" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                     @endif
                 @else
                     @if ($paperwork->currentProgressState == 4 )

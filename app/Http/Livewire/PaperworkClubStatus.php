@@ -67,7 +67,7 @@ class PaperworkClubStatus extends Component
         else if (auth()->user()->role == 4) {
             if ($request->paperwork_updateStatus == "Lulus") {
 
-                if (count(json_decode($paperwork->progressStates)) == 4) {
+                if (count($paperwork->progressStates) == 4) {
                     $paperwork->status = 1;
                 } else {
                     $paperwork->status = 2;
@@ -92,6 +92,7 @@ class PaperworkClubStatus extends Component
         $paperwork->save();
 
         if ($request->paperwork_updateStatus == "Lulus") {
+
             return redirect()->back()
             ->with('updated', 'Kertas kerja ini telah diluluskan.');
         } else {

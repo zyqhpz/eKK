@@ -33,6 +33,10 @@ use App\Http\Livewire\PaperworkClubStatus;
 use App\Http\Livewire\PaperworkDetailsGenerator;
 
 use App\Http\Controllers\PaperworkController;
+use App\Http\Controllers\MailController;
+
+use App\Mail\StatusUpdateMail;
+use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -98,6 +102,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/kertas-kerja-kelab/{id}/paperwork-generator/update_status', [PaperworkClubStatus::class, 'updatePaperworkStatus'])->name('paperwork.updatePaperworkStatus');
 
+    Route::get('/email/{id}', [MailController::class, 'sendEmail'])->name('paperwork.updateStatusEmail');
 
     Route::get('/users', Users::class)->name('users');
     Route::get('/login-example', LoginExample::class)->name('login-example');
