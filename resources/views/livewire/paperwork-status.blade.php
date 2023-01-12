@@ -114,7 +114,7 @@
         <div class="progress">
             @if ($paperwork->progressStates != null)
                 @if (count($paperwork->progressStates) == 4)
-                    @if ($paperwork->currentProgressState == 4 )
+                    @if ($paperwork->currentProgressState == 4)
                         <div class="progress-bar bg-success" role="progressbar" style="width: 100%;" aria-valuenow="99" aria-valuemin="0" aria-valuemax="100"></div>
                     @elseif($paperwork->currentProgressState == 1)
                         <div class="progress-bar bg-warning" role="progressbar" style="width: 35%;" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
@@ -126,12 +126,16 @@
                         <div class="progress-bar bg-danger" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                     @endif
                 @else
-                    @if ($paperwork->currentProgressState == 4 )
-                        <div class="progress-bar bg-success" role="progressbar" style="width: 100%;" aria-valuenow="99" aria-valuemin="0" aria-valuemax="100"></div>
+                    @if ($paperwork->currentProgressState == 5)
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 95%;" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
                     @elseif($paperwork->currentProgressState == 1)
-                        <div class="progress-bar bg-warning" role="progressbar" style="width: 50%;" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 30%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
                     @elseif ($paperwork->currentProgressState == 2)
-                        <div class="progress-bar bg-warning" role="progressbar" style="width: 75%;" aria-valuenow="61" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 45%;" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
+                    @elseif ($paperwork->currentProgressState == 3)
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                    @elseif ($paperwork->currentProgressState == 4)
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 80%;" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
                     @else
                         <div class="progress-bar bg-danger" role="progressbar" style="width: 25%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
                     @endif
@@ -170,10 +174,6 @@
             <button type="button" data-bs-toggle="modal" data-bs-target="#modal-editPaperwork" class="btn btn-outline-secondary">Sunting</button>
             <?php } ?>
             <button class="btn btn-success text-white" id="btn-submit" type="button" data-bs-toggle="modal" data-bs-target="#modal-submitPaperwork" >Hantar</button>
-                {{-- <form action="{{ route('paperwork.submit', $paperwork->id ) }}" method="POST">
-                    @csrf
-                    <button class="btn btn-success text-white" id="btn-submit" type="submit">Hantar</button>
-                </form> --}}
         @endif
             
         <?php if ($paperwork->isGenerated) { ?>
@@ -219,9 +219,13 @@
 
     $(document).ready(function() {
 
-        var progression = ["Draf", "Penasihat Kelab", "HEPA", "TNC (HEPA)", "Lulus"];
-
-        var progressionBarValue = [35, 61, 93, 99];
+        if ({{ count($paperwork->progressStates) }}  == 4) {
+            var progression = ["Draf", "Penasihat Kelab", "HEPA", "TNC (HEPA)", "Lulus"];
+            var progressionBarValue = [35, 61, 93, 99];
+        } else {
+            var progression = ["Draf", "Penasihat Kelab", "HEPA", "TNC (HEPA)", "NC", "Lulus"];
+            var progressionBarValue = [30, 55, 70, 80, 96];
+        }
 
         if ( {{ $paperwork->currentProgressState }} != null && {{ $paperwork->currentProgressState }} != 0) {
             SelectValue.innerHTML = progression[{{ $paperwork->currentProgressState }} - 1];

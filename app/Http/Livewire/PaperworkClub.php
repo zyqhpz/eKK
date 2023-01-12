@@ -198,9 +198,6 @@ class PaperworkClub extends Component
             4 => "NC",
         );
 
-        $mailController = new MailController();
-        $mailController->sendEmail($paperwork->id);
-
         if ($paperwork->isGenerated == 1) {
 
             $pdf_generator = new PDFGenerator();
@@ -216,14 +213,37 @@ class PaperworkClub extends Component
                 $paperwork->progressStates = json_encode($progression_NC);
             } else {
                 $paperwork->progressStates = json_encode($progression);
-                // dd($paperwork->progressStates);
             }
         } else {
-            // use AI
-            
-                    // convert array to json
-            $paperwork->progressStates = json_encode($progression);
+
+            // use AI Python Detector
+
+            // open file
+            $file = public_path('paperworks/' . $paperwork->filePath);
+
+            // run python script
+            $process = new Process(['python', 'python/detector.py', $file]);
+            $process->run();
+
+            $output = $process->getOutput();
+
+            // dd($output);
+
+            // remove comma from string
+            $int = filter_var($output, FILTER_SANITIZE_NUMBER_INT);
+
+            $new_int = $int / 100;
+
+            if ($new_int >= 20000) {
+                $paperwork->progressStates = json_encode($progression_NC);
+            } else {
+                $paperwork->progressStates = json_encode($progression);
+            }
         }
+
+
+        $mailController = new MailController();
+        $mailController->sendEmail($paperwork->id);
         $paperwork->currentProgressState = 1;
         // $paperwork->currentProgressState = $request->paperwork_currentProgressState ?? $paperwork->currentProgressState;
         // $paperwork->progressStates = $request->paperwork_progressStates ?? $paperwork->progressStates;
