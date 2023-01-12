@@ -276,7 +276,7 @@
                         </table>
                     </li>
                     <li id="implikasi-kewangan" class="fw-bold px-2 table-responsive" style="page-break-before: always;"><span>0<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>IMPLIKASI KEWANGAN</b></span></span>
-                        <p class="fw-normal">Anggaran perbelanjaan keseluruhan bagi penganjuran {{ $paperwork->name }} ini adalah sebanyak RM {{ $financialImplication['jumlah_implikasi'] }}.</p>
+                        <p class="fw-normal">Anggaran perbelanjaan keseluruhan bagi penganjuran {{ $paperwork->name }} ini adalah sebanyak <b>RM {{ $financialImplication['jumlah_implikasi'] }}</b>.</p>
                         <table class="table fw-normal mx-auto" id="table-implikasi">
                             <thead>
                                 <tr>
