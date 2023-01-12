@@ -120,6 +120,8 @@
                         <div class="progress-bar bg-warning" role="progressbar" style="width: 35%;" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
                     @elseif ($paperwork->currentProgressState == 2)
                         <div class="progress-bar bg-warning" role="progressbar" style="width: 61%;" aria-valuenow="61" aria-valuemin="0" aria-valuemax="100"></div>
+                    @elseif($paperwork->currentProgressState == 3 && $paperwork->status == 2)
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 99%;" aria-valuenow="99" aria-valuemin="0" aria-valuemax="100"></div>
                     @elseif($paperwork->currentProgressState == 3)
                         <div class="progress-bar bg-warning" role="progressbar" style="width: 93%;" aria-valuenow="93" aria-valuemin="0" aria-valuemax="100"></div>
                     @else
@@ -135,7 +137,7 @@
                     @elseif ($paperwork->currentProgressState == 3)
                         <div class="progress-bar bg-warning" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
                     @elseif ($paperwork->currentProgressState == 4 && $paperwork->status == 2)
-                        <div class="progress-bar bg-success" role="progressbar" style="width: 95%;" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 99%;" aria-valuenow="99" aria-valuemin="0" aria-valuemax="100"></div>
                     @elseif ($paperwork->currentProgressState == 4)
                         <div class="progress-bar bg-warning" role="progressbar" style="width: 95%;" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
                     @else
@@ -147,7 +149,7 @@
             @endif
         </div>
 
-        @if ($paperwork->status != 0 && $paperwork->status != null && $paperwork->progressStates != null)
+        @if ($paperwork->status > 0)
             <div>
                 {{-- <label for="statusRange" class="form-label">Status</label> --}}
                 <input type="range" class="form-range" min="0" max="100" step="1" id="statusRange" hidden>
@@ -221,11 +223,15 @@
 
     $(document).ready(function() {
 
-        if ({{ $paperwork->status }} != 0 && {{$paperwork->status}} != null && {{ $paperwork->progressStates }} != null && {{$paperwork->progressStates}} == 0 && {{ $paperwork->currentProgressState }} != null && {{ $paperwork->currentProgressState }} != 0) {
+        if ({{ $paperwork->status }} > 0) {
 
-            if ( {{ $paperwork->currentProgressState }} != null && {{ $paperwork->currentProgressState }} != 0) {
+            var states = '<?php echo json_encode($paperwork->progressStates); ?>';
 
-                if ( {{ $paperwork->progressStates }}.length  == 4) {
+            if (states != null && states  != '') {
+
+                var statesJson = JSON.parse(states);
+                
+                if (statesJson.length  == 4 ) {
                     var progression = ["Draf", "Penasihat Kelab", "HEPA", "TNC (HEPA)", "Lulus"];
                     var progressionBarValue = [35, 61, 93, 99];
                 } else {
@@ -242,7 +248,6 @@
                     SelectValue.innerHTML = progression[{{ $paperwork->currentProgressState }} - 1];
                 }
 
-
                 if ( ({{ $paperwork->currentProgressState }} == 1) || ({{ $paperwork->currentProgressState }} == 2) || ({{ $paperwork->status }} == 3) ) {
                     $('#SelectValue').addClass("bg-warning");
                 } else if ( {{ $paperwork->currentProgressState }} == 4) {
@@ -252,7 +257,7 @@
                 }
 
             } else {
-                SelectValue.innerHTML = "Belum Dihantar";
+                // SelectValue.innerHTML = "Belum Dihantar";
             }
 
             updateSliderValue();
