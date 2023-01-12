@@ -10,6 +10,11 @@ use App\Models\PaperworkDetails;
 
 use Symfony\Component\Process\Process;
 
+use App\Mail\StatusUpdateMail;
+use App\Http\Controllers\MailController;
+
+use App\Http\Livewire\PDFGenerator;
+
 use PDF;
 use File;
 use Response;
@@ -18,9 +23,37 @@ class PaperworkClub extends Component
 {
     public function render()
     {
-        // $paperworks = Paperwork::all();
-        // filter by user id
-        $paperworks = Paperwork::where('clubId', auth()->user()->id)->get();
+        // admin
+        if (auth()->user()->role == 0) {
+            // $paperworks = Paperwork::where('status', '>', 1)->get();
+            $paperworks = Paperwork::where('currentProgressState', '>', 1)->get();
+        }
+
+        // club
+        if (auth()->user()->role == 1) {
+            $paperworks = Paperwork::where('clubId', auth()->user()->id)->get();
+        }
+
+        // advisor
+        if (auth()->user()->role == 2) {
+            $paperworks = Paperwork::where('clubId', auth()->user()->advisorOf)->where('status', '>', 0)->get();
+        }
+
+        // HEPA
+        if (auth()->user()->role == 3) {
+            $paperworks = Paperwork::where('currentProgressState', '>', 1)->get();
+        }
+
+        // TNC (HEPA)
+        if (auth()->user()->role == 4) {
+            $paperworks = Paperwork::where('currentProgressState', '>', 2)->get();
+        }
+
+        // NC
+        if (auth()->user()->role == 5) {
+            $paperworks = Paperwork::where('currentProgressState', '>', 3)->where('status', '!=', 2)->get();
+        }
+
         return view('livewire.paperwork-club', compact('paperworks'));
     }
 
@@ -141,6 +174,7 @@ class PaperworkClub extends Component
     public function submit(Request $request, $id)
     {
         $paperwork = Paperwork::find($id);
+        $paperworkDetails = PaperworkDetails::find($paperwork->paperworkDetailsId);
 
         // $paperwork->isOneDay = $request->paperwork_isOneDay ?? $paperwork->isOneDay;
         // $paperwork->programDate = $request->paperwork_programDate ?? $paperwork->programDate;
@@ -149,13 +183,6 @@ class PaperworkClub extends Component
         // $paperwork->venue = $request->paperwork_venue ?? $paperwork->venue;
         $paperwork->status = 1;
 
-        // $progression = array(
-        //     'submitted' => true,
-        //     'approved' => false,
-        //     'rejected' => false,
-        //     'completed' => false
-        // );
-
         $progression = array(
             0 => "Draf",
             1 => "Penasihat Kelab",
@@ -163,8 +190,60 @@ class PaperworkClub extends Component
             3 => "TNC (HEPA)"
         );
 
-        // convert array to json
-        $paperwork->progressStates = json_encode($progression);
+        $progression_NC = array(
+            0 => "Draf",
+            1 => "Penasihat Kelab",
+            2 => "HEPA",
+            3 => "TNC (HEPA)",
+            4 => "NC",
+        );
+
+        if ($paperwork->isGenerated == 1) {
+
+            $pdf_generator = new PDFGenerator();
+            $financialImplication = $pdf_generator->calculateTotalImplication($paperworkDetails->financialImplication);
+
+            $total_all = 0;
+
+            foreach ($financialImplication['totalByRemark'] as $key => $value) {
+                $total_all += $value;
+            }
+
+            if ($total_all >= 20000) {
+                $paperwork->progressStates = json_encode($progression_NC);
+            } else {
+                $paperwork->progressStates = json_encode($progression);
+            }
+        } else {
+
+            // use AI Python Detector
+
+            // open file
+            $file = public_path('paperworks/' . $paperwork->filePath);
+
+            // run python script
+            $process = new Process(['python', 'python/detector.py', $file]);
+            $process->run();
+
+            $output = $process->getOutput();
+
+            // dd($output);
+
+            // remove comma from string
+            $int = filter_var($output, FILTER_SANITIZE_NUMBER_INT);
+
+            $new_int = $int / 100;
+
+            if ($new_int >= 20000) {
+                $paperwork->progressStates = json_encode($progression_NC);
+            } else {
+                $paperwork->progressStates = json_encode($progression);
+            }
+        }
+
+
+        $mailController = new MailController();
+        $mailController->sendEmail($paperwork->id);
         $paperwork->currentProgressState = 1;
         // $paperwork->currentProgressState = $request->paperwork_currentProgressState ?? $paperwork->currentProgressState;
         // $paperwork->progressStates = $request->paperwork_progressStates ?? $paperwork->progressStates;

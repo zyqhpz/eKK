@@ -28,4 +28,75 @@ class PaperworkClubStatus extends Component
 
         return view('livewire.paperwork-status', compact('paperwork'));
     }
+
+    public function updatePaperworkStatus(Request $request, $id)
+    {
+        $paperwork = Paperwork::find($id);
+
+        // Admin
+        if (auth()->user()->role == 0) {
+            // if ($request->paperwork_updateStatus == "Lulus") {
+            //     $paperwork->status = 1;
+            //     $paperwork->currentProgressState = 3;
+            // } else {
+            //     $paperwork->status = 0;
+            //     $paperwork->currentProgressState = 0;
+            // }
+        }
+        // advisor
+        else if (auth()->user()->role == 2) {
+            if ($request->paperwork_updateStatus == "Lulus") {
+                $paperwork->status = 1;
+                $paperwork->currentProgressState = 2;
+            } else {
+                $paperwork->status = 0;
+                $paperwork->currentProgressState = 0;
+            }
+        }
+        // HEPA
+        else if (auth()->user()->role == 3) {
+            if ($request->paperwork_updateStatus == "Lulus") {
+                $paperwork->status = 1;
+                $paperwork->currentProgressState = 3;
+            } else {
+                $paperwork->status = 0;
+                $paperwork->currentProgressState = 0;
+            }
+        }
+        // TNC (HEPA)
+        else if (auth()->user()->role == 4) {
+            if ($request->paperwork_updateStatus == "Lulus") {
+
+                if (count($paperwork->progressStates) == 4) {
+                    $paperwork->status = 1;
+                } else {
+                    $paperwork->status = 2;
+                }
+                $paperwork->currentProgressState = 3;
+            } else {
+                $paperwork->status = 0;
+                $paperwork->currentProgressState = 0;
+            }
+        }
+        // NC
+        else if (auth()->user()->role == 5) {
+            if ($request->paperwork_updateStatus == "Lulus") {
+                $paperwork->status = 2;
+                $paperwork->currentProgressState = 4;
+            } else {
+                $paperwork->status = 0;
+                $paperwork->currentProgressState = 0;
+            }
+        }
+    
+        $paperwork->save();
+
+        if ($request->paperwork_updateStatus == "Lulus") {
+
+            return redirect()->back()
+            ->with('updated', 'Kertas kerja ini telah diluluskan.');
+        } else {
+            return redirect()->route('paperwork-club');
+        }
+    }
 }
