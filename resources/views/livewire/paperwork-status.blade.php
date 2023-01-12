@@ -112,7 +112,7 @@
         </div>
 
         <div class="progress">
-            @if ($paperwork->progressStates != null)
+            @if ($paperwork->progressStates != null && $paperwork->status != null && $paperwork->status != 0)
                 @if (count($paperwork->progressStates) == 4)
                     @if ($paperwork->currentProgressState == 4)
                         <div class="progress-bar bg-success" role="progressbar" style="width: 100%;" aria-valuenow="99" aria-valuemin="0" aria-valuemax="100"></div>
@@ -221,39 +221,42 @@
 
     $(document).ready(function() {
 
-        if ({{ count($paperwork->progressStates) }}  == 4) {
-            var progression = ["Draf", "Penasihat Kelab", "HEPA", "TNC (HEPA)", "Lulus"];
-            var progressionBarValue = [35, 61, 93, 99];
-        } else {
-            var progression = ["Draf", "Penasihat Kelab", "HEPA", "TNC (HEPA)", "NC", "Lulus"];
-            var progressionBarValue = [30, 55, 70, 95, 96];
-        }
+        if ({{ $paperwork->status }} != 0 && {{$paperwork->status}} != null && {{ $paperwork->progressStates }} != null && {{$paperwork->progressStates}} == 0 && {{ $paperwork->currentProgressState }} != null && {{ $paperwork->currentProgressState }} != 0) {
 
-        if ( {{ $paperwork->currentProgressState }} != null && {{ $paperwork->currentProgressState }} != 0) {
+            if ( {{ $paperwork->currentProgressState }} != null && {{ $paperwork->currentProgressState }} != 0) {
 
-            $('#statusRange').val(progressionBarValue[{{ $paperwork->currentProgressState }} - 1]);
+                if ( {{ $paperwork->progressStates }}.length  == 4) {
+                    var progression = ["Draf", "Penasihat Kelab", "HEPA", "TNC (HEPA)", "Lulus"];
+                    var progressionBarValue = [35, 61, 93, 99];
+                } else {
+                    var progression = ["Draf", "Penasihat Kelab", "HEPA", "TNC (HEPA)", "NC", "Lulus"];
+                    var progressionBarValue = [30, 55, 70, 95, 96];
+                }
 
-            if ({{ $paperwork->status }} == 2) {
-                SelectValue.innerHTML = "Lulus";
-                $('#statusRange').val(97);
+                $('#statusRange').val(progressionBarValue[{{ $paperwork->currentProgressState }} - 1]);
+
+                if ({{ $paperwork->status }} == 2) {
+                    SelectValue.innerHTML = "Lulus";
+                    $('#statusRange').val(97);
+                } else {
+                    SelectValue.innerHTML = progression[{{ $paperwork->currentProgressState }} - 1];
+                }
+
+
+                if ( ({{ $paperwork->currentProgressState }} == 1) || ({{ $paperwork->currentProgressState }} == 2) || ({{ $paperwork->status }} == 3) ) {
+                    $('#SelectValue').addClass("bg-warning");
+                } else if ( {{ $paperwork->currentProgressState }} == 4) {
+                    $('#SelectValue').addClass("bg-success");
+                } else {
+                    $('#SelectValue').addClass("bg-danger");
+                }
+
             } else {
-                SelectValue.innerHTML = progression[{{ $paperwork->currentProgressState }} - 1];
+                SelectValue.innerHTML = "Belum Dihantar";
             }
 
-
-            if ( ({{ $paperwork->currentProgressState }} == 1) || ({{ $paperwork->currentProgressState }} == 2) || ({{ $paperwork->status }} == 3) ) {
-                $('#SelectValue').addClass("bg-warning");
-            } else if ( {{ $paperwork->currentProgressState }} == 4) {
-                $('#SelectValue').addClass("bg-success");
-            } else {
-                $('#SelectValue').addClass("bg-danger");
-            }
-
-        } else {
-            SelectValue.innerHTML = "Belum Dihantar";
+            updateSliderValue();
         }
-
-        updateSliderValue();
 
     });
 
