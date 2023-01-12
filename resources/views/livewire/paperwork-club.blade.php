@@ -149,9 +149,9 @@
                     <td><span class="fw-normal d-flex align-items-center">{{ $formatted_programDateStartEnd }}</span></td>
                     <?php if($paperwork->status == 0) { ?>
                         <td><span class="fw-normal text-danger">Draf</span></td>
-                    <?php } else if($paperwork->status == 1 || $paperwork->status == 2 || $paperwork->status == 3) { ?>
+                    <?php } else if($paperwork->status == 1) { ?>
                         <td><span class="fw-normal text-warning">Dalam proses</span></td>
-                    <?php } else if($paperwork->status == 4) { ?>
+                    <?php } else if($paperwork->status == 2) { ?>
                         <td><span class="fw-normal text-success">Diluluskan</span></td>
                     <?php } ?>
                     <td>

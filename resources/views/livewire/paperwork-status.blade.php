@@ -134,8 +134,10 @@
                         <div class="progress-bar bg-warning" role="progressbar" style="width: 45%;" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
                     @elseif ($paperwork->currentProgressState == 3)
                         <div class="progress-bar bg-warning" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                    @elseif ($paperwork->currentProgressState == 4 && $paperwork->status == 2)
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 95%;" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
                     @elseif ($paperwork->currentProgressState == 4)
-                        <div class="progress-bar bg-warning" role="progressbar" style="width: 80%;" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 95%;" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
                     @else
                         <div class="progress-bar bg-danger" role="progressbar" style="width: 25%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
                     @endif
@@ -224,13 +226,20 @@
             var progressionBarValue = [35, 61, 93, 99];
         } else {
             var progression = ["Draf", "Penasihat Kelab", "HEPA", "TNC (HEPA)", "NC", "Lulus"];
-            var progressionBarValue = [30, 55, 70, 80, 96];
+            var progressionBarValue = [30, 55, 70, 95, 96];
         }
 
         if ( {{ $paperwork->currentProgressState }} != null && {{ $paperwork->currentProgressState }} != 0) {
-            SelectValue.innerHTML = progression[{{ $paperwork->currentProgressState }} - 1];
 
             $('#statusRange').val(progressionBarValue[{{ $paperwork->currentProgressState }} - 1]);
+
+            if ({{ $paperwork->status }} == 2) {
+                SelectValue.innerHTML = "Lulus";
+                $('#statusRange').val(97);
+            } else {
+                SelectValue.innerHTML = progression[{{ $paperwork->currentProgressState }} - 1];
+            }
+
 
             if ( ({{ $paperwork->currentProgressState }} == 1) || ({{ $paperwork->currentProgressState }} == 2) || ({{ $paperwork->status }} == 3) ) {
                 $('#SelectValue').addClass("bg-warning");
