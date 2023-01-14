@@ -22,6 +22,7 @@
         <h2 class="h4">Senarai Kertas Kerja</h2>
         <p class="mb-0">Halaman ini menunjukkan senarai kertas kerja yang telah dibuat.</p>
     </div>
+    @if (auth()->user()->role == 1)
     <div class="btn-toolbar mb-2 mb-md-0">
         <button type="button" data-bs-toggle="modal" data-bs-target="#modal-addNewPaperwork" class="btn btn-sm btn-gray-800 d-inline-flex align-items-center">
             <svg class="icon icon-xs me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -32,6 +33,7 @@
             Tambah Kerja Kerja
         </button>
     </div>
+    @endif
 </div>
 <div class="table-settings mb-4">
     <div class="row justify-content-between align-items-center">
@@ -144,7 +146,7 @@
                 ?>
                 <tr>
                     <td><span class="fw-normal">{{ $numbering }}.</span></td>
-                    <td><span class="fw-normal">{{ $paperwork->name }}</span></td>
+                    <td class="d-flex align-items-center"><span class="fw-normal">{{ $paperwork->name }}</span>@if ($paperwork->status == 1 && $paperwork->currentProgressState == (auth()->user()->role - 1))<span class="badge badge-sm bg-danger badge-pill notification-count ms-3">Baru</span>@endif</td>
                     <td><span class="fw-normal">{{ $formatted_date }}</span></td>
                     <td><span class="fw-normal d-flex align-items-center">{{ $formatted_programDateStartEnd }}</span></td>
                     <?php if($paperwork->status == 0) { ?>

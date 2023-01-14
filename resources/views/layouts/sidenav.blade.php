@@ -74,8 +74,9 @@
         role="list" id="submenu-pages" aria-expanded="false">
           <ul class="flex-column nav">
             <li class="nav-item {{ Request::segment(1) == 'paperwork' ? 'active' : '' }}"">
-              <a class="nav-link" href="{{ route('paperwork-club') }}">
+              <a class="nav-link d-flex align-items-center justify-content-between" href="{{ route('paperwork-club') }}">
                 <span class="sidebar-text">Kertas Kerja</span>
+                <span class="badge badge-sm bg-danger badge-pill notification-count">4</span>
               </a>
             </li>
           </ul>
