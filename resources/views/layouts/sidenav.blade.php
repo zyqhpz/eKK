@@ -40,13 +40,13 @@
           </span>
         </a>
       </li>
-      {{-- <li class="nav-item {{ Request::segment(1) == 'dashboard' ? 'active' : '' }}">
-        <a href="/dashboard" class="nav-link">
-          <span class="sidebar-icon"><i class="far fa-chart-pie"></i></span>
-          <span class="sidebar-text">Dashboard</span>
+      <li class="nav-item {{ Request::segment(1) == 'users-list' ? 'active' : '' }}">
+        <a href="{{ route('users.list') }}" class="nav-link">
+          <span class="sidebar-icon"><i class="fas fa-address-book"></i></span>
+          <span class="sidebar-text">Pengurusan Pengguna</span>
         </a>
-      </li> --}}
-      <li class="nav-item {{ Request::segment(1) == 'paperwork' ? 'active' : '' }}">
+      </li>
+      <li class="nav-item {{ Request::segment(1) == 'kertas-kerja-kelab' ? 'active' : '' }}">
         <a href="{{ route('paperwork-club') }}" class="nav-link">
           <span class="sidebar-icon"><i class="far fa-newspaper"></i></span>
           <span class="sidebar-text">Kertas Kerja</span>
