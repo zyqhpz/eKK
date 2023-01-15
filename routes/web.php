@@ -105,6 +105,9 @@ Route::middleware('auth')->group(function () {
 
     // route for users managament
     Route::get('/users-list', UserManagement::class)->name('users.list');
+    Route::post('/users/create', [UserManagement::class, 'store'])->name('users.store');
+    Route::delete('/users/delete/{id}', [UserManagement::class, 'delete'])->name('users.delete');
+    // Route::post('/users/update/{id}', [UserManagement::class, 'store'])->name('users.store');
 
     Route::get('/users', Users::class)->name('users');
     Route::get('/login-example', LoginExample::class)->name('login-example');

@@ -40,12 +40,14 @@
           </span>
         </a>
       </li>
+      @if (Auth::user()->role == 0)
       <li class="nav-item {{ Request::segment(1) == 'users-list' ? 'active' : '' }}">
         <a href="{{ route('users.list') }}" class="nav-link">
           <span class="sidebar-icon"><i class="fas fa-address-book"></i></span>
           <span class="sidebar-text">Pengurusan Pengguna</span>
         </a>
       </li>
+      @endif
       <li class="nav-item {{ Request::segment(1) == 'kertas-kerja-kelab' ? 'active' : '' }}">
         <a href="{{ route('paperwork-club') }}" class="nav-link">
           <span class="sidebar-icon"><i class="far fa-newspaper"></i></span>

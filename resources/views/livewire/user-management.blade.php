@@ -18,12 +18,12 @@
                         </svg>
                     </a>
                 </li>
-                <li class="breadcrumb-item"><a href="#">Kelab</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Kertas Kerja</li>
+                <li class="breadcrumb-item"><a href="#">Pengguna</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Senarai Pengguna</li>
             </ol>
         </nav>
-        <h2 class="h4">Senarai Kertas Kerja</h2>
-        <p class="mb-0">Halaman ini menunjukkan senarai kertas kerja yang telah dibuat.</p>
+        <h2 class="h4">Senarai Pengguna</h2>
+        <p class="mb-0">Halaman ini menunjukkan senarai pengguna dalam sistem.</p>
     </div>
     @if (auth()->user()->role == 0)
     <div class="btn-toolbar mb-2 mb-md-0">
@@ -52,7 +52,7 @@
                     <div class="col-12 col-xl-7 px-xl-0">
                         <div class="d-none d-sm-block">
                             <h2 class="h6 mb-0">Jumlah Pengguna</h2>
-                            <h3 class="fw-extrabold mb-2"><span>0</span></h3>
+                            <h3 class="fw-extrabold mb-2">@if (isset($users)) <span>{{ count($users) }}</span> @else <span>0</span>@endif</h3>
                         </div>
                     </div>
                 </div>
@@ -105,9 +105,10 @@
                 <th class="border-bottom">Status</th>
                 <th class="border-bottom"></th>
             </tr>
+            <?php $numbering = 1; ?>
             @foreach ($users as $user)
                 <tr>
-                    <td><span class="fw-normal">1.</span></td>
+                    <td><span class="fw-normal">{{ $numbering }}.</span></td>
                     <td><span class="fw-normal">{{ $user->name }}</span></td>
                     @if ($user->role == 1)
                         <td><span class="fw-normal"><span class="badge bg-success">Kelab</span></span></td>
@@ -128,11 +129,12 @@
                                 <span class="visually-hidden">Toggle Dropdown</span>
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item bg-danger text-white" href="#">Padam</a>
+                                <a class="dropdown-item bg-danger text-white" data-id="{{ $user->id }}" data-name="{{ $user->name }}" data-bs-toggle="modal" data-bs-target="#modal-deleteUser">Padam</a>
                             </div>
                         </div>
                     </td>
                 </tr>
+                <?php $numbering++; ?>
             @endforeach
         </thead>
         <tbody>
@@ -146,7 +148,7 @@
 
         <div class="modal-content">
             {{-- create a form to add a new paperwork with attributes: name, method to upload paperwork --}}
-            <form action="{{ route('paperwork.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('users.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-header">
                     <h2 class="h6 modal-title">Tambah Pengguna Baru</h2>
@@ -157,34 +159,38 @@
                         <label class="form-label required">Nama Pengguna</label>
                         <input type="text" class="form-control" name="user_name" placeholder="Nama Pengguna" autocomplete="off" required>
                     </div>
-                    {{-- add radio button to upload paperwork or using generator --}}
+                    <div class="form-group mb-3">
+                        <label class="form-label required">Email Pengguna</label>
+                        <input type="text" class="form-control" name="user_email" placeholder="user@email.com" autocomplete="off" required>
+                    </div>
+                    {{-- add radio button to select user role --}}
                     <label for="">Jenis pengguna</label>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="user_role" value="club">
+                        <input class="form-check-input" type="radio" name="user_role" value="1" checked>
                         <label class="form-check-label">
                             Kelab
                         </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="user_role" value="advisor">
+                        <input class="form-check-input" type="radio" name="user_role" value="2">
                         <label class="form-check-label">
                             Penasihat
                         </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="user_role" value="officer">
+                        <input class="form-check-input" type="radio" name="user_role" value="3">
                         <label class="form-check-label">
                             Pegawai
                         </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="user_role" value="tnc">
+                        <input class="form-check-input" type="radio" name="user_role" value="4">
                         <label class="form-check-label">
                             TNC (HEPA)
                         </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="user_role" value="nc">
+                        <input class="form-check-input" type="radio" name="user_role" value="5">
                         <label class="form-check-label">
                             NC
                         </label>
@@ -208,11 +214,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body pb-0">
-                {{-- <div id="paperwork-deleted-name">{{ $paperwork->name }}</div> --}}
+                <div id="user-deleted-name">{{ $user->name }}</div>
                 <p>Adakah anda pasti untuk memadam pengguna ini?</p>
             </div>
             <div class="modal-footer">
-                <form action="{{ route('paperwork.delete', $user->id) }}" id="delete-user" method="POST">
+                <form action="" id="delete-user" method="POST">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger">Padam</button>
@@ -225,34 +231,22 @@
 
 {{-- javascript for modal add new paperwork --}}
 <script>
-    // Javascript for modal add new paperwork
-    // show and hide paperworkFileUpload when radio button paperworkUpload is checked
     $(document).ready(function() {
-        $('#paperworkUpload').click(function() {
-            $('#paperworkFileUpload').show();
-            // add required attribute to paperwork-file
-            $('input[name="paperwork_file"]').attr('required', true);
-        });
-        $('#paperworkGenerator').click(function() {
-            $('#paperworkFileUpload').hide();
-            // remove required attribute to paperwork-file
-            $('input[name="paperwork_file"]').removeAttr('required');
-        });
 
-        $('#modal-deletePaperwork').on('show.bs.modal', function (event) {
+        $('#modal-deleteUser').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget) // Button that triggered the modal
             var id = button.data('id') // Extract info from data-* attributes
             var name = button.data('name') // Extract info from data-* attributes
 
-            $("#paperwork-deleted-name").text(name);
+            $("#user-deleted-name").text(name);
 
-            // change the action attribute of form to delete the paperwork
-            $('#delete-paperwork').attr('action', '/paperwork/delete/' + id);
+            // change the action attribute of form to delete 
+            $('#delete-user').attr('action', '/users/delete/' + id);
         });
     });
 
     $(document).ready(function() {
-        $("#paperwork-search").on("keyup", function() {
+        $("#user-search").on("keyup", function() {
             var value = $(this).val().toLowerCase();
             $("table tr").filter(function() {
                 $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
