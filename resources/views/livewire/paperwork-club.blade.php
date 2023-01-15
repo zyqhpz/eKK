@@ -1,6 +1,10 @@
 <title>Volt Laravel Dashboard - User management</title>
-<script src="https://code.jquery.com/jquery-3.6.1.js"></script>
-<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+<head>
+
+    <script src="https://code.jquery.com/jquery-3.6.1.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://kit.fontawesome.com/36f73a74bd.js" crossorigin="anonymous"></script>
+</head>
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
     <div class="d-block mb-4 mb-md-0">
         <nav aria-label="breadcrumb" class="d-none d-md-inline-block">
@@ -35,6 +39,69 @@
     </div>
     @endif
 </div>
+<div class="row mb-4">
+    @if (auth()->user()->role == 1)
+    <div class="col-3 col-lg-4">
+        <div class="card border-0 shadow">
+            <div class="card-body">
+                <div class="row d-block d-xl-flex align-items-center">
+                    <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
+                        <div class="icon-shape icon-shape-tertiary rounded me-4 me-sm-0">
+                            <i class="far fa-newspaper text-white "></i>
+                        </div>
+                    </div>
+                    <div class="col-12 col-xl-7 px-xl-0">
+                        <div class="d-none d-sm-block">
+                            <h2 class="h6 mb-0">Jumlah Kertas Kerja</h2>
+                            <h3 class="fw-extrabold mb-2">@if ($paperworks != null && $paperworks != '') {{ count($paperworks) }} @else <span>0</span> @endif</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @elseif (auth()->user()->role != 0)
+    <div class="col-3 col-lg-4">
+        <div class="card border-0 shadow">
+            <div class="card-body">
+                <i class="fa-regular fa-circle-check"></i>
+                <div class="row d-block d-xl-flex align-items-center">
+                    <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
+                                                
+                    </div>
+                    <div class="col-12 col-xl-7 px-xl-0">
+                        <div class="d-none d-sm-block">
+                            @if (auth()->user()->role == 1)
+                            <h2 class="h6 mb-0">Jumlah Kertas Kerja Diluluskan</h2>
+                            <?php 
+                                $status_2_count = 0;
+                                foreach ($paperworks as $paperwork) {
+                                    if ($paperwork->status == 2) {
+                                        $status_2_count++;
+                                    }
+                                }
+                            ?>
+                            <h3 class="fw-extrabold mb-2">@if ($paperworks != null && $paperworks != '') {{ $status_2_count }} @else <span>0</span> @endif</h3>
+                            @else
+                            <h2 class="h6 mb-0">Jumlah Kertas Kerja Perlu Diluluskan</h2>
+                            <?php 
+                                $approved_count = 0;
+                                foreach ($paperworks as $paperwork) {
+                                    if ($paperwork->status == 1 && ($paperwork->currentProgressState == (auth()->user()->role - 1))) {
+                                        $approved_count++;
+                                    }
+                                }
+                            ?>
+                            <h3 class="fw-extrabold mb-2">@if ($paperworks != null && $paperworks != '') {{ $approved_count }} @else <span>0</span> @endif</h3>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+</div>
 <div class="table-settings mb-4">
     <div class="row justify-content-between align-items-center">
         <div class="col-9 col-lg-8 d-md-flex">
@@ -47,7 +114,7 @@
                             clip-rule="evenodd"></path>
                     </svg>
                 </span>
-                <input type="text" class="form-control" placeholder="Cari kertas kerja">
+                <input type="text" class="form-control"id="paperwork-search" placeholder="Cari kertas kerja">
             </div>
             <select class="form-select fmxw-200 d-none d-md-inline" aria-label="Message select example 2">
                 <option selected>Semua</option>
@@ -74,7 +141,7 @@
         <thead>
             <tr>
                 <th class="border-bottom">No.</th>
-                <th class="border-bottom">Nama Program</th>
+                <th class="border-bottom name">Nama Program</th>
                 <th class="border-bottom">Tarikh Terakhir Disunting</th>
                 <th class="border-bottom">Tarikh Program</th>
                 <th class="border-bottom">Status</th>
@@ -146,7 +213,7 @@
                 ?>
                 <tr>
                     <td><span class="fw-normal">{{ $numbering }}.</span></td>
-                    <td class="d-flex align-items-center"><span class="fw-normal">{{ $paperwork->name }}</span>@if ($paperwork->status == 1 && $paperwork->currentProgressState == (auth()->user()->role - 1))<span class="badge badge-sm bg-danger badge-pill notification-count ms-3">Baru</span>@endif</td>
+                    <td><span class="fw-normal">{{ $paperwork->name }} @if ($paperwork->status == 1 && $paperwork->currentProgressState == (auth()->user()->role - 1))<span class="badge badge-sm bg-danger badge-pill notification-count ms-3">Baru</span>@endif</span></td>
                     <td><span class="fw-normal">{{ $formatted_date }}</span></td>
                     <td><span class="fw-normal d-flex align-items-center">{{ $formatted_programDateStartEnd }}</span></td>
                     <?php if($paperwork->status == 0) { ?>
@@ -158,6 +225,7 @@
                     <?php } ?>
                     <td>
                         <div class="btn-group .z-index-master">
+                            @if (auth()->user()->role == $paperwork->clubId)
                             <a href="{{ route('paperwork-club-status', $paperwork->id) }}" type="button" class="btn btn-info" data-bs-toggle="tooltip"
                                 data-bs-placement="top" title="Lihat kertas kerja">Butiran</a>
                             <button type="button" class="btn btn-info dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
@@ -165,14 +233,14 @@
                                 <span class="visually-hidden">Toggle Dropdown</span>
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Sunting</a></li>
-                                {{-- if status is draft, show delete option. else, hidden --}}
-                                <li><hr class="dropdown-divider"></li>
                                 @if ($paperwork->status == 0)
-                                <li class="dropdown-item bg-danger text-white"><a data-bs-target="#modal-deletePaperwork" id="btn-deletePaperwork-{{ $paperwork->id }}" value="{{$paperwork->id}}" data-bs-toggle="modal">Padam</a></li>
+                                <li class="dropdown-item bg-danger text-white"><a id="btn-deletePaperwork" data-id="{{ $paperwork->id }}" data-name="{{ $paperwork->name }}" data-bs-toggle="modal" data-bs-target="#modal-deletePaperwork">Padam</a></li>
                                 @endif
-                                {{-- <li class="bg-danger"><button class="dropdown-item text-white" id="btn-deletePaperwork-{{ $paperwork->id }}" data-bs-toggle="modal" data-bs-target="#modal-deletePaperwork{{ $paperwork->id }}" value="{{ $paperwork->id }}">Padam</button></li> --}}
                             </ul>
+                            @else
+                            <a href="{{ route('paperwork-club-status', $paperwork->id) }}"  class="btn btn-info" type="button" data-bs-toggle="tooltip"
+                                data-bs-placement="top" title="Lihat kertas kerja">Butiran</a>
+                            @endif
                         </div>
                     </td>
                 </tr>
@@ -235,26 +303,8 @@
     </div>
 </div>
 
-{{-- open modal based on the modal-deletePaperwork{id} --}}
-<script>
-    $(document).ready(function() {
-
-    });
-
-    // get value from value attribute of button to delete paperwork and pass it to modal to delete 
-    $(document).on('click', '#btn-deletePaperwork', function() {
-        var id = $(this).val();
-        console.log(id);
-        $('#modal-deletePaperwork'+id).modal('show');
-    });
-
-    
-</script>
-
 {{-- modal confirmation to delete paperwork --}}
-
-{{-- <?php if($paperwork != null) { ?> --}}
-{{-- <div class="modal fade" id="modal-deletePaperwork{{ $paperwork->id }}" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+<div class="modal fade" id="modal-deletePaperwork" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -262,10 +312,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body pb-0">
+                <div id="paperwork-deleted-name">{{ $paperwork->name }}</div>
                 <p>Adakah anda pasti untuk memadam kertas kerja ini?</p>
             </div>
             <div class="modal-footer">
-                <form action="{{ route('paperwork.delete', $paperwork->id) }}" method="POST">
+                <form action="{{ route('paperwork.delete', $paperwork->id) }}" id="delete-paperwork" method="POST">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger">Padam</button>
@@ -274,11 +325,9 @@
             </div>
         </div>
     </div>
-</div> --}}
-{{-- <?php } ?> --}}
+</div>
 
 {{-- javascript for modal add new paperwork --}}
-
 <script>
     // Javascript for modal add new paperwork
     // show and hide paperworkFileUpload when radio button paperworkUpload is checked
@@ -294,14 +343,26 @@
             $('input[name="paperwork_file"]').removeAttr('required');
         });
 
-        // get value from value attribute of button when that particular button was clicked
-        // $('#btn-deletePaperwork').click(function() {
-        //     var paperworkId = $(this).val();
-        //     console.log(paperworkId)
-        // });
+        $('#modal-deletePaperwork').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var id = button.data('id') // Extract info from data-* attributes
+            var name = button.data('name') // Extract info from data-* attributes
+
+            $("#paperwork-deleted-name").text(name);
+
+            // change the action attribute of form to delete the paperwork
+            $('#delete-paperwork').attr('action', '/paperwork/delete/' + id);
+        });
     });
 
-    // when #btn-deletePaperwork-X is clicked, get the value of X and set it in var paperworkId and set it in the action attribute of form
+    $(document).ready(function() {
+        $("#paperwork-search").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("table tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
 
     // set timeout for alert message
     window.setTimeout(function() {
