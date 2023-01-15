@@ -104,7 +104,6 @@
         if ($paperwork->isOneDay) {
             $tarikh_main_page = date('j', strtotime($paperwork->programDate)).' '.$months[date('n', strtotime($paperwork->programDate))-1].' '.date('Y', strtotime($paperwork->programDate));
         } else {
-            $tarikh_main_page;
             // make it format X - X MONTH YYYY
             $tarikh_main_page = date('j', strtotime($paperwork->programDateStart)).' - '.date('j', strtotime($paperwork->programDateEnd)).' '.$months[date('n', strtotime($paperwork->programDateEnd))-1].' '.date('Y', strtotime($paperwork->programDateEnd));
         }
@@ -164,7 +163,7 @@
             @if ($paperwork->collaborations != null)
                 <p class="text-uppercase text-bold"><b>DENGAN KERJASAMA:<br> {{ $paperwork->collaborations }}</b></p>
             @endif
-            <p class="text-uppercase text-bold"><b>DISEDIAKAN OLEH: <br> {{ json_decode($paperworkDetails->signature, true)['writer_name'] }}</b></p>
+            <p class="text-uppercase text-bold"><b>DISEDIAKAN OLEH: <br>@if (isset($paperworkDetails->signature)) {{ json_decode($paperworkDetails->signature, true)['writer_name'] }} @else - @endif</b></p>
         </div>
 
         <br><br>
@@ -192,16 +191,32 @@
                         <ol class="list-group list-group-numbered fw-normal"">
                             <li class="list-group-item d-flex align-items-start">
                                 <div class="justified">
-                                    Donec feugiat sagittis finibus. Sed rhoncus ipsum eu tortor vestibulum congue. Nullam sed felis nec mauris vehicula ornare. Ut id ultrices nunc. Maecenas quis arcu et quam laoreet luctus. Nullam pharetra tellus in laoreet bibendum. Quisque vestibulum a nisi a ultricies. Aenean sed urna ut nulla fringilla fermentum nec sit amet nisi. Morbi urna purus, fringilla vitae odio id, accumsan feugiat ipsum. Nam ac leo odio. Donec iaculis ante et mollis varius. Donec vulputate augue risus, et condimentum metus vulputate quis. Pellentesque at quam id orci sollicitudin convallis sit amet id justo. Donec lorem odio, congue quis turpis non, luctus facilisis risus. Vestibulum tempus justo ac risus tincidunt, non ultrices mi vestibulum.
+                                    @if (isset($paperworkDetails->introduction))
+                                        {!! $paperworkDetails->introduction !!}
+                                    @else
+                                        - 
+                                    @endif
                                 </div>
                             </li>
                         </ol>
                     </li>
                     <li id="latar-belakang" class="fw-bold"><span>0<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>LATAR BELAKANG</b></span></span>
                         <ol class="list-group list-group-numbered fw-normal"">
-                            <li class="list-group-item justified">Donec feugiat sagittis finibus. Sed rhoncus ipsum eu tortor vestibulum congue. Nullam sed felis nec mauris vehicula ornare. Ut id ultrices nunc. Maecenas quis arcu et quam laoreet luctus. Nullam pharetra tellus in laoreet bibendum. Quisque vestibulum a nisi a ultricies. Aenean sed urna ut nulla fringilla fermentum nec sit amet nisi. Morbi urna purus, fringilla vitae odio id, accumsan feugiat ipsum. Nam ac leo odio. Donec iaculis ante et mollis varius. Donec vulputate augue risus, et condimentum metus vulputate quis. Pellentesque at quam id orci sollicitudin convallis sit amet id justo. Donec lorem odio, congue quis turpis non, luctus facilisis risus. Vestibulum tempus justo ac risus tincidunt, non ultrices mi vestibulum.</li>
-                            <li class="list-group-item justified">Donec feugiat sagittis finibus. Sed rhoncus ipsum eu tortor vestibulum congue. Nullam sed felis nec mauris vehicula ornare. Ut id ultrices nunc. Maecenas quis arcu et quam laoreet luctus. Nullam pharetra tellus in laoreet bibendum. Quisque vestibulum a nisi a ultricies. Aenean sed urna ut nulla fringilla fermentum nec sit amet nisi. Morbi urna purus, fringilla vitae odio id, accumsan feugiat ipsum. Nam ac leo odio. Donec iaculis ante et mollis varius. Donec vulputate augue risus, et condimentum metus vulputate quis. Pellentesque at quam id orci sollicitudin convallis sit amet id justo. Donec lorem odio, congue quis turpis non, luctus facilisis risus. Vestibulum tempus justo ac risus tincidunt, non ultrices mi vestibulum.</li>
-                            <li class="list-group-item justified">Etiam quis volutpat nunc, eu fermentum erat. Donec bibendum at nisi in maximus. In hac habitasse platea dictumst. Ut malesuada, magna sit amet facilisis rutrum, orci augue sagittis dolor, vitae egestas erat elit quis risus. Donec a lacus ex. Maecenas in ex scelerisque, consectetur dolor sed, dictum nisi. Sed congue consectetur fringilla. Proin a neque justo.</li>
+                            @if (isset($paperworkDetails->background) && is_array($paperworkDetails->background))
+                                @foreach ($paperworkDetails->background as $background)
+                                    <li class="list-group-item d-flex align-items-start">
+                                        <div class="justified">
+                                            {!! $background !!}
+                                        </div>
+                                    </li>
+                                @endforeach
+                            @else
+                                <li class="list-group-item d-flex align-items-start">
+                                    <div class="justified">
+                                        -
+                                    </div>
+                                </li>
+                            @endif
                         </ol>
                     </li>
                     <li id="objektif" class="fw-bold" style="page-break-before: always;"><span>0<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>OBJEKTIF</b></span></span>
@@ -210,9 +225,17 @@
                                 Objektif utama program diadakan adalah:
                             </li>
                             <ol type="a">
-                                <li class="list-group-item justified">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eros donec ac odio tempor orci. Vivamus arcu felis bibendum ut tristique. Eros in cursus turpis massa tincidunt. Quis risus sed vulputate odio ut.</li>
-                                <li class="list-group-item justified">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eros donec ac odio tempor orci. Vivamus arcu felis bibendum ut tristique. Eros in cursus turpis massa tincidunt. Quis risus sed vulputate odio ut.</li>
-                                <li class="list-group-item justified">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eros donec ac odio tempor orci. Vivamus arcu felis bibendum ut tristique. Eros in cursus turpis massa tincidunt. Quis risus sed vulputate odio ut.</li>
+                                @if (isset($paperworkDetails->objective) && is_array($paperworkDetails->objective))
+                                    @foreach ($paperworkDetails->objective as $objective)
+                                        <li class="list-group-item justified">
+                                            {!! $objective !!}
+                                        </li>
+                                    @endforeach
+                                @else
+                                    <li class="list-group-item justified">
+                                        -
+                                    </li>
+                                @endif
                             </ol>
                         </ol>
                     </li>
@@ -238,30 +261,39 @@
                     <li id="anjuran" class="fw-bold"><span>0<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>ANJURAN</b></span></span>
                         <ol class="list-group list-group-numbered fw-normal">
                             <li class="list-group-item">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dolor purus non enim praesent elementum facilisis leo. Ut ornare lectus sit amet est placerat in. Est ullamcorper eget nulla facilisi etiam dignissim diam quis enim. Sollicitudin nibh sit amet commodo nulla. Diam in arcu cursus euismod quis viverra.
+                                @if (isset($paperworkDetails->organizedBy) && is_array($paperworkDetails->organizedBy))
+                                    {!! $paperworkDetails->organizedBy !!}
+                                @else
+                                    -
+                                @endif
                             </li>
                         </ol>
                     </li>
                     <li id="kumpulan-sasaran" class="fw-bold"><span>0<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>KUMPULAN SASARAN</b></span></span>
                         <ol class="list-group list-group-numbered fw-normal">
-                            <li class="list-group-item">
-                                Lorem ipsum dolor sit amet
-                            </li>
-                            <li class="list-group-item">
-                                Lorem ipsum dolor sit amet
-                            </li>
+                            @if (isset($paperworkDetails->targetGroup) && is_array($paperworkDetails->targetGroup))
+                                @foreach ($paperworkDetails->targetGroup as $targetGroup => $value)
+                                    <li class="list-group-item">
+                                        {!! $targetGroup !!}
+                                    </li>
+                                @endforeach
+                            @else
+                                <li class="list-group-item">
+                                    -
+                                </li>
+                            @endif
                         </ol>
                     </li>
                     <li id="tarikh-tempat-masa" class="fw-bold"><span>0<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>TARIKH, TEMPAT DAN MASA</b></span></span>
                         <ol class="list-group list-group-numbered fw-normal">
                             <li class="list-group-item">
-                                Tarikh:&nbsp;&nbsp;Lorem ipsum dolor sit amet
+                                Tarikh:&nbsp;&nbsp; {{ $tarikh_main_page }}
                             </li>
                             <li class="list-group-item">
-                                Tempat:&nbsp;&nbsp;Lorem ipsum dolor sit amet
+                                Tempat:&nbsp;&nbsp; @if (isset($paperwork->venue)) {{ $paperwork->venue }} @else - @endif
                             </li>
                             <li class="list-group-item">
-                                Masa:&nbsp;&nbsp;Lorem ipsum dolor sit amet
+                                Masa:&nbsp;&nbsp; @if (isset($paperwork->dateVenueTime)) {{ $paperwork->dateVenutTime }} @else - @endif
                             </li>
                         </ol>
                     </li>
@@ -312,172 +344,13 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td width="90%" align="center" style="text-align: center;">
-                                    PROGRAM BYLEAD:BOOST YOUR LEADERSHIP
+                                <td width="90%" align="center" style="text-align: center;" class="text-uppercase">
+                                    {{ $paperwork->name }}
                                 </td>
                             </tr>
                             <tr height="10pt"></tr>
 
-                            <tr>
-                                <td width="90%" align="center">
-                                    <b>PENASIHAT</b>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td width="90%" align="center">
-                                    IR. DR. NORAZHAR BIN ABU BAKAR
-                                </td>
-                            </tr>
-                            <tr height="10pt"></tr>
-
-                            <tr>
-                                <td width="90%" align="center">
-                                    <b>PENGURUSI</b>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td width="90%" align="center">
-                                    MUHAMMAD QOIYUM BIN SUHAIMI
-                                </td>
-                            </tr>
-                            <tr height="10pt"></tr>
-
-                            <tr>
-                                <td width="90%" align="center">
-                                    <b>PENGARAH</b>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td width="90%" align="center">
-                                    MUHAMMAD HAZIQ BIN MOHD HAPIZ
-                                </td>
-                            </tr>
-                            <tr height="10pt"></tr>
-
-                            <tr>
-                                <td width="90%" align="center">
-                                    <b>TIMBALAN PENGARAH</b>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td width="90%" align="center">
-                                    AZHARRUL HARIFF BIN KAMARZAMAN
-                                </td>
-                            </tr>
-                            <tr height="10pt"></tr>
-
-                            <tr>
-                                <td width="90%" align="center">
-                                    <b>SETIAUSAHA</b>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td width="90%" align="center">
-                                    NOOR SYAHIRAH BINTI ABDULLAH
-                                </td>
-                            </tr>
-                            <tr height="10pt"></tr>
-
-                            <tr>
-                                <td width="90%" align="center">
-                                    <b>BENDAHARI</b>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td width="90%" align="center">
-                                    NURFAZIRAH BINTI MUSLIMIN
-                                </td>
-                            </tr>
-                            <tr height="30pt"></tr>
-                            <tr>
-                                <td width="90%"><b>BIRO PENDAFTARAN, PENGANGKUTAN DAN TEMPAT:</b></td>
-                            </tr>
-                            <tr height="10pt"></tr>
-                            <tr>
-                                <td>
-                                    <table width="100%" style="text-align: center;">
-                                        <tr>
-                                            <td width="5%" align="right">1.</td>
-                                            <td width="100%">&nbsp;&nbsp;&nbsp;MUHAMMAD NAJIHIN BIN HAMZAH</td>
-                                        </tr>
-                                        <tr>
-                                            <td width="5%" align="right">2.</td>
-                                            <td width="100%">&nbsp;&nbsp;&nbsp;NUR'AIN NATASHA BINTI HASBULLAH</td>
-                                        </tr>
-                                        <tr>
-                                            <td width="5%" align="right">3.</td>
-                                            <td width="100%">&nbsp;&nbsp;&nbsp;NUR SYAZWANI HANAFI</td>
-                                        </tr>
-                                        <tr>
-                                            <td width="5%" align="right">4.</td>
-                                            <td width="100%">&nbsp;&nbsp;&nbsp;NUR AIN SOLEHAH BT MOHD SA'AD</td>
-                                        </tr>
-                                        <tr>
-                                            <td width="5%" align="right">5.</td>
-                                            <td width="100%">&nbsp;&nbsp;&nbsp;NUR SYAZWANI BT RIZAL</td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-
-                            <tr height="20pt"></tr>
-                            <tr>
-                                <td width="90%"><b>BIRO TEKNIKAL & LOGISTIK:</b></td>
-                            </tr>
-                            <tr height="10pt"></tr>
-                            <tr>
-                                <td>
-                                    <table width="100%">
-                                        <tr>
-                                            <td width="5%" align="right">1.</td>
-                                            <td width="90%">&nbsp;&nbsp;&nbsp;AHMAD SUFIYAN BIN TAHIR</td>
-                                        </tr>
-                                        <tr>
-                                            <td width="5%" align="right">2.</td>
-                                            <td width="90%">&nbsp;&nbsp;&nbsp;MUHAMMAD LUQMAN BIN SA'ADON</td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                            <tr height="20pt"></tr>
-                            <tr>
-                                <td width="90%"><b>BIRO PENGISIAN DAN PROTOKOL:</b></td>
-                            </tr>
-                            <tr height="10pt"></tr>
-                            <tr>
-                                <td>
-                                    <table width="100%">
-                                        <tr>
-                                            <td width="5%" align="right">1.</td>
-                                            <td width="90%">&nbsp;&nbsp;&nbsp;SITI NUR ALIA BINTI MOHD AZHAR</td>
-                                        </tr>
-                                        <tr>
-                                            <td width="5%" align="right">2.</td>
-                                            <td width="90%">&nbsp;&nbsp;&nbsp;MOHD RIZWAN BIN AHMAD HUSSIN</td>
-                                        </tr>
-                                        <tr>
-                                            <td width="5%" align="right">3.</td>
-                                            <td width="90%">&nbsp;&nbsp;&nbsp;S'NG JIA YU</td>
-                                        </tr>
-                                        <tr>
-                                            <td width="5%" align="right">4.</td>
-                                            <td width="90%">&nbsp;&nbsp;&nbsp;MOHAMMAD HASIF BIN MOHD TAHIR</td>
-                                        </tr>
-                                        <tr>
-                                            <td width="5%" align="right">5.</td>
-                                            <td width="90%">&nbsp;&nbsp;&nbsp;RACHEL MICHAEL</td>
-                                        </tr>
-                                        <tr>
-                                            <td width="5%" align="right">6.</td>
-                                            <td width="90%">&nbsp;&nbsp;&nbsp;IDA ROHAYU BINTI ABD KARIM</td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
+                            <?php echo $ajk; ?>
                     </table>
                     </li>
                     <li id="penutup" class="fw-bold" style="page-break-before: always;"><span>0<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>PENUTUP</b></span></span>

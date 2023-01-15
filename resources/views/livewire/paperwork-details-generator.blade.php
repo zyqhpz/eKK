@@ -1328,14 +1328,10 @@
 
             var paperworkTentative = '<?php echo $paperworkDetails->tentative; ?>';
             // get duration object from $paperworkDetails->tentativeFirebaseId
-            if (paperworkTentative === 'null') {
+            if (paperworkTentative == null || paperworkTentative == "") {
                 count_tentatives = 0;
             } else {
-                var tentativeJson = JSON.parse('<?= $paperworkDetails->tentative ?>');
-                // set 0s to timeAndItems array
-                // for (var i = 0; i < duration; i++) {
-                //     timeAndItems[i] = 0;
-                // }
+                var tentativeJson = JSON.parse(paperworkTentative);
 
                 updateTimeAndItemsValue();
 
@@ -1612,9 +1608,18 @@
 
         if ($("#program-date-start").val() == "" || $("#program-date-end").val() == "") {
             // $("#tentative").hide();
+            if ( {{ isset($paperworkDetails->tentatives) != null ? 'true' : 'false' }}) {
+                // <?php if (isset($paperworkDetails->tentatives)) { ?>
+                //     $("#tentative").show();
+                // <?php } else { ?>
+                //     $("#tentative").hide();
+                // <?php } ?>
             createInputFieldTentative();
+            }
         } else {
+            if ( {{ isset($paperworkDetails->tentatives) != null ? 'true' : 'false' }}) {
             createInputFieldTentative();
+            }
         }
 
     });
