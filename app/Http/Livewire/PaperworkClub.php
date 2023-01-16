@@ -204,18 +204,25 @@ class PaperworkClub extends Component
         if ($paperwork->isGenerated == 1) {
 
             $pdf_generator = new PDFGenerator();
-            $financialImplication = $pdf_generator->calculateTotalImplication($paperworkDetails->financialImplication);
+            if ($paperworkDetails->financialImplication != null && $paperworkDetails->financialImplication != "") {
 
-            $total_all = 0;
+                $financialImplication = $pdf_generator->calculateTotalImplication($paperworkDetails->financialImplication);
 
-            foreach ($financialImplication['totalByRemark'] as $key => $value) {
-                $total_all += $value;
-            }
-
-            if ($total_all >= 20000) {
-                $paperwork->progressStates = json_encode($progression_NC);
+                $total_all = 0;
+        
+                foreach ($financialImplication['totalByRemark'] as $key => $value) {
+                    $total_all += $value;
+                }
+    
+                if ($total_all >= 20000) {
+                    $paperwork->progressStates = json_encode($progression_NC);
+                } else {
+                    $paperwork->progressStates = json_encode($progression);
+                }
             } else {
-                $paperwork->progressStates = json_encode($progression);
+                return redirect()->back()
+                    ->with('error', 'Sila isi maklumat dengan lengkap terlebih dahulu.');
+                    // ->with('error', 'Sila isi maklumat kewangan terlebih dahulu.');
             }
         } else {
 

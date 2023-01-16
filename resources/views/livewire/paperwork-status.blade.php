@@ -90,6 +90,10 @@
     if (session('rejected')) {
         echo '<div class="alert alert-danger" role="alert" fade show>' . session('rejected') . '</div>';
     }
+
+    if (session('error')) {
+        echo '<div class="alert alert-danger" role="alert" fade show>' . session('error') . '</div>';
+    }
     ?>
     <div class="alert alert-success" role="alert" id="response-submitted" fade show hidden>Kertas kerja berjaya dihantar</div>
 </div>
