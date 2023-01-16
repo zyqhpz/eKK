@@ -225,7 +225,7 @@
                     <?php } ?>
                     <td>
                         <div class="btn-group .z-index-master">
-                            @if (auth()->user()->role == $paperwork->clubId)
+                            @if (auth()->user()->id == $paperwork->clubId)
                             <a href="{{ route('paperwork-club-status', $paperwork->id) }}" type="button" class="btn btn-info" data-bs-toggle="tooltip"
                                 data-bs-placement="top" title="Lihat kertas kerja">Butiran</a>
                             <button type="button" class="btn btn-info dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
@@ -312,11 +312,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body pb-0">
-                <div id="paperwork-deleted-name">{{ $paperwork->name }}</div>
+                <div id="paperwork-deleted-name"></div>
                 <p>Adakah anda pasti untuk memadam kertas kerja ini?</p>
             </div>
             <div class="modal-footer">
-                <form action="{{ route('paperwork.delete', $paperwork->id) }}" id="delete-paperwork" method="POST">
+                <form action="" id="delete-paperwork" method="POST">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger">Padam</button>

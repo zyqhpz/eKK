@@ -23,6 +23,7 @@ class PaperworkClub extends Component
 {
     public function render()
     {
+        $paperworks = null;
         // admin
         if (auth()->user()->role == 0) {
             // $paperworks = Paperwork::where('status', '>', 1)->get();
