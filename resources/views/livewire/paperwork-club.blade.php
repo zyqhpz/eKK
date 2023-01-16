@@ -116,11 +116,11 @@
                 </span>
                 <input type="text" class="form-control"id="paperwork-search" placeholder="Cari kertas kerja">
             </div>
-            <select class="form-select fmxw-200 d-none d-md-inline" aria-label="Message select example 2">
-                <option selected>Semua</option>
-                <option value="1">Lulus</option>
-                <option value="2">Dalam proses</option>
-                <option value="3">Draf</option>
+            <select class="form-select fmxw-200 d-none d-md-inline" id="paperwork-filter-status" aria-label="Message select example 2">
+                <option selected value="Semua">Semua</option>
+                <option value="Draf">Draf</option>
+                <option value="Dalam proses">Dalam proses</option>
+                <option value="Lulus">Lulus</option>
             </select>
         </div>
         <div class="col-3 col-lg-4 d-flex justify-content-end">
@@ -221,7 +221,7 @@
                     <?php } else if($paperwork->status == 1) { ?>
                         <td><span class="fw-normal text-warning">Dalam proses</span></td>
                     <?php } else if($paperwork->status == 2) { ?>
-                        <td><span class="fw-normal text-success">Diluluskan</span></td>
+                        <td><span class="fw-normal text-success">Lulus</span></td>
                     <?php } ?>
                     <td>
                         <div class="btn-group .z-index-master">
@@ -361,6 +361,18 @@
             $("table tr").filter(function() {
                 $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
             });
+        });
+
+        $("#paperwork-filter-status").on("change", function() {
+            var selected = $(this).val();
+            $("table tbody tr").hide();
+            if (selected === "Semua") {
+                $("table tbody tr").show();
+            } else {
+                $("table tbody tr td:nth-child(5)").filter(function() {
+                    return $(this).text() === selected;
+                }).parent().show();
+            }
         });
     });
 
