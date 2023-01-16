@@ -16,16 +16,17 @@ class StatusUpdateMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $name;
+    public $name, $link;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($name)
+    public function __construct($name, $link)
     {
         $this->name = $name;
+        $this->link = $link;
     }
 
     /**

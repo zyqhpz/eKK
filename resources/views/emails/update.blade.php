@@ -3,11 +3,10 @@
 
 Anda menerima kertas kerja baharu daripada {{ $name }}.
 
-{{-- <x-mail::button :url="''">
-Button Text
-</x-mail::button> --}}
+<x-mail::button :url="$link">
+Lihat Kertas Kerja Disini
+</x-mail::button>
 
 Terima kasih,<br>
-{{-- {{ config('app.name') }} --}}
 e-Kertas Kerja
 </x-mail::message>
