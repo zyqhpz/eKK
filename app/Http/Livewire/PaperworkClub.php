@@ -240,9 +240,9 @@ class PaperworkClub extends Component
             // dd($output);
 
             // remove comma from string
-            $int = filter_var($output, FILTER_SANITIZE_NUMBER_INT);
+            $int_string = filter_var($output, FILTER_SANITIZE_NUMBER_INT);
 
-            $new_int = $int / 100;
+            $new_int = intval($int_string) / 100;
 
             if ($new_int >= 20000) {
                 $paperwork->progressStates = json_encode($progression_NC);
@@ -255,8 +255,6 @@ class PaperworkClub extends Component
         $mailController = new MailController();
         $mailController->sendEmail($paperwork->id);
         $paperwork->currentProgressState = 1;
-        // $paperwork->currentProgressState = $request->paperwork_currentProgressState ?? $paperwork->currentProgressState;
-        // $paperwork->progressStates = $request->paperwork_progressStates ?? $paperwork->progressStates;
 
         $paperwork->save();
 
