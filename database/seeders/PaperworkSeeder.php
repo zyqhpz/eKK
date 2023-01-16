@@ -26,12 +26,14 @@ class PaperworkSeeder extends Seeder
         DB::table('paperworks')->insert([
             'name' => 'Kertas Kerja 1',
             'isGenerated' => 1,
-            'clubId' => 1,
+            'clubId' => 2,
             'status' => 0,
             'progressStates' => "[]",
             'currentProgressState' => 0,
             'isOneDay' => 1,
-            'paperworkDetailsId' => $paperworkDetailsId
+            'paperworkDetailsId' => $paperworkDetailsId,
+            'created_at' => now(),
+            'updated_at' => now()
         ]);
     }
 }

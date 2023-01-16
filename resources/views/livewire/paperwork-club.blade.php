@@ -163,7 +163,7 @@
                         $programDateStart = $paperwork->programDateStart;
                         $programDateEnd = $paperwork->programDateEnd;
 
-                        if ($programDateStart != '' && $programDateEnd != '' && $programDateStart != null && $programDateEnd != null) {
+                        if (isset($programDateStart) && isset($programDateEnd)) {
                         // format YYYY/MM/DD it to DD MONTH YYYY format and in Malaysia timezone (UTC+8)
 
                         $startDate = new DateTime($programDateStart, new DateTimeZone('UTC'));
@@ -193,7 +193,7 @@
 
                         $programDate = $paperwork->programDate;
 
-                        if ($programDate != '' && $programDate != null) {
+                        if (isset($programDate)) {
                         // format YYYY/MM/DD it to DD MONTH YYYY format and in Malaysia timezone (UTC+8)
 
                             $programDate = new DateTime($programDate, new DateTimeZone('UTC'));
