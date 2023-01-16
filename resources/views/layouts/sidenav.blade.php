@@ -3,11 +3,11 @@
     <div class="user-card d-flex d-md-none align-items-center justify-content-between justify-content-md-center pb-4">
       <div class="d-flex align-items-center">
         <div class="avatar-lg me-4">
-          <img src="/assets/img/team/profile-picture-3.jpg" class="card-img-top rounded-circle border-white"
+          <img src="/assets/img/team/profile-picture-1.jpg" class="card-img-top rounded-circle border-white"
             alt="Bonnie Green">
         </div>
         <div class="d-block">
-          <h2 class="h5 mb-3">Hi, Jane</h2>
+          <h2 class="h5 mb-3">{{  auth()->user()->name ? auth()->user()->name: 'User Name'}}</h2>
           <a href="/login" class="btn btn-secondary btn-sm d-inline-flex align-items-center">
             <svg class="icon icon-xxs me-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg">
@@ -31,7 +31,7 @@
     </div>
     <ul class="nav flex-column pt-3 pt-md-0">
       <li class="nav-item">
-        <a href="/dashboard" class="nav-link d-flex align-items-center">
+        <a href="#" class="nav-link d-flex align-items-center">
           <span class="sidebar-icon me-3">
             <img src="/assets/img/brand/light.svg" height="20" width="20" alt="Volt Logo">
           </span>
