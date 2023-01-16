@@ -114,13 +114,14 @@ class PDFGenerator extends Component
             }
         }
 
+        $financial_html = '';
+        $total_all = 0;
+
         // FINANCIAL IMPLICATION
         if ($paperworkDetails->financialImplication == null || $paperworkDetails->financialImplication == '') {
-            $financialImplication = '';
+            $financial_html = '';
         } else {
             $financialImplication = $this->calculateTotalImplication($paperworkDetails->financialImplication);
-
-            $financialImplication_html = '';
 
             $counter = 0;
             $financial_html = '';
@@ -191,6 +192,56 @@ class PDFGenerator extends Component
                                     </tr>';
         }
 
+        // AJK
+        $ajk_html = '';
+
+        if ($paperworkDetails->programCommittee == null || $paperworkDetails->programCommittee == '') {
+            $ajk_html = '';
+        } else {
+            $ajk = json_decode($paperworkDetails->programCommittee, true);
+
+            // get key and value from array
+            for ($i = 0; $i < count($ajk); $i++) {
+
+                foreach ($ajk[$i] as $key => $value) {
+
+                    if (is_array($value)) {
+
+                        $ajk_html .=    '<tr height="30pt"></tr>
+                                        <tr>
+                                            <td width="90%"><b class="text-uppercase">'.$key.':</b></td>
+                                        </tr>
+                                        <tr height="10pt"></tr>
+                                        <tr>
+                                            <td>
+                                                <table width="100%" style="text-align: center;">';
+                                                for ($j = 0; $j < count($value); $j++) {
+                                                    $ajk_html .= '<tr>
+                                                                    <td width="5%" align="right">'.($j+1).'.</td>
+                                                                    <td width="100%">&nbsp;&nbsp;&nbsp;'.$value[$j].'</td>
+                                                                </tr>';
+                                                }
+                        $ajk_html .=            '</table>
+                                            </td>
+                                        </tr>';
+                    } else {
+
+                        $ajk_html .=    '<tr>
+                                            <td width="90%" align="center">
+                                                <b class="text-uppercase">'. $key.'</b>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="90%" align="center">
+                                                '.$value.'
+                                            </td>
+                                        </tr>';
+                    }
+                }
+
+            }
+        }
+
         $data = [
             'user' => $user,
             'paperwork' => $paperwork,
@@ -199,7 +250,8 @@ class PDFGenerator extends Component
             'financialImplication' => array(
                 'implikasi' => $financial_html,
                 'jumlah_implikasi' => $total_all
-            )
+            ),
+            'ajk' => $ajk_html,
         ];
         
         $pdf = PDF::loadView('livewire.paperwork-pdf', $data);

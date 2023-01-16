@@ -1,7 +1,7 @@
 <x-layouts.base>
 
 
-    @if(in_array(request()->route()->getName(), ['dashboard', 'profile', 'profile-example', 'profile-club', 'paperwork-club', 'paperwork-club-status', 'paperwork-club-list', 'paperwork-status', 'pdf-generator', 'paperwork-generator', 'users', 'bootstrap-tables', 'transactions',
+    @if(in_array(request()->route()->getName(), ['dashboard', 'profile', 'profile-example', 'profile-club', 'paperwork-club', 'paperwork-club-status', 'paperwork-club-list', 'paperwork-status', 'pdf-generator', 'paperwork-generator', 'users', 'users.list', 'bootstrap-tables', 'transactions',
     'buttons',
     'forms', 'modals', 'notifications', 'typography', 'upgrade-to-pro']))
 

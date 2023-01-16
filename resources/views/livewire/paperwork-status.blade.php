@@ -94,7 +94,8 @@
     <div class="alert alert-success" role="alert" id="response-submitted" fade show hidden>Kertas kerja berjaya dihantar</div>
 </div>
 <div class="card card-body shadow border-0 table-wrapper table-responsive">
-    <div>Nama Kertas Kerja: {{ $paperwork->name }}</div>
+    <div class="d-flex mb-2 gap-2"><span>Nama Kertas Kerja: </span><p>{{ $paperwork->name }}</p></div>
+    <div class="d-flex mb-2 gap-2"><span>Nama Kelab: </span><p>{{ $club->name }}</p></div>
 
     <div class="progress-wrapper">
 

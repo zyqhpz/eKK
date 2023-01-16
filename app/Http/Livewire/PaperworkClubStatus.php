@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use Illuminate\Http\Request;
 use Livewire\Component;
+use App\Models\User;
 use App\Models\Paperwork;
 use App\Models\PaperworkDetails;
 
@@ -18,6 +19,7 @@ class PaperworkClubStatus extends Component
     public function show($id)
     {
         $paperwork = Paperwork::find($id);
+        $club = User::find($paperwork->clubId);
 
         // convert $paperwork->progressStates to array if not null, not using explode() because it will return an array with one element if the string is empty
         if ($paperwork->progressStates != null) {
@@ -26,7 +28,7 @@ class PaperworkClubStatus extends Component
             $paperwork->progressStates = null;
         }
 
-        return view('livewire.paperwork-status', compact('paperwork'));
+        return view('livewire.paperwork-status', compact('paperwork', 'club'));
     }
 
     public function updatePaperworkStatus(Request $request, $id)
