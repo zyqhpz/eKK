@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Paperwork;
 use App\Models\PaperworkDetails;
 
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 use App\Mail\StatusUpdateMail;
@@ -178,12 +179,6 @@ class PaperworkClub extends Component
     {
         $paperwork = Paperwork::find($id);
         $paperworkDetails = PaperworkDetails::find($paperwork->paperworkDetailsId);
-
-        // $paperwork->isOneDay = $request->paperwork_isOneDay ?? $paperwork->isOneDay;
-        // $paperwork->programDate = $request->paperwork_programDate ?? $paperwork->programDate;
-        // $paperwork->startDate = $request->paperwork_startDate ?? $paperwork->startDate;
-        // $paperwork->endDate = $request->paperwork_endDate ?? $paperwork->endDate;
-        // $paperwork->venue = $request->paperwork_venue ?? $paperwork->venue;
         $paperwork->status = 1;
 
         $progression = array(
@@ -230,14 +225,20 @@ class PaperworkClub extends Component
 
             // open file
             $file = public_path('paperworks/' . $paperwork->filePath);
+                        
+            try {
+                // run python script
+                if (config('app.env') == 'local')
+                    $process = new Process(['python', 'python/detector.py', $file]);
+                else
+                    $process = new Process(['python3', 'python/detector.py', $file]);
+                // $process->run();
+                $process->mustRun();
 
-            // run python script
-            $process = new Process(['python', 'python/detector.py', $file]);
-            $process->run();
-
-            $output = $process->getOutput();
-
-            // dd($output);
+                $output = $process->getOutput();
+            } catch (ProcessFailedException $exception) {
+                $message = $exception->getMessage();
+            }
 
             // remove comma from string
             $int_string = filter_var($output, FILTER_SANITIZE_NUMBER_INT);
@@ -250,7 +251,6 @@ class PaperworkClub extends Component
                 $paperwork->progressStates = json_encode($progression);
             }
         }
-
 
         $mailController = new MailController();
         $mailController->sendEmail($paperwork->id);

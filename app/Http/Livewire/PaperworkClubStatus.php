@@ -8,6 +8,8 @@ use App\Models\User;
 use App\Models\Paperwork;
 use App\Models\PaperworkDetails;
 
+use App\Http\Controllers\MailController;
+
 class PaperworkClubStatus extends Component
 {
     public function render()
@@ -35,6 +37,8 @@ class PaperworkClubStatus extends Component
     {
         $paperwork = Paperwork::find($id);
 
+        $mailController = new MailController();
+
         // Admin
         if (auth()->user()->role == 0) {
             // if ($request->paperwork_updateStatus == "Lulus") {
@@ -50,6 +54,7 @@ class PaperworkClubStatus extends Component
             if ($request->paperwork_updateStatus == "Lulus") {
                 $paperwork->status = 1;
                 $paperwork->currentProgressState = 2;
+                $mailController->sendEmail($paperwork->id);
             } else {
                 $paperwork->status = 0;
                 $paperwork->currentProgressState = 0;
@@ -60,6 +65,7 @@ class PaperworkClubStatus extends Component
             if ($request->paperwork_updateStatus == "Lulus") {
                 $paperwork->status = 1;
                 $paperwork->currentProgressState = 3;
+                $mailController->sendEmail($paperwork->id);
             } else {
                 $paperwork->status = 0;
                 $paperwork->currentProgressState = 0;
@@ -69,11 +75,13 @@ class PaperworkClubStatus extends Component
         else if (auth()->user()->role == 4) {
             if ($request->paperwork_updateStatus == "Lulus") {
 
-                if (count($paperwork->progressStates) == 4) {
-                    $paperwork->status = 1;
-                } else {
+                if (count(json_decode($paperwork->progressStates)) == 4) {
                     $paperwork->status = 2;
+                } else {
+                    $paperwork->status = 1;
+                    $mailController->sendEmail($paperwork->id);
                 }
+
                 $paperwork->currentProgressState = 3;
             } else {
                 $paperwork->status = 0;
@@ -94,7 +102,6 @@ class PaperworkClubStatus extends Component
         $paperwork->save();
 
         if ($request->paperwork_updateStatus == "Lulus") {
-
             return redirect()->back()
             ->with('updated', 'Kertas kerja ini telah diluluskan.');
         } else {

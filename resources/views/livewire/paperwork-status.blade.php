@@ -130,7 +130,7 @@
                     @elseif($paperwork->currentProgressState == 3)
                         <div class="progress-bar bg-warning" role="progressbar" style="width: 93%;" aria-valuenow="93" aria-valuemin="0" aria-valuemax="100"></div>
                     @else
-                        <div class="progress-bar bg-danger" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                     @endif
                 @else
                     @if ($paperwork->currentProgressState == 5)
@@ -248,14 +248,14 @@
 
                 if ({{ $paperwork->status }} == 2) {
                     SelectValue.innerHTML = "Lulus";
-                    $('#statusRange').val(97);
+                    $('#statusRange').val(98);
                 } else {
                     SelectValue.innerHTML = progression[{{ $paperwork->currentProgressState }} - 1];
                 }
 
-                if ( ({{ $paperwork->currentProgressState }} == 1) || ({{ $paperwork->currentProgressState }} == 2) || ({{ $paperwork->status }} == 3) ) {
+                if ( {{ $paperwork->status }} == 1) {
                     $('#SelectValue').addClass("bg-warning");
-                } else if ( {{ $paperwork->currentProgressState }} == 4) {
+                } else if ({{ $paperwork->status }} == 2) {
                     $('#SelectValue').addClass("bg-success");
                 } else {
                     $('#SelectValue').addClass("bg-danger");
@@ -299,20 +299,6 @@
             }
         });
     });
-    
-    // $('#btn-submit').on('click',function(){
-    //     console.log("clicked");
-    //     $.ajax({
-    //         type: "POST",
-    //         url: "{{ route('paperwork.submit', $paperwork->id) }}",
-    //         headers: {
-    //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    //         },
-    //         success: function(response){
-    //             console.log(response);
-    //         }
-    //     });
-    // });
 </script>
 
 {{-- modal to submit paperwork--}}
