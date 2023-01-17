@@ -112,7 +112,6 @@
         $learningOutcome_detail = "";
         
         if ($paperworkDetails->learningOutcome == null || $paperworkDetails->learningOutcome == '') {
-            // $learningOutcome = json_decode($paperworkDetails->learningOutcome, true);
             $learningOutcome_title = "";
             $learningOutcome_detail = "";
         } else {
@@ -158,7 +157,7 @@
         <div class="mx-auto d-block text-center">
             <p class="text-uppercase text-bold"><b>KERTAS KERJA <br> {{ $paperwork->name }}</b></p>
             <p class="text-uppercase text-bold"><b>TARIKH:<br> {{ $tarikh_main_page }}</b></p>
-            <p class="text-uppercase text-bold"><b>TEMPAT:<br> {{ $paperwork->venue }}</b></p>
+            <p class="text-uppercase text-bold"><b>TEMPAT:<br> @if(isset($paperwork->venue)) {{ $paperwork->venue }} @else - @endif</b></p>
             <p class="text-uppercase text-bold"><b>ANJURAN:<br> {{ $user->name }}</b></p>
             @if ($paperwork->collaborations != null)
                 <p class="text-uppercase text-bold"><b>DENGAN KERJASAMA:<br> {{ $paperwork->collaborations }}</b></p>

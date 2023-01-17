@@ -116,11 +116,11 @@
                 </span>
                 <input type="text" class="form-control"id="paperwork-search" placeholder="Cari kertas kerja">
             </div>
-            <select class="form-select fmxw-200 d-none d-md-inline" aria-label="Message select example 2">
-                <option selected>Semua</option>
-                <option value="1">Lulus</option>
-                <option value="2">Dalam proses</option>
-                <option value="3">Draf</option>
+            <select class="form-select fmxw-200 d-none d-md-inline" id="paperwork-filter-status" aria-label="Message select example 2">
+                <option selected value="Semua">Semua</option>
+                <option value="Draf">Draf</option>
+                <option value="Dalam proses">Dalam proses</option>
+                <option value="Lulus">Lulus</option>
             </select>
         </div>
         <div class="col-3 col-lg-4 d-flex justify-content-end">
@@ -163,7 +163,7 @@
                         $programDateStart = $paperwork->programDateStart;
                         $programDateEnd = $paperwork->programDateEnd;
 
-                        if ($programDateStart != '' && $programDateEnd != '' && $programDateStart != null && $programDateEnd != null) {
+                        if (isset($programDateStart) && isset($programDateEnd)) {
                         // format YYYY/MM/DD it to DD MONTH YYYY format and in Malaysia timezone (UTC+8)
 
                         $startDate = new DateTime($programDateStart, new DateTimeZone('UTC'));
@@ -193,7 +193,7 @@
 
                         $programDate = $paperwork->programDate;
 
-                        if ($programDate != '' && $programDate != null) {
+                        if (isset($programDate)) {
                         // format YYYY/MM/DD it to DD MONTH YYYY format and in Malaysia timezone (UTC+8)
 
                             $programDate = new DateTime($programDate, new DateTimeZone('UTC'));
@@ -221,11 +221,11 @@
                     <?php } else if($paperwork->status == 1) { ?>
                         <td><span class="fw-normal text-warning">Dalam proses</span></td>
                     <?php } else if($paperwork->status == 2) { ?>
-                        <td><span class="fw-normal text-success">Diluluskan</span></td>
+                        <td><span class="fw-normal text-success">Lulus</span></td>
                     <?php } ?>
                     <td>
                         <div class="btn-group .z-index-master">
-                            @if (auth()->user()->role == $paperwork->clubId)
+                            @if (auth()->user()->id == $paperwork->clubId)
                             <a href="{{ route('paperwork-club-status', $paperwork->id) }}" type="button" class="btn btn-info" data-bs-toggle="tooltip"
                                 data-bs-placement="top" title="Lihat kertas kerja">Butiran</a>
                             <button type="button" class="btn btn-info dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
@@ -312,11 +312,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body pb-0">
-                <div id="paperwork-deleted-name">{{ $paperwork->name }}</div>
+                <div id="paperwork-deleted-name"></div>
                 <p>Adakah anda pasti untuk memadam kertas kerja ini?</p>
             </div>
             <div class="modal-footer">
-                <form action="{{ route('paperwork.delete', $paperwork->id) }}" id="delete-paperwork" method="POST">
+                <form action="" id="delete-paperwork" method="POST">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger">Padam</button>
@@ -361,6 +361,18 @@
             $("table tr").filter(function() {
                 $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
             });
+        });
+
+        $("#paperwork-filter-status").on("change", function() {
+            var selected = $(this).val();
+            $("table tbody tr").hide();
+            if (selected === "Semua") {
+                $("table tbody tr").show();
+            } else {
+                $("table tbody tr td:nth-child(5)").filter(function() {
+                    return $(this).text() === selected;
+                }).parent().show();
+            }
         });
     });
 

@@ -35,12 +35,11 @@ class UserSeeder extends Seeder
             'email' => 'kelab.b@volt.com',
             'password' => Hash::make('secret'),
         ]);
-
         
         DB::table("users")->insert([
             'name' => 'Penasihat Kelab A',
             'role' => 2,
-            'advisorOf' => 1,
+            'advisorOf' => 2,
             'email' => 'penasihat.a@volt.com',
             'password' => Hash::make('secret'),
         ]);

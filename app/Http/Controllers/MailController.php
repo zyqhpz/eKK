@@ -16,7 +16,9 @@ class MailController extends Controller
         $paperwork = Paperwork::find($id);
         $user = User::find($paperwork->clubId);
 
-        Mail::to('receiver@example.com')->send(new StatusUpdateMail($user->name));
+        $link = 'https://ekk.fly.dev/kertas-kerja-kelab/'.$id ;
+
+        Mail::to('receiver@example.com')->send(new StatusUpdateMail($user->name, $link));
 
         return 'Email was sent';
     }

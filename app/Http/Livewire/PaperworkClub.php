@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Paperwork;
 use App\Models\PaperworkDetails;
 
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 use App\Mail\StatusUpdateMail;
@@ -23,6 +24,7 @@ class PaperworkClub extends Component
 {
     public function render()
     {
+        $paperworks = null;
         // admin
         if (auth()->user()->role == 0) {
             // $paperworks = Paperwork::where('status', '>', 1)->get();
@@ -177,12 +179,6 @@ class PaperworkClub extends Component
     {
         $paperwork = Paperwork::find($id);
         $paperworkDetails = PaperworkDetails::find($paperwork->paperworkDetailsId);
-
-        // $paperwork->isOneDay = $request->paperwork_isOneDay ?? $paperwork->isOneDay;
-        // $paperwork->programDate = $request->paperwork_programDate ?? $paperwork->programDate;
-        // $paperwork->startDate = $request->paperwork_startDate ?? $paperwork->startDate;
-        // $paperwork->endDate = $request->paperwork_endDate ?? $paperwork->endDate;
-        // $paperwork->venue = $request->paperwork_venue ?? $paperwork->venue;
         $paperwork->status = 1;
 
         $progression = array(
@@ -203,18 +199,25 @@ class PaperworkClub extends Component
         if ($paperwork->isGenerated == 1) {
 
             $pdf_generator = new PDFGenerator();
-            $financialImplication = $pdf_generator->calculateTotalImplication($paperworkDetails->financialImplication);
+            if ($paperworkDetails->financialImplication != null && $paperworkDetails->financialImplication != "") {
 
-            $total_all = 0;
+                $financialImplication = $pdf_generator->calculateTotalImplication($paperworkDetails->financialImplication);
 
-            foreach ($financialImplication['totalByRemark'] as $key => $value) {
-                $total_all += $value;
-            }
-
-            if ($total_all >= 20000) {
-                $paperwork->progressStates = json_encode($progression_NC);
+                $total_all = 0;
+        
+                foreach ($financialImplication['totalByRemark'] as $key => $value) {
+                    $total_all += $value;
+                }
+    
+                if ($total_all >= 20000) {
+                    $paperwork->progressStates = json_encode($progression_NC);
+                } else {
+                    $paperwork->progressStates = json_encode($progression);
+                }
             } else {
-                $paperwork->progressStates = json_encode($progression);
+                return redirect()->back()
+                    ->with('error', 'Sila isi maklumat dengan lengkap terlebih dahulu.');
+                    // ->with('error', 'Sila isi maklumat kewangan terlebih dahulu.');
             }
         } else {
 
@@ -222,19 +225,25 @@ class PaperworkClub extends Component
 
             // open file
             $file = public_path('paperworks/' . $paperwork->filePath);
+                        
+            try {
+                // run python script
+                if (config('app.env') == 'local')
+                    $process = new Process(['python', 'python/detector.py', $file]);
+                else
+                    $process = new Process(['python3', 'python/detector.py', $file]);
+                // $process->run();
+                $process->mustRun();
 
-            // run python script
-            $process = new Process(['python', 'python/detector.py', $file]);
-            $process->run();
-
-            $output = $process->getOutput();
-
-            // dd($output);
+                $output = $process->getOutput();
+            } catch (ProcessFailedException $exception) {
+                $message = $exception->getMessage();
+            }
 
             // remove comma from string
-            $int = filter_var($output, FILTER_SANITIZE_NUMBER_INT);
+            $int_string = filter_var($output, FILTER_SANITIZE_NUMBER_INT);
 
-            $new_int = $int / 100;
+            $new_int = intval($int_string) / 100;
 
             if ($new_int >= 20000) {
                 $paperwork->progressStates = json_encode($progression_NC);
@@ -243,12 +252,9 @@ class PaperworkClub extends Component
             }
         }
 
-
         $mailController = new MailController();
         $mailController->sendEmail($paperwork->id);
         $paperwork->currentProgressState = 1;
-        // $paperwork->currentProgressState = $request->paperwork_currentProgressState ?? $paperwork->currentProgressState;
-        // $paperwork->progressStates = $request->paperwork_progressStates ?? $paperwork->progressStates;
 
         $paperwork->save();
 
