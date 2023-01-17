@@ -160,17 +160,17 @@ class PDFGenerator extends Component
                                                 }
 
                                                 $financial_html .= '</td><td class="align-middle">'. $value['total'] .'</td>
-                                                <td class="align-middle">'. $value['remark'] .'</td>
+                                                <td class="align-middle text-uppercase">'. $value['remark'] .'</td>
                                             </tr>';
                 } else {
                         $financial_html .=   '<tr>
                                                 <th scope="row">'.++$counter.'.</th>
-                                                <td class="text-start">'. $value['item'] .'</td>
-                                                <td>'. $value['quantity'] .'</td>
-                                                <td>'. $value['pricePerUnit'] .'</td>
-                                                <td>'. $value['subTotal'] .'</td>
+                                                <td class="text-start align-middle">'. $value['item'] .'</td>
+                                                <td class="align-middle">'. $value['quantity'] .'</td>
+                                                <td class="align-middle">'. $value['pricePerUnit'] .'</td>
+                                                <td class="align-middle">'. $value['subTotal'] .'</td>
                                                 <td class="align-middle">'. $value['total'] .'</td>
-                                                <td class="align-middle">'. $value['remark'] .'</td>
+                                                <td class="align-middle text-uppercase">'. $value['remark'] .'</td>
                                             </tr>';
                 }
             }
@@ -179,7 +179,7 @@ class PDFGenerator extends Component
 
             foreach ($financialImplication['totalByRemark'] as $key => $value) {
                 $financial_html .= '<tr>
-                                        <td colspan="5" class="align-middle"><b>JUMLAH KESELURUHAN IMPLIKASI KEWANGAN ('. $key .' SAHAJA)</b></td>
+                                        <td colspan="5" class="align-middle"><b class="text-uppercase">JUMLAH KESELURUHAN IMPLIKASI KEWANGAN ('. $key .' SAHAJA)</b></td>
                                         <td colspan="2" class="align-middle"><b>RM'. $value .'</b></td>
                                     </tr>';
 
