@@ -1607,18 +1607,20 @@
         }
 
         if ($("#program-date-start").val() == "" || $("#program-date-end").val() == "") {
-            // $("#tentative").hide();
-            if ( {{ isset($paperworkDetails->tentatives) != null ? 'true' : 'false' }}) {
-                // <?php if (isset($paperworkDetails->tentatives)) { ?>
-                //     $("#tentative").show();
-                // <?php } else { ?>
-                //     $("#tentative").hide();
-                // <?php } ?>
-            createInputFieldTentative();
+            var paperworkTentative = '<?php echo $paperworkDetails->tentative; ?>';
+            if (paperworkTentative === 'null') {
+                count_tentatives = 0;
+            } else {
+
+                createInputFieldTentative();
             }
         } else {
-            if ( {{ isset($paperworkDetails->tentatives) != null ? 'true' : 'false' }}) {
-            createInputFieldTentative();
+            var paperworkTentative = '<?php echo $paperworkDetails->tentative; ?>';
+            if (paperworkTentative === 'null') {
+                count_tentatives = 0;
+            } else {
+
+                createInputFieldTentative();
             }
         }
 
