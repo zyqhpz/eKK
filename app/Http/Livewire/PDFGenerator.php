@@ -28,6 +28,7 @@ class PDFGenerator extends Component
         $paperwork = Paperwork::find($id);
         $paperworkDetails = PaperworkDetails::find($paperwork->paperworkDetailsId);
         $user = User::find($paperwork->clubId);
+        $advisor = User::where('advisorOf', $user->id)->first();
 
         $learningOutcome = ""; 
         
@@ -43,6 +44,8 @@ class PDFGenerator extends Component
                 $learningOutcome = "Meningkatkan hubungan baik dan nilai tambah seseorang individu disamping membantu mereka yang memerlukan.";
             } else if ($paperworkDetails->learningOutcome == 3) {
                 $learningOutcome = "<div><b>Akademik & Kerjaya</b><br>Perancangan dan matlamat yang baik supaya bidang kemahiran yang dipilih selari dengan matlamat yang dituju.</div>";
+            } else if ($paperworkDetails->learningOutcome == 4) {
+                $learningOutcome = "<div><b> Etika & Kerohanian</b><br>Menerapkan nilai-nilai keagamaan dan moral dalam diri mahasiswa/i supaya mereka dapat mengelakkan diri daripada melakukan perkara yang dilarang oleh agama dan etika budaya rakyat Malaysia</div>";
             }
         }
 
@@ -50,6 +53,9 @@ class PDFGenerator extends Component
         if ($paperworkDetails->tentative == null || $paperworkDetails->tentative == '') {
             $tentative_html = '';
         } else {
+
+            $tentative_html = '';
+
             $tentative = json_decode($paperworkDetails->tentative, true);
 
             $days = ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu'];
@@ -59,18 +65,26 @@ class PDFGenerator extends Component
                 $tentative_dayAndDate = $days[date('w', strtotime($paperwork->programDate))] . '<br>(' . date('d/m/Y', strtotime($paperwork->programDate)) . ')';
 
                 foreach ($tentative['timeAndItem'][0] as $key => $value) {
-                    $tentative_html = '<tr><td rowspan="'. count($tentative['timeAndItem']) .'" class="fw-bold">'. $tentative_dayAndDate .'</td>
+                    $tentative_html = '<tr><td rowspan="'. count($tentative['timeAndItem'][0]) .'" class="fw-bold">'. $tentative_dayAndDate .'</td>
                                         <td>'.$key.'</td>
                                         <td>'. $value.'</td>
                                         </tr>';
+                    break;
                 }
-
-                for ($i = 1; $i < count($tentative['timeAndItem']); $i++) {
-                    // get key and value from array
-                    foreach ($tentative['timeAndItem'][$i] as $key => $value) {
+                
+                    // get key and value from array and start with second row
+                    $j = 0;
+                                    
+                    foreach ($tentative['timeAndItem'][0] as $key => $value) {
+                        if ($j == 0) {
+                            $j++;
+                            continue;
+                        }
+                        // start with second row
                         $tentative_html .= '<tr><td>'.$key.'</td><td>'. $value.'</td></tr>';
                     }
-                }
+                // }
+                // dd($tentative_html);
             } else {
 
                 $tentative_html = '';
@@ -248,27 +262,49 @@ class PDFGenerator extends Component
             $signature_html = '';
         } else {
             $signature = json_decode($paperworkDetails->signature, true);
+
+            // get created_at date
+            $created_date = date_create($paperworkDetails->created_at);
             
-            $signature_html = ' <td class="col-6 text-start">
-                                    <p class="fw-bold">Disediakan oleh :</p>
-                                    <br><br><br>
-                                    <p class="fw-bold">.................................................</p>
-                                    <p class="fw-bold">('.$signature['writer_name'].')</p>
-                                    <p class="fw-normal">Jawatan: '.$signature['writer_position'].'</p>
-                                    <p class="fw-normal">Tarikh: ...................................</p>
-                                    <p class="fw-normal">No. H/P: '.$signature['writer_phone'].'</p>
-                                    <p class="fw-normal">Emel: '.$signature['writer_email'].'</p>
-                                </td>
-                                <td class="col-5 text-start">
-                                    <p class="fw-bold">Disemak oleh :</p>
-                                    <br><br><br>
-                                    <p class="fw-bold">.................................................</p>
-                                    <p class="fw-bold">('.$signature['president_name'].')</p>
-                                    <p class="fw-normal">Jawatan: '.$signature['president_position'].'</p>
-                                    <p class="fw-normal">Tarikh: ...................................</p>
-                                    <p class="fw-normal">No. H/P: '.$signature['president_phone'].'</p>
-                                    <p class="fw-normal">Emel: '.$signature['president_email'].'</p>
-                                </td>';
+            // format to dd/mm/yyyy
+            $created_date = date_format($created_date, 'd/m/Y');
+            
+            $signature_html = ' <tr>
+                                    <td class="col-6 text-start">
+                                        <p class="fw-bold">Disediakan oleh :</p>
+                                        <br><br><br>
+                                        <p class="fw-bold">.................................................</p>
+                                        <p class="fw-bold">('.$signature['writer_name'].')</p>
+                                        <p class="fw-normal">Jawatan: '.$signature['writer_position'].'</p>
+                                        <p class="fw-normal">Tarikh: '.$created_date.'</p>
+                                        <p class="fw-normal">No. H/P: '.$signature['writer_phone'].'</p>
+                                        <p class="fw-normal">Emel: '.$signature['writer_email'].'</p>
+                                    </td>
+                                    <td class="col-5 text-start">
+                                        <p class="fw-bold">Disemak oleh :</p>
+                                        <br><br><br>
+                                        <p class="fw-bold">.................................................</p>
+                                        <p class="fw-bold">('.$signature['president_name'].')</p>
+                                        <p class="fw-normal">Jawatan: '.$signature['president_position'].'</p>
+                                        <p class="fw-normal">Tarikh: '.$created_date.'</p>
+                                        <p class="fw-normal">No. H/P: '.$signature['president_phone'].'</p>
+                                        <p class="fw-normal">Emel: '.$signature['president_email'].'</p>
+                                    </td>
+                                </tr>';
+
+
+            $signature_html .=  '<tr>
+                                    <td class="col-6 text-start">
+                                        <p class="fw-bold">Disahkan oleh :</p>
+                                        <br><br><br>
+                                        <p class="fw-bold">.................................................</p>
+                                        <p class="fw-bold">('.$advisor->name.')</p>
+                                        <p class="fw-normal">Jawatan: Penasihat</p>
+                                        <p class="fw-normal">Tarikh: '.$created_date.'</p>
+                                        <p class="fw-normal">No. H/P: 011-224433</p>
+                                        <p class="fw-normal">Emel: '.$advisor->email.'</p>
+                                    </td>
+                                </tr>';
         }
 
         $data = [

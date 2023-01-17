@@ -220,8 +220,8 @@
                     </li>
                     <li id="latar-belakang" class="fw-bold"><span>0<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>LATAR BELAKANG</b></span></span>
                         <ol class="list-group list-group-numbered fw-normal"">
-                            @if (isset($paperworkDetails->background) && is_array($paperworkDetails->background))
-                                @foreach ($paperworkDetails->background as $background)
+                            @if (isset($paperworkDetails->background) && is_array(json_decode($paperworkDetails->background)))
+                                @foreach (json_decode($paperworkDetails->background) as $background)
                                     <li class="list-group-item d-flex align-items-start">
                                         <div class="justified">
                                             {!! $background !!}
@@ -243,8 +243,8 @@
                                 Objektif utama program diadakan adalah:
                             </li>
                             <ol type="a">
-                                @if (isset($paperworkDetails->objective) && is_array($paperworkDetails->objective))
-                                    @foreach ($paperworkDetails->objective as $objective)
+                                @if (isset($paperworkDetails->objective) && is_array(json_decode($paperworkDetails->objective)))
+                                    @foreach (json_decode($paperworkDetails->objective) as $objective)
                                         <li class="list-group-item justified">
                                             {!! $objective !!}
                                         </li>
@@ -279,7 +279,7 @@
                     <li id="anjuran" class="fw-bold"><span>0<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>ANJURAN</b></span></span>
                         <ol class="list-group list-group-numbered fw-normal">
                             <li class="list-group-item">
-                                @if (isset($paperworkDetails->organizedBy) && is_array($paperworkDetails->organizedBy))
+                                @if (isset($paperworkDetails->organizedBy))
                                     {!! $paperworkDetails->organizedBy !!}
                                 @else
                                     -
@@ -289,8 +289,8 @@
                     </li>
                     <li id="kumpulan-sasaran" class="fw-bold"><span>0<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>KUMPULAN SASARAN</b></span></span>
                         <ol class="list-group list-group-numbered fw-normal">
-                            @if (isset($paperworkDetails->targetGroup) && is_array($paperworkDetails->targetGroup))
-                                @foreach ($paperworkDetails->targetGroup as $targetGroup => $value)
+                            @if (isset($paperworkDetails->targetGroup) && is_array(json_decode($paperworkDetails->targetGroup)))
+                                @foreach (json_decode($paperworkDetails->targetGroup) as $targetGroup)
                                     <li class="list-group-item">
                                         {!! $targetGroup !!}
                                     </li>
@@ -311,7 +311,7 @@
                                 Tempat:&nbsp;&nbsp; @if (isset($paperwork->venue)) {{ $paperwork->venue }} @else - @endif
                             </li>
                             <li class="list-group-item">
-                                Masa:&nbsp;&nbsp; @if (isset($paperwork->dateVenueTime)) {{ $paperwork->dateVenutTime }} @else - @endif
+                                Masa:&nbsp;&nbsp; @if (isset($paperworkDetails->dateVenueTime)) {{ $paperworkDetails->dateVenueTime }} @else - @endif
                             </li>
                         </ol>
                     </li>
