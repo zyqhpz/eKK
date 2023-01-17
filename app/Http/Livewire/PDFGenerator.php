@@ -242,6 +242,35 @@ class PDFGenerator extends Component
             }
         }
 
+        $signature_html = '';
+
+        if ($paperworkDetails->signature == null || $paperworkDetails->signature == '') {
+            $signature_html = '';
+        } else {
+            $signature = json_decode($paperworkDetails->signature, true);
+            
+            $signature_html = ' <td class="col-6 text-start">
+                                    <p class="fw-bold">Disediakan oleh :</p>
+                                    <br><br><br>
+                                    <p class="fw-bold">.................................................</p>
+                                    <p class="fw-bold">('.$signature['writer_name'].')</p>
+                                    <p class="fw-normal">Jawatan: '.$signature['writer_position'].'</p>
+                                    <p class="fw-normal">Tarikh: ...................................</p>
+                                    <p class="fw-normal">No. H/P: '.$signature['writer_phone'].'</p>
+                                    <p class="fw-normal">Emel: '.$signature['writer_email'].'</p>
+                                </td>
+                                <td class="col-5 text-start">
+                                    <p class="fw-bold">Disemak oleh :</p>
+                                    <br><br><br>
+                                    <p class="fw-bold">.................................................</p>
+                                    <p class="fw-bold">('.$signature['president_name'].')</p>
+                                    <p class="fw-normal">Jawatan: '.$signature['president_position'].'</p>
+                                    <p class="fw-normal">Tarikh: ...................................</p>
+                                    <p class="fw-normal">No. H/P: '.$signature['president_phone'].'</p>
+                                    <p class="fw-normal">Emel: '.$signature['president_email'].'</p>
+                                </td>';
+        }
+
         $data = [
             'user' => $user,
             'paperwork' => $paperwork,
@@ -252,6 +281,7 @@ class PDFGenerator extends Component
                 'jumlah_implikasi' => $total_all
             ),
             'ajk' => $ajk_html,
+            'signature' => $signature_html,
         ];
         
         $pdf = PDF::loadView('livewire.paperwork-pdf', $data);

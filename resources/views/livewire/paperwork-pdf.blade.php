@@ -7,6 +7,25 @@
     <script src="https://code.jquery.com/jquery-3.6.1.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
 
+    <script type="text/php">
+        if (isset($pdf) ) {
+            // OLD 
+            // $font = Font_Metrics::get_font("helvetica", "bold");
+            // $pdf->page_text(72, 18, "{PAGE_NUM} of {PAGE_COUNT}", $font, 6, array(255,0,0));
+            // v.0.7.0 and greater
+            $x = 72;
+            $y = 790;
+            $text = "Page {PAGE_NUM} of {PAGE_COUNT}";
+            $font = $fontMetrics->get_font("Times New Roman", "bold");
+            $size = 8;
+            $color = array(0,0,0);
+            $word_space = 0.0;  //  default
+            $char_space = 0.0;  //  default
+            $angle = 0.0;   //  default
+            $pdf->page_text($x, $y, $text, $font, $size, $color, $word_space, $char_space, $angle);
+        }
+    </script>
+
     <style>
         * {
             font-family: arial, sans-serif;
@@ -360,30 +379,16 @@
                 </ol>
             </div>
         </div>
+    </div>
 
+    {{-- Signature --}}
+    <div style="page-break-before: always;">    
+        <table class="col-11 mx-auto">
+            <tr>
+                <?php echo $signature; ?>
+            </tr>
+        </table>
     </div>
 
 </body>
-<script type="text/php">
-    if (isset($pdf) ) {
-        // OLD 
-        // $font = Font_Metrics::get_font("helvetica", "bold");
-        // $pdf->page_text(72, 18, "{PAGE_NUM} of {PAGE_COUNT}", $font, 6, array(255,0,0));
-        // v.0.7.0 and greater
-        $x = 72;
-        $y = 790;
-        $text = "Page {PAGE_NUM} of {PAGE_COUNT}";
-        $font = $fontMetrics->get_font("Times New Roman", "bold");
-        $size = 8;
-        $color = array(0,0,0);
-        $word_space = 0.0;  //  default
-        $char_space = 0.0;  //  default
-        $angle = 0.0;   //  default
-        $pdf->page_text($x, $y, $text, $font, $size, $color, $word_space, $char_space, $angle);
-    }
-</script>
-
-<script>
-    alert("{{ $paperwork->name }}");
-</script>
 </html>
