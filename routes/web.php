@@ -74,13 +74,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/pdf-generator', PDFGenerator::class)->name('pdf-generator');
     // Route::post('/pdf-generator', PDFGenerator::class)->name('pdf-generator');
     // Route::post("/pdf-generator/view", [PDFGenerator::class, 'viewPDF'])->name('pdf-generator.view');
-    Route::post("/pdf-generator/view", [PDFGenerator::class, 'viewPDF'])->name('view-pdf');
-    
-    
-    // Paperwork
-    // Route::get('/paperwork', [PaperworkController::class, 'index'])->name('paperwork.index');
-    // Route::get('/kertas-kerja-kelab', [PaperworkController::class, 'index'])->name('paperwork.index');
-
 
     // call PaperworkClub.list method from PaperworkClub.php file when /kertas-kerja-kelab is accessed
     Route::get('/kertas-kerja-kelab', PaperworkClub::class)->name('paperwork-club');

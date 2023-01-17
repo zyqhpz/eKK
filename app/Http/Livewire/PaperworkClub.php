@@ -250,6 +250,47 @@ class PaperworkClub extends Component
             } else {
                 $paperwork->progressStates = json_encode($progression);
             }
+
+            $program_date = "";
+
+            try {
+                if (config('app.env') == 'local')
+                    $process = new Process(['python', 'python/date-detector.py', $file]);
+                else
+                    $process = new Process(['python3', 'python/date-detector.py', $file]);
+
+                $process->mustRun();
+
+                $program_date = $process->getOutput();
+            } catch (ProcessFailedException $exception) {
+                $message = $exception->getMessage();
+            }
+
+            // check if program_date has [] or not
+            if (strpos($program_date, '[') !== false) {
+
+                // remove [] from string
+                $program_date = str_replace("[", "", $program_date);
+                $program_date = str_replace("]", "", $program_date);
+
+                // convert string to array
+                $program_date = explode(",", $program_date);
+
+                // remove ' and space from string
+                foreach ($program_date as $key => $value) {
+                    $program_date[$key] = str_replace("'", "", $value);
+                    $program_date[$key] = str_replace(" ", "", $program_date[$key]);
+                }
+
+                $paperwork->programDateStart = $program_date[0];
+                $paperwork->programDateEnd = $program_date[1];
+
+                $paperwork->isOneDay = 0;
+            } else {
+                $paperwork->programDate = $program_date;
+
+                $paperwork->isOneDay = 1;
+            }
         }
 
         $mailController = new MailController();
