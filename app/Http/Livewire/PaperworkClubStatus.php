@@ -82,7 +82,7 @@ class PaperworkClubStatus extends Component
                     $mailController->sendEmail($paperwork->id);
                 }
 
-                $paperwork->currentProgressState = 3;
+                $paperwork->currentProgressState = 4;
             } else {
                 $paperwork->status = 0;
                 $paperwork->currentProgressState = 0;
@@ -92,7 +92,7 @@ class PaperworkClubStatus extends Component
         else if (auth()->user()->role == 5) {
             if ($request->paperwork_updateStatus == "Lulus") {
                 $paperwork->status = 2;
-                $paperwork->currentProgressState = 4;
+                $paperwork->currentProgressState = 5;
             } else {
                 $paperwork->status = 0;
                 $paperwork->currentProgressState = 0;

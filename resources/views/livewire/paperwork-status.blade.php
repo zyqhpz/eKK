@@ -125,22 +125,22 @@
                         <div class="progress-bar bg-warning" role="progressbar" style="width: 35%;" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
                     @elseif ($paperwork->currentProgressState == 2)
                         <div class="progress-bar bg-warning" role="progressbar" style="width: 61%;" aria-valuenow="61" aria-valuemin="0" aria-valuemax="100"></div>
-                    @elseif($paperwork->currentProgressState == 3 && $paperwork->status == 2)
-                        <div class="progress-bar bg-success" role="progressbar" style="width: 99%;" aria-valuenow="99" aria-valuemin="0" aria-valuemax="100"></div>
                     @elseif($paperwork->currentProgressState == 3)
                         <div class="progress-bar bg-warning" role="progressbar" style="width: 93%;" aria-valuenow="93" aria-valuemin="0" aria-valuemax="100"></div>
+                    @elseif($paperwork->currentProgressState == 4 && $paperwork->status == 2)
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 99%;" aria-valuenow="99" aria-valuemin="0" aria-valuemax="100"></div>
                     @else
                         <div class="progress-bar bg-warning" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                     @endif
                 @else
                     @if ($paperwork->currentProgressState == 5)
-                        <div class="progress-bar bg-success" role="progressbar" style="width: 95%;" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 97%;" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
                     @elseif($paperwork->currentProgressState == 1)
                         <div class="progress-bar bg-warning" role="progressbar" style="width: 30%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
                     @elseif ($paperwork->currentProgressState == 2)
-                        <div class="progress-bar bg-warning" role="progressbar" style="width: 45%;" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 49%;" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
                     @elseif ($paperwork->currentProgressState == 3)
-                        <div class="progress-bar bg-warning" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 74%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
                     @elseif ($paperwork->currentProgressState == 4 && $paperwork->status == 2)
                         <div class="progress-bar bg-success" role="progressbar" style="width: 99%;" aria-valuenow="99" aria-valuemin="0" aria-valuemax="100"></div>
                     @elseif ($paperwork->currentProgressState == 4)
@@ -191,8 +191,6 @@
         <a class="btn btn-primary" href="{{ route('paperworkViewPDF', $paperwork->id ) }}" target="_blank" type="button">Lihat PDF</a>
         <?php } ?>
 
-        {{-- <a class="btn btn-secondary" id="btn-viewImplication" href="{{ route('paperworkFinanceDetails', $paperwork->id ) }}" type="button">Lihat Implikasi Kewangan</a> --}}
-
         @if ($paperwork->currentProgressState == 2 && auth()->user()->role == 0)
             <a class="btn btn-secondary" id="btn-updatePaperworkStatus" href="" data-bs-toggle="modal" data-bs-target="#modal-updatePaperworkStatus" type="button">Kemaskini Status</a>
         @endif
@@ -205,7 +203,7 @@
             <a class="btn btn-secondary" id="btn-updatePaperworkStatus" href="" data-bs-toggle="modal" data-bs-target="#modal-updatePaperworkStatus" type="button">Kemaskini Status</a>
         @endif
 
-        @if ($paperwork->currentProgressState == 3 && auth()->user()->role == 4)
+        @if ($paperwork->currentProgressState == 3 && auth()->user()->role == 4 && $paperwork->status == 1)
             <a class="btn btn-secondary" id="btn-updatePaperworkStatus" href="" data-bs-toggle="modal" data-bs-target="#modal-updatePaperworkStatus" type="button">Kemaskini Status</a>
         @endif
 
@@ -235,13 +233,15 @@
             if (states != null && states  != '') {
 
                 var statesJson = JSON.parse(states);
+
+                console.log(statesJson.length);
                 
                 if (statesJson.length  == 4 ) {
                     var progression = ["Draf", "Penasihat Kelab", "HEPA", "TNC (HEPA)", "Lulus"];
                     var progressionBarValue = [35, 61, 93, 99];
                 } else {
                     var progression = ["Draf", "Penasihat Kelab", "HEPA", "TNC (HEPA)", "NC", "Lulus"];
-                    var progressionBarValue = [30, 55, 70, 95, 96];
+                    var progressionBarValue = [30, 49, 74, 93, 97];
                 }
 
                 $('#statusRange').val(progressionBarValue[{{ $paperwork->currentProgressState }} - 1]);

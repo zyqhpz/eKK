@@ -53,7 +53,7 @@ class PaperworkClub extends Component
 
         // NC
         if (auth()->user()->role == 5) {
-            $paperworks = Paperwork::where('currentProgressState', '>', 3)->where('status', '!=', 2)->get();
+            $paperworks = Paperwork::where('currentProgressState', '>', 3)->where('status', '>=', 1)->get();
         }
 
         return view('livewire.paperwork-club', compact('paperworks'));
