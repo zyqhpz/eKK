@@ -54,7 +54,7 @@ class PaperworkClubStatus extends Component
             if ($request->paperwork_updateStatus == "Lulus") {
                 $paperwork->status = 1;
                 $paperwork->currentProgressState = 2;
-                $mailController->sendEmail($paperwork->id);
+                $mailController->sendEmail($paperwork->id, "Update");
             } else {
                 $paperwork->status = 0;
                 $paperwork->currentProgressState = 0;
@@ -65,7 +65,7 @@ class PaperworkClubStatus extends Component
             if ($request->paperwork_updateStatus == "Lulus") {
                 $paperwork->status = 1;
                 $paperwork->currentProgressState = 3;
-                $mailController->sendEmail($paperwork->id);
+                $mailController->sendEmail($paperwork->id, "Update");
             } else {
                 $paperwork->status = 0;
                 $paperwork->currentProgressState = 0;
@@ -77,9 +77,10 @@ class PaperworkClubStatus extends Component
 
                 if (count(json_decode($paperwork->progressStates)) == 4) {
                     $paperwork->status = 2;
+                    $mailController->sendEmail($paperwork->id, "Lulus");
                 } else {
                     $paperwork->status = 1;
-                    $mailController->sendEmail($paperwork->id);
+                    $mailController->sendEmail($paperwork->id, "Update");
                 }
 
                 $paperwork->currentProgressState = 4;
@@ -93,6 +94,7 @@ class PaperworkClubStatus extends Component
             if ($request->paperwork_updateStatus == "Lulus") {
                 $paperwork->status = 2;
                 $paperwork->currentProgressState = 5;
+                $mailController->sendEmail($paperwork->id, "Lulus");
             } else {
                 $paperwork->status = 0;
                 $paperwork->currentProgressState = 0;
