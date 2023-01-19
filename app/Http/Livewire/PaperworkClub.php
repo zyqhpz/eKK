@@ -294,7 +294,7 @@ class PaperworkClub extends Component
         }
 
         $mailController = new MailController();
-        $mailController->sendEmail($paperwork->id);
+        $mailController->sendEmail($paperwork->id,"update");
         $paperwork->currentProgressState = 1;
 
         $paperwork->save();
