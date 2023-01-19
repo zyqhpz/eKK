@@ -231,9 +231,9 @@
                             {{-- TARIKH, TEMPAT, DAN MASA --}}
                             <div class="mb-3">
                                 <label for="tarikh-tempat-masa">Tarikh, Tempat dan Masa</label>
-                                <div class="mb-3 d-flex">
+                                <div class="mb-3 d-flex align-items-center">
                                     <label for="program_date">Tarikh</label>
-                                    <input type="text" class="form-control" id="program_date"
+                                    <input type="text" class="form-control ms-2" id="program_date"
                                     value="<?php if ($paperwork->programDate != null) {
                                         // format date to dd/mm/yyyy
                                         $date = date_create($paperwork->programDate);
@@ -250,18 +250,18 @@
                                         echo "Sila masukkan tarikh program pada bahagian Maklumat Asas";
                                     }  ?>" disabled />
                                 </div>
-                                <div class="mb-3 d-flex">
+                                <div class="mb-3 d-flex align-items-center">
                                     <label for="program_location">Tempat</label>
-                                    <input type="text" class="form-control" id="program_location"
+                                    <input type="text" class="form-control ms-2" id="program_location"
                                     value="<?php if ($paperwork->venue != null) {
                                         echo $paperwork->venue;
                                     } else {
                                         echo "Sila masukkan tempat program pada bahagian Maklumat Asas";
                                     }  ?>" disabled />
                                 </div>
-                                <div class="mb-3 d-flex">
+                                <div class="mb-3 d-flex align-items-center">
                                     <label for="program_time">Masa</label>
-                                    <input type="text" class="form-control" id="program_time" name="paperwork_dateVenueTime" placeholder="Contoh: 9:00 pagi - 5:00 petang"
+                                    <input type="text" class="form-control ms-2" id="program_time" name="paperwork_dateVenueTime" placeholder="Contoh: 9:00 pagi - 5:00 petang"
                                     value="<?php if ($paperworkDetails->dateVenueTime != null) {
                                         echo $paperworkDetails->dateVenueTime;
                                     }?>" />
@@ -434,9 +434,9 @@
                     <div class="flex mt-3">
                         <input type="submit" id="btn-save" class="btn btn-primary mt-2 animate-up-2" value="Simpan"/>
                         {{-- <button type="button" class="btn btn-primary mt-2 animate-up-2" id="btn-save">Simpan</button> --}}
-                        <button type="button" class="btn btn-secondary mt-2 animate-up-2">Hantar</button>
+                        {{-- <button type="button" class="btn btn-secondary mt-2 animate-up-2">Hantar</button> --}}
                         <button type="button" id="btn-viewPDF" class="btn btn-gray-100 mt-2 animate-up-2">Lihat PDF</button>
-                        <button type="button" class="btn btn-danger mt-2 animate-up-2">Batal</button>
+                        <button type="button" id="btn-cancel" class="btn btn-danger mt-2 animate-up-2">Batal</button>
                     </div>
                 </div>
             </form>
@@ -569,17 +569,6 @@
     });
 
     $('#btn-save').click(function() {
-        // append all inputs with attribute name="implication", to #implication_details value of each input
-        // $('#implication_details').val(" ");
-        // for (var i = 0; i <= count_row_implication; i++) {
-        //     // $('#implication_details').val("i_"+ i);
-
-        //     // append new value to #implication_details without deleting previous
-        //     $('#implication_details').val($('#implication_details').val() + $('#implication_' + i).val() + " ");
-
-        //     // append all inputs with attribute name="implication_item", to #implication_item_details value of each input
-        //     // $('#implication_item_details').val("");
-        // }
 
         updateImplicationItemsCount();
 
@@ -587,7 +576,6 @@
 
         $('#implication_details').val(count_row_implication_item);
         
-        // append input with name "implication_item", to #implication_item_details value of each input
     });
 
     // Open PDF in new tab when Lihat PDF clicked
@@ -596,6 +584,11 @@
             .then(function(response) {
                 window.open(response.url, '_blank');
             });
+    });
+
+    // btn-cancel to redirect back 
+    $('#btn-cancel').click(function() {
+        window.location.href = "{{ route('paperwork-club-status', $paperwork->id) }}";
     });
 
     // implication
@@ -1607,18 +1600,20 @@
         }
 
         if ($("#program-date-start").val() == "" || $("#program-date-end").val() == "") {
-            // $("#tentative").hide();
-            if ( {{ isset($paperworkDetails->tentatives) != null ? 'true' : 'false' }}) {
-                // <?php if (isset($paperworkDetails->tentatives)) { ?>
-                //     $("#tentative").show();
-                // <?php } else { ?>
-                //     $("#tentative").hide();
-                // <?php } ?>
-            createInputFieldTentative();
+            var paperworkTentative = '<?php echo $paperworkDetails->tentative; ?>';
+            if (paperworkTentative === 'null') {
+                count_tentatives = 0;
+            } else {
+
+                createInputFieldTentative();
             }
         } else {
-            if ( {{ isset($paperworkDetails->tentatives) != null ? 'true' : 'false' }}) {
-            createInputFieldTentative();
+            var paperworkTentative = '<?php echo $paperworkDetails->tentative; ?>';
+            if (paperworkTentative === 'null') {
+                count_tentatives = 0;
+            } else {
+
+                createInputFieldTentative();
             }
         }
 

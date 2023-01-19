@@ -41,6 +41,20 @@
 </div>
 <div class="row mb-4">
     @if (auth()->user()->role == 1)
+
+    <?php
+        $count_inProgress = 0;
+        $count_approved = 0;
+
+        foreach ($paperworks as $paperwork) {
+            if ($paperwork->status == 1) {
+                $count_inProgress++;
+            } else if ($paperwork->status == 2) {
+                $count_approved++;
+            }
+        }
+    
+    ?>
     <div class="col-3 col-lg-4">
         <div class="card border-0 shadow">
             <div class="card-body">
@@ -53,7 +67,48 @@
                     <div class="col-12 col-xl-7 px-xl-0">
                         <div class="d-none d-sm-block">
                             <h2 class="h6 mb-0">Jumlah Kertas Kerja</h2>
+                            <span class="text-gray-400">Ditulis</span>
                             <h3 class="fw-extrabold mb-2">@if ($paperworks != null && $paperworks != '') {{ count($paperworks) }} @else <span>0</span> @endif</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-3 col-lg-4">
+        <div class="card border-0 shadow">
+            <div class="card-body">
+                <div class="row d-block d-xl-flex align-items-center">
+                    <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
+                        <div class="icon-shape icon-shape-tertiary rounded me-4 me-sm-0">
+                            <i class="far fa-newspaper text-white "></i>
+                        </div>
+                    </div>
+                    <div class="col-12 col-xl-7 px-xl-0">
+                        <div class="d-none d-sm-block">
+                            <h2 class="h6 mb-0">Jumlah Kertas Kerja</h2>
+                            <span class="text-warning">Dalam proses</span>
+                            <h3 class="fw-extrabold mb-2">@if ($paperworks != null && $paperworks != '') {{ $count_inProgress }} @else <span>0</span> @endif</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-3 col-lg-4">
+        <div class="card border-0 shadow">
+            <div class="card-body">
+                <div class="row d-block d-xl-flex align-items-center">
+                    <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
+                        <div class="icon-shape icon-shape-tertiary rounded me-4 me-sm-0">
+                            <i class="far fa-newspaper text-white "></i>
+                        </div>
+                    </div>
+                    <div class="col-12 col-xl-7 px-xl-0">
+                        <div class="d-none d-sm-block">
+                            <h2 class="h6 mb-0">Jumlah Kertas Kerja</h2>
+                            <span class="text-success">Diluluskan</span>
+                            <h3 class="fw-extrabold mb-2">@if ($paperworks != null && $paperworks != '') {{ $count_approved }} @else <span>0</span> @endif</h3>
                         </div>
                     </div>
                 </div>
@@ -67,7 +122,9 @@
                 <i class="fa-regular fa-circle-check"></i>
                 <div class="row d-block d-xl-flex align-items-center">
                     <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
-                                                
+                        <div class="icon-shape icon-shape-tertiary rounded me-4 me-sm-0">
+                            <i class="far fa-newspaper text-white "></i>
+                        </div>            
                     </div>
                     <div class="col-12 col-xl-7 px-xl-0">
                         <div class="d-none d-sm-block">
@@ -83,7 +140,8 @@
                             ?>
                             <h3 class="fw-extrabold mb-2">@if ($paperworks != null && $paperworks != '') {{ $status_2_count }} @else <span>0</span> @endif</h3>
                             @else
-                            <h2 class="h6 mb-0">Jumlah Kertas Kerja Perlu Diluluskan</h2>
+                            <h2 class="h6 mb-0">Jumlah Kertas Kerja</h2>
+                            <span class="text-warning">Perlu diluluskan</span>
                             <?php 
                                 $approved_count = 0;
                                 foreach ($paperworks as $paperwork) {
@@ -179,7 +237,7 @@
                         $formatter->setPattern("d");
 
                         $dateString = $formatter->format($startDate);
-                        $dateString .= "-";
+                        $dateString .= " - ";
                         $dateString .= $formatter->format($endDate);
                         $dateString .= " ";
                         $formatter->setPattern("MMMM y");

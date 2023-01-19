@@ -7,6 +7,25 @@
     <script src="https://code.jquery.com/jquery-3.6.1.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
 
+    <script type="text/php">
+        if (isset($pdf) ) {
+            // OLD 
+            // $font = Font_Metrics::get_font("helvetica", "bold");
+            // $pdf->page_text(72, 18, "{PAGE_NUM} of {PAGE_COUNT}", $font, 6, array(255,0,0));
+            // v.0.7.0 and greater
+            $x = 72;
+            $y = 790;
+            $text = "Page {PAGE_NUM} of {PAGE_COUNT}";
+            $font = $fontMetrics->get_font("Times New Roman", "bold");
+            $size = 8;
+            $color = array(0,0,0);
+            $word_space = 0.0;  //  default
+            $char_space = 0.0;  //  default
+            $angle = 0.0;   //  default
+            $pdf->page_text($x, $y, $text, $font, $size, $color, $word_space, $char_space, $angle);
+        }
+    </script>
+
     <style>
         * {
             font-family: arial, sans-serif;
@@ -201,8 +220,8 @@
                     </li>
                     <li id="latar-belakang" class="fw-bold"><span>0<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>LATAR BELAKANG</b></span></span>
                         <ol class="list-group list-group-numbered fw-normal"">
-                            @if (isset($paperworkDetails->background) && is_array($paperworkDetails->background))
-                                @foreach ($paperworkDetails->background as $background)
+                            @if (isset($paperworkDetails->background) && is_array(json_decode($paperworkDetails->background)))
+                                @foreach (json_decode($paperworkDetails->background) as $background)
                                     <li class="list-group-item d-flex align-items-start">
                                         <div class="justified">
                                             {!! $background !!}
@@ -224,8 +243,8 @@
                                 Objektif utama program diadakan adalah:
                             </li>
                             <ol type="a">
-                                @if (isset($paperworkDetails->objective) && is_array($paperworkDetails->objective))
-                                    @foreach ($paperworkDetails->objective as $objective)
+                                @if (isset($paperworkDetails->objective) && is_array(json_decode($paperworkDetails->objective)))
+                                    @foreach (json_decode($paperworkDetails->objective) as $objective)
                                         <li class="list-group-item justified">
                                             {!! $objective !!}
                                         </li>
@@ -260,7 +279,7 @@
                     <li id="anjuran" class="fw-bold"><span>0<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>ANJURAN</b></span></span>
                         <ol class="list-group list-group-numbered fw-normal">
                             <li class="list-group-item">
-                                @if (isset($paperworkDetails->organizedBy) && is_array($paperworkDetails->organizedBy))
+                                @if (isset($paperworkDetails->organizedBy))
                                     {!! $paperworkDetails->organizedBy !!}
                                 @else
                                     -
@@ -270,8 +289,8 @@
                     </li>
                     <li id="kumpulan-sasaran" class="fw-bold"><span>0<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>KUMPULAN SASARAN</b></span></span>
                         <ol class="list-group list-group-numbered fw-normal">
-                            @if (isset($paperworkDetails->targetGroup) && is_array($paperworkDetails->targetGroup))
-                                @foreach ($paperworkDetails->targetGroup as $targetGroup => $value)
+                            @if (isset($paperworkDetails->targetGroup) && is_array(json_decode($paperworkDetails->targetGroup)))
+                                @foreach (json_decode($paperworkDetails->targetGroup) as $targetGroup)
                                     <li class="list-group-item">
                                         {!! $targetGroup !!}
                                     </li>
@@ -292,7 +311,7 @@
                                 Tempat:&nbsp;&nbsp; @if (isset($paperwork->venue)) {{ $paperwork->venue }} @else - @endif
                             </li>
                             <li class="list-group-item">
-                                Masa:&nbsp;&nbsp; @if (isset($paperwork->dateVenueTime)) {{ $paperwork->dateVenutTime }} @else - @endif
+                                Masa:&nbsp;&nbsp; @if (isset($paperworkDetails->dateVenueTime)) {{ $paperworkDetails->dateVenueTime }} @else - @endif
                             </li>
                         </ol>
                     </li>
@@ -360,30 +379,16 @@
                 </ol>
             </div>
         </div>
+    </div>
 
+    {{-- Signature --}}
+    <div style="page-break-before: always;">    
+        <table class="col-11 mx-auto">
+            <tr>
+                <?php echo $signature; ?>
+            </tr>
+        </table>
     </div>
 
 </body>
-<script type="text/php">
-    if (isset($pdf) ) {
-        // OLD 
-        // $font = Font_Metrics::get_font("helvetica", "bold");
-        // $pdf->page_text(72, 18, "{PAGE_NUM} of {PAGE_COUNT}", $font, 6, array(255,0,0));
-        // v.0.7.0 and greater
-        $x = 72;
-        $y = 790;
-        $text = "Page {PAGE_NUM} of {PAGE_COUNT}";
-        $font = $fontMetrics->get_font("Times New Roman", "bold");
-        $size = 8;
-        $color = array(0,0,0);
-        $word_space = 0.0;  //  default
-        $char_space = 0.0;  //  default
-        $angle = 0.0;   //  default
-        $pdf->page_text($x, $y, $text, $font, $size, $color, $word_space, $char_space, $angle);
-    }
-</script>
-
-<script>
-    alert("{{ $paperwork->name }}");
-</script>
 </html>

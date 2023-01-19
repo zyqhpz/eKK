@@ -152,69 +152,80 @@ class PaperworkDetailsGenerator extends Component
         // Tentative Program
         $tentatives = null;
 
-        if ($request->program_duration != null && $request->tentatives_item != null && $request->tentatives_time != null) {
+        // dd($request->all());
 
-            // split $request->program_tentatives string to int array by comma and count the length
-            $program_itemPerDay = explode(',', $request->program_tentatives); // num items per day
-            $program_duration = count(explode(',', $request->program_tentatives)); // num days
-            
-            $tentatives = array(
-                'duration' => $program_duration,
-                'timeAndItem' => array()
-            );
+        if ($request->tentatives_item != null && $request->tentatives_time != null) {
 
-            $k=0;
+            if ($request->paperwork_isOneDay == 'on') {
+                if ($paperwork->programDate != null) {
 
-            $totalItems = count($request->tentatives_time);
+                    $items = array();
 
-            for ($i=0; $i < $program_duration; $i++) {
-                $tentatives['timeAndItem'][$i] = $program_itemPerDay[$i];
-            }
+                    // dd($request->program_tentatives[0]);
 
-            // tentative - data format v1
-            // for ($i=0; $i < $program_duration; $i++) {
-            //     for ($j=0; $j < $program_itemPerDay[$i]; $j++) {
-            //         $items[$j] = array(
-            //             'time' => $request->tentatives_time[$k],
-            //             'item' => $request->tentatives_item[$k]
-            //         );
-            //         $k++;
-            //     }
-            //     $tentatives['timeAndItem'][$i] = $items;
-            // }
+                    for ($j=0; $j < $request->program_tentatives[0]; $j++) {
+                        $items[$j] = array(
+                            $request->tentatives_time[$j] => $request->tentatives_item[$j]
+                        );
+                    }
 
-            // tentative - data format v2
-            for ($i=0; $i < $program_duration; $i++) {
-                $items = array();
-                for ($j=0; $j < $program_itemPerDay[$i]; $j++) {
-                    $items[$j] = array(
-                        $request->tentatives_time[$k] => $request->tentatives_item[$k]
+                    $tentatives = array(
+                        'duration' => 1,
+                        'timeAndItem' => array()
                     );
-                    // echo 'row: '.$k . ' ' . $request->tentatives_time[$k] . ' ' . $request->tentatives_item[$k] . '<br>';
-                    $k++;
+
+                    $tentatives['timeAndItem'] = $items;
+
+                    $paperworkDetails->tentative = json_encode($tentatives);
                 }
-                $tentatives['timeAndItem'][$i] = $items;
+            } else {
+
+                if ($request->program_duration != null) {
+                    // split $request->program_tentatives string to int array by comma and count the length
+                    $program_itemPerDay = explode(',', $request->program_tentatives); // num items per day
+                    $program_duration = count(explode(',', $request->program_tentatives)); // num days
+                    
+                    $tentatives = array(
+                        'duration' => $program_duration,
+                        'timeAndItem' => array()
+                    );
+
+                    $k=0;
+
+                    $totalItems = count($request->tentatives_time);
+
+                    for ($i=0; $i < $program_duration; $i++) {
+                        $tentatives['timeAndItem'][$i] = $program_itemPerDay[$i];
+                    }
+
+                    // tentative - data format v1
+                    // for ($i=0; $i < $program_duration; $i++) {
+                    //     for ($j=0; $j < $program_itemPerDay[$i]; $j++) {
+                    //         $items[$j] = array(
+                    //             'time' => $request->tentatives_time[$k],
+                    //             'item' => $request->tentatives_item[$k]
+                    //         );
+                    //         $k++;
+                    //     }
+                    //     $tentatives['timeAndItem'][$i] = $items;
+                    // }
+
+                    // tentative - data format v2
+                    for ($i=0; $i < $program_duration; $i++) {
+                        $items = array();
+                        for ($j=0; $j < $program_itemPerDay[$i]; $j++) {
+                            $items[$j] = array(
+                                $request->tentatives_time[$k] => $request->tentatives_item[$k]
+                            );
+                            $k++;
+                        }
+                        $tentatives['timeAndItem'][$i] = $items;
+                    }
+                    
+                    $paperworkDetails->tentative = json_encode($tentatives);
+                }
             }
-            $paperworkDetails->tentative = json_encode($tentatives);
-            // dd($totalItems, $program_itemPerDay, $paperworkDetails->tentativeFirebaseId);
-        } else if ($paperwork->programDate != null) {
-
-            for ($j=0; $j < $request->program_tentatives; $j++) {
-                $items[$j] = array(
-                    $request->tentatives_time[$j] => $request->tentatives_item[$j]
-                );
-            }
-
-            $tentatives = array(
-                'duration' => 1,
-                'timeAndItem' => array()
-            );
-
-            $tentatives['timeAndItem'] = $items;
-
-            // dd($tentatives);
-
-            $paperworkDetails->tentative = json_encode($tentatives);
+        
         }
 
         // Implication
